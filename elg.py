@@ -1,3 +1,5 @@
+import numpy as np
+
 class Agent :
     N_objects = 5
     N_symbols = 5
