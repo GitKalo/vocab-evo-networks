@@ -33,7 +33,7 @@ class Agent :
                     return count
                 count += 1
         except AssertionError :
-            print("NO! Bad list!")
+            print("NO! Bad list!")  # TODO: Change error handline message (and add return value?)
 
     def __str__(self) :
         return 'a[' + str(self.id) + ']'
