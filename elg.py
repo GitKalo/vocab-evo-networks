@@ -34,3 +34,6 @@ class Agent :
                 count += 1
         except AssertionError :
             print("NO! Bad list!")
+
+    def __str__(self) :
+        return 'a[' + str(self.id) + ']'
