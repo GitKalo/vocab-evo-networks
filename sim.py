@@ -5,14 +5,9 @@ import random
 
 import elg
 
-agent_list = [
-    elg.Agent(0),
-    elg.Agent(1),
-    elg.Agent(2),
-    elg.Agent(3),
-    elg.Agent(4),
-    elg.Agent(5)
-]
+pop_size = 10
+
+agent_list = [elg.Agent(n) for n in range(pop_size)]
 
 G = nx.complete_graph(agent_list)
 
