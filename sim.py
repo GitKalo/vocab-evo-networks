@@ -5,7 +5,20 @@ import random
 
 import elg
 
-pop_size = 10
+def generation( G, agents ) :
+    for speaker in agents :
+        agent_payoff = 0
+        list_connections = list(nx.neighbors(G, speaker))
+        for listener in list_connections :
+            agent_payoff += elg.payoff(speaker, listener)
+
+        print("Agent", speaker.id, "has payoff", agent_payoff)
+
+    # reproduction
+
+    # return new graph
+
+pop_size = 3
 
 agent_list = [elg.Agent(n) for n in range(pop_size)]
 
@@ -17,11 +30,8 @@ pop_size = len(agent_list)
 n_time_steps = 10
 
 for step_num in range(n_time_steps) :
-    speaker = random.choice(list(G.nodes))
-    list_connections = list(nx.neighbors(G, speaker))
-    listener = random.choice(list_connections)
     print("\nTime step ", step_num)
-    speaker.speak(listener)
+    generation(G, agent_list)
 
 
 plt.show()
