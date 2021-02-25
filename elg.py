@@ -37,3 +37,10 @@ class Agent :
 
     def __str__(self) :
         return 'a[' + str(self.id) + ']'
+
+def payoff(agent_1, agent_2) :
+    return 0.5 * sum(
+        [sum(
+            agent_1.P_matrix[i][j] * agent_2.Q_matrix[j][i] + agent_2.P_matrix[i][j] * agent_1.Q_matrix[j][i] for j in range(Agent.N_symbols)
+            ) for i in range(Agent.N_objects)]
+        )
