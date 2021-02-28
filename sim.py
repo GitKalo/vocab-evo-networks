@@ -18,20 +18,18 @@ def generation( G, agents ) :
 
     # return new graph
 
-pop_size = 3
+if __name__ == '__main__' :
+    agent_list = [elg.Agent(n) for n in range(pop_size)]
 
-agent_list = [elg.Agent(n) for n in range(pop_size)]
+    G = nx.complete_graph(agent_list)
 
-G = nx.complete_graph(agent_list)
+    nx.draw_circular(G, with_labels=True, font_weight='bold')
 
-nx.draw_circular(G, with_labels=True, font_weight='bold')
+    pop_size = len(agent_list)
+    n_time_steps = 10
 
-pop_size = len(agent_list)
-n_time_steps = 10
+    for step_num in range(n_time_steps) :
+        print("\nTime step ", step_num)
+        generation(G, agent_list)
 
-for step_num in range(n_time_steps) :
-    print("\nTime step ", step_num)
-    generation(G, agent_list)
-
-
-plt.show()
+    plt.show()
