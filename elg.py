@@ -22,7 +22,7 @@ class Agent :
         for i in range(len(self.active_matrix)) :
             row_sum = sum(self.assoc_matrix[i])
             for j in range(len(self.active_matrix[i])):
-                self.active_matrix[i][j] = self.assoc_matrix[i][j] / row_sum  # TODO
+                self.active_matrix[i][j] = self.assoc_matrix[i][j] / row_sum
 
     def update_passive_matrix(self) :
         self.passive_matrix = np.zeros(tuple(reversed(np.shape(self.assoc_matrix))))
@@ -30,7 +30,7 @@ class Agent :
         for j in range(len(self.passive_matrix)) :
             col_sums = np.sum(self.assoc_matrix, axis=0)
             for i in range(len(self.passive_matrix[j])):
-                self.passive_matrix[j][i] = self.assoc_matrix[i][j] / col_sums[j]  # TODO
+                self.passive_matrix[j][i] = self.assoc_matrix[i][j] / col_sums[j]
 
     @staticmethod
     def pick_list(lists) :
@@ -65,10 +65,11 @@ class Agent :
         return 'a[' + str(self.id) + ']'
 
 def payoff(agent_1, agent_2) :
+    # TODO: add check for correct shape of agents' matrices
     return 0.5 * sum(
         [sum(
-            agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(Agent.N_symbols)
-            ) for i in range(Agent.N_objects)]
+            agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(len(agent_1.assoc_matrix))
+            ) for i in range(len(agent_1.assoc_matrix[0]))]
         )
 
 def sample(agent_1, agent_2, k) :
