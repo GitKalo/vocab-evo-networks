@@ -1,5 +1,7 @@
 import numpy as np
 
+import util
+
 class Agent :
     N_objects = 5
     N_symbols = 5
@@ -12,8 +14,8 @@ class Agent :
 
     def speak(self, listener) :
         print("Agent", self.id, "speaking to agent", listener.id)
-        obj = Agent.pick_list(self.active_matrix)
-        sym = Agent.pick_item(self.active_matrix[obj])
+        obj = np.random.randint(len(self.active_matrix))
+        sym = util.pick_item(self.active_matrix[obj])
         print("Agent", self.id, "is using symbol", sym, "to talk about object", obj)
 
     def update_active_matrix(self) :
@@ -31,26 +33,6 @@ class Agent :
             col_sums = np.sum(self.assoc_matrix, axis=0)
             for i in range(len(self.passive_matrix[j])):
                 self.passive_matrix[j][i] = self.assoc_matrix[i][j] / col_sums[j]
-
-    @staticmethod
-    def pick_list(lists) :
-        return np.random.randint(len(lists))
-
-    @staticmethod
-    def pick_item(list_p) :
-        try :
-            sum_p = np.sum(list_p)
-            assert (sum_p == 1) or (sum_p > 0.99 and round(sum_p) == 1) # TODO: Improve validation
-            a = np.random.random_sample(1)
-            count, acc = 0, 0
-
-            for e in list_p :
-                acc += e
-                if a <= acc :
-                    return count
-                count += 1
-        except AssertionError :
-            print("NO! Bad list!")  # TODO: Change error handline message (and add return value?)
 
     def set_active_matrix(self, new_active_matrix) :
         self.active_matrix = new_active_matrix
