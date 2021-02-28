@@ -6,8 +6,10 @@ class Agent :
 
     def __init__(self, id, n_objects=N_objects, n_symbols=N_symbols) :
         self.id = id
+        # TODO: Random initial matrix generation (for first generation)
         self.P_matrix = [[round(1 / n_symbols, 2)] * n_symbols] * n_objects
         self.Q_matrix = [[round(1 / n_objects, 2)] * n_objects] * n_symbols
+        self.A_matrix = [[0] * n_symbols] * n_objects
 
     def speak(self, listener) :
         print("Agent", self.id, "speaking to agent", listener.id)
@@ -44,3 +46,15 @@ def payoff(agent_1, agent_2) :
             agent_1.P_matrix[i][j] * agent_2.Q_matrix[j][i] + agent_2.P_matrix[i][j] * agent_1.Q_matrix[j][i] for j in range(Agent.N_symbols)
             ) for i in range(Agent.N_objects)]
         )
+
+def sample(agent_1, agent_2, k) :
+    
+    # agent 1 constructs association matrix by sampling k responses from agent 2
+
+    return None
+
+def random_matrix(n_rows, n_cols) :
+
+    # generate a random matrix of given size whose rows sum to 1
+
+    return None
