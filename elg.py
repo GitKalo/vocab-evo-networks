@@ -6,15 +6,14 @@ class Agent :
 
     def __init__(self, id, n_objects=N_objects, n_symbols=N_symbols) :
         self.id = id
-        # TODO: Random initial matrix generation (for first generation)
-        self.P_matrix = [[round(1 / n_symbols, 2)] * n_symbols] * n_objects
-        self.Q_matrix = [[round(1 / n_objects, 2)] * n_objects] * n_symbols
-        self.A_matrix = [[0] * n_symbols] * n_objects
+        self.active_matrix = [[round(1 / n_symbols, 2)] * n_symbols] * n_objects
+        self.passive_matrix = [[round(1 / n_objects, 2)] * n_objects] * n_symbols
+        self.assoc_matrix = [[0] * n_symbols] * n_objects
 
     def speak(self, listener) :
         print("Agent", self.id, "speaking to agent", listener.id)
-        obj = Agent.pick_list(self.P_matrix)
-        sym = Agent.pick_item(self.P_matrix[obj])
+        obj = Agent.pick_list(self.active_matrix)
+        sym = Agent.pick_item(self.active_matrix[obj])
         print("Agent", self.id, "is using symbol", sym, "to talk about object", obj)
 
     @staticmethod
@@ -43,7 +42,7 @@ class Agent :
 def payoff(agent_1, agent_2) :
     return 0.5 * sum(
         [sum(
-            agent_1.P_matrix[i][j] * agent_2.Q_matrix[j][i] + agent_2.P_matrix[i][j] * agent_1.Q_matrix[j][i] for j in range(Agent.N_symbols)
+            agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(Agent.N_symbols)
             ) for i in range(Agent.N_objects)]
         )
 
