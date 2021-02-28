@@ -29,7 +29,14 @@ def pp_matrix(matrix) :
 if __name__ == '__main__' :
     pop_size = 5
 
-    agent_list = [elg.Agent(n) for n in range(pop_size)]
+    agent_list = []
+    for n in range(pop_size) :
+        a = elg.Agent(n)
+        a.assoc_matrix = elg.random_assoc_matrix(3, 3)
+        a.update_active_matrix()
+        a.update_passive_matrix()
+
+        agent_list.append(a)
 
     G = nx.complete_graph(agent_list)
 
