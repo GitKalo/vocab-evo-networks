@@ -65,3 +65,6 @@ def random_matrix(n_rows, n_cols) :
     # generate a random matrix of given size whose rows sum to 1
 
     return None
+
+def random_assoc_matrix(n_rows, m_cols) :
+    return np.random.randint(1, 10, size=(n_rows, m_cols))
