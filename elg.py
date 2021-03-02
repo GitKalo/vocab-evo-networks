@@ -54,11 +54,15 @@ def payoff(agent_1, agent_2) :
             ) for i in range(len(agent_1.assoc_matrix[0]))]
         )
 
-def sample(agent_1, agent_2, k) :
-    
-    # agent 1 constructs association matrix by sampling k responses from agent 2
+def sample(agent, k) :
+    assoc = np.zeros(np.shape(agent.assoc_matrix))
 
-    return None
+    for obj in range(len(agent.active_matrix)) :
+        for _ in range(k) :
+            response = util.pick_item(agent.active_matrix[obj])
+            assoc[obj][response] += 1
+
+    return assoc
 
 def random_matrix(n_rows, n_cols) :
 
