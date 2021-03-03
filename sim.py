@@ -30,9 +30,7 @@ def generation( G ) :
         # create child that samples A from parent
         max_id = max([a.id for a in agents])
         child = elg.Agent(max_id + 1)
-        child.set_assoc_matrix(elg.sample(parent, 5))
-        child.update_active_matrix()
-        child.update_passive_matrix()
+        child.update_language(elg.sample(parent, 5))
 
         new_agents.append(child)
 

@@ -18,6 +18,11 @@ class Agent :
         sym = util.pick_item(self.active_matrix[obj])
         print("Agent", self.id, "is using symbol", sym, "to talk about object", obj)
 
+    def update_language(self, assoc_matrix) :
+        self.set_assoc_matrix(assoc_matrix)
+        self.update_active_matrix()
+        self.update_passive_matrix()
+
     def update_active_matrix(self) :
         self.active_matrix = np.zeros(np.shape(self.assoc_matrix))
 
