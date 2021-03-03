@@ -37,7 +37,7 @@ def generation( G ) :
     new_G = nx.relabel_nodes(G, {old_agent: child})
 
     # return new graph
-    return new_G
+    return new_G, individual_payoffs
 
 if __name__ == '__main__' :
     pop_size = 10
