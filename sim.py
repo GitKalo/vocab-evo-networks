@@ -40,23 +40,34 @@ def generation( G ) :
     return new_G, individual_payoffs
 
 if __name__ == '__main__' :
-    pop_size = 10
-    n_time_steps = 100
+    pop_size = 100
+    n_time_steps = 200
+    n_runs = 20
 
-    agent_list = []
-    for n in range(pop_size) :
-        a = elg.Agent(n)
-        a.assoc_matrix = elg.random_assoc_matrix(5, 5)
-        a.update_active_matrix()
-        a.update_passive_matrix()
+    run_average_payoffs = []
+    for run_num in range(n_runs) :
+        agent_list = []
+        for n in range(pop_size) :
+            a = elg.Agent(n)
+            a.assoc_matrix = elg.random_assoc_matrix(3, 3)
+            a.update_active_matrix()
+            a.update_passive_matrix()
 
-        agent_list.append(a)
+            agent_list.append(a)
 
-    G = nx.complete_graph(agent_list)
+        G = nx.complete_graph(agent_list)
 
-    for step_num in range(n_time_steps) :
-        # print("\nTime step ", step_num)
-        G = generation(G)
+        average_payoffs = []
+        for step_num in range(n_time_steps) :
+            G, payoffs = generation(G)
+            average_payoffs.append(np.mean(payoffs))
+        run_average_payoffs.append(average_payoffs)
 
-    nx.draw_circular(G, with_labels=True, font_weight='bold')
+    fig, ax = plt.subplots()
+    for run_payoffs in run_average_payoffs :
+        ax.plot(run_payoffs, color='blue')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Payoff')
+    ax.set_title('Parental learning, k = 5')
+
     plt.show()
