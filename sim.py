@@ -22,19 +22,22 @@ def generation( G ) :
     sum_payoffs = sum(total_payoffs)
     normalized_payoffs = list(map(lambda x : x / sum_payoffs, total_payoffs))
 
-    # pick agent proportional to fitness
-    parent = agents[util.pick_item(normalized_payoffs)]
+    new_agents = []
+    for n in range(len(agents)) :
+        # pick agent proportional to fitness
+        parent = agents[util.pick_item(normalized_payoffs)]
 
-    # create child that samples A from parent
-    max_id = max([a.id for a in agents])
-    child = elg.Agent(max_id + 1)
-    child.set_assoc_matrix(elg.sample(parent, 5))
-    child.update_active_matrix()
-    child.update_passive_matrix()
+        # create child that samples A from parent
+        max_id = max([a.id for a in agents])
+        child = elg.Agent(max_id + 1)
+        child.set_assoc_matrix(elg.sample(parent, 5))
+        child.update_active_matrix()
+        child.update_passive_matrix()
+
+        new_agents.append(child)
 
     # pick random agent and replace with new one on graph
-    old_agent = np.random.choice(G.nodes)
-    new_G = nx.relabel_nodes(G, {old_agent: child})
+    new_G = nx.complete_graph(new_agents)
 
     # return new graph
     return new_G, individual_payoffs
