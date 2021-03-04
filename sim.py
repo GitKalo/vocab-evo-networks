@@ -5,22 +5,22 @@ import numpy as np
 import elg, util
 
 class Simulation :
-    def __init__(self, pop_size=100, time_steps=100, runs=20):
+    def __init__(self, pop_size=100, time_steps=100, runs=20, 
+        objects=elg.Agent.default_objects, symbols=elg.Agent.default_symbols):
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
+        self.__n_objects = objects
+        self.__n_symbols = symbols
         self.__n_learning_samples = 1
 
     def run(self) :
         run_average_payoffs = []
         for i_run in range(self.__n_runs) :
-            first_gen = []
-            for n in range(self.__pop_size) :
-                a = elg.Agent(n)
-                a.update_language(elg.random_assoc_matrix(5, 5))
-                first_gen.append(a)
-
-            G = nx.complete_graph(first_gen)
+            first_gen = {agent_id : elg.Agent(agent_id, self.__n_objects, self.__n_symbols) for agent_id in range(self.__pop_size)}
+            for k, v in first_gen.items() : v.update_language(elg.random_assoc_matrix(self.__n_objects, self.__n_symbols))
+            G = self.generate_graph()
+            nx.relabel_nodes(G, first_gen, copy=False)
 
             average_payoffs = []
             for step_num in range(self.__n_time_steps) :
@@ -72,6 +72,9 @@ class Simulation :
 
         # return new graph
         return new_G, individual_payoffs
+
+    def generate_graph(self, type='regular') :
+        return nx.complete_graph(self.__pop_size)
 
 if __name__ == '__main__' :
     pop_size = 10
