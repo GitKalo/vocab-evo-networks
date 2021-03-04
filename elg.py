@@ -50,8 +50,11 @@ class Agent :
     def set_assoc_matrix(self, new_assoc_matrix) :
         self.assoc_matrix = new_assoc_matrix
 
+    def get_id(self) :
+        return self.__id
+
     def __str__(self) :
-        return 'a[' + str(self.id) + ']'
+        return 'a[' + str(self.__id) + ']'
 
 def payoff(agent_1, agent_2) :
     # TODO: add check for correct shape of agents' matrices
