@@ -9,6 +9,7 @@ class Simulation :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
+        self.__n_learning_samples = 1
 
     def run(self) :
         run_average_payoffs = []
@@ -62,7 +63,7 @@ class Simulation :
             # create child that samples A from parent
             max_id = max([a.get_id() for a in agents])
             child = elg.Agent(max_id + 1)
-            child.update_language(elg.sample(parent, 5))
+            child.update_language(elg.sample(parent, self.__n_learning_samples))
 
             new_agents.append(child)
 
