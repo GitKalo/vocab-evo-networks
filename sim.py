@@ -61,8 +61,7 @@ class Simulation :
             parent = agents[util.pick_item(normalized_payoffs)]
 
             # create child that samples A from parent
-            max_id = max([a.get_id() for a in agents])
-            child = elg.Agent(max_id + 1)
+            child = elg.Agent(n, self.__n_objects, self.__n_symbols)
             child.update_language(elg.sample(parent, self.__n_learning_samples))
 
             new_agents.append(child)
