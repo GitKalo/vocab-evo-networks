@@ -3,11 +3,13 @@ import numpy as np
 import util
 
 class Agent :
-    N_objects = 5
-    N_symbols = 5
+    default_objects = 5
+    default_symbols = 5
 
-    def __init__(self, id, n_objects=N_objects, n_symbols=N_symbols) :
-        self.id = id
+    def __init__(self, agent_id, n_objects=default_objects, n_symbols=default_symbols) :
+        self.__id = agent_id
+        self.__n_objects = n_objects
+        self.__n_symbols = n_symbols
         self.active_matrix = [[0] * n_symbols] * n_objects
         self.passive_matrix = [[0] * n_objects] * n_symbols
         self.assoc_matrix = [[0] * n_symbols] * n_objects
