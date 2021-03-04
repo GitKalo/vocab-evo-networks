@@ -33,7 +33,7 @@ class Simulation :
             ax.plot(payoff, color='blue')
         ax.set_xlabel('Time')
         ax.set_ylabel('Payoff')
-        ax.set_title('Parental learning, k = 5')
+        ax.set_title('Parental learning, k = ' + str(self.__n_learning_samples))
 
         plt.show()
 
@@ -41,7 +41,7 @@ class Simulation :
         agents = list(G.nodes)
         total_payoffs = []
         individual_payoffs = []
-        
+
         for speaker in agents :
             agent_total_payoff = 0
             list_connections = list(nx.neighbors(G, speaker))
