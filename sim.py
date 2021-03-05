@@ -18,9 +18,9 @@ class Simulation :
         run_avg_payoffs = []
         for i_run in range(self.__n_runs) :
             first_gen = {agent_id : elg.Agent(agent_id, self.__n_objects, self.__n_symbols) for agent_id in range(self.__pop_size)}
-            for k, v in first_gen.items() : v.update_language(elg.random_assoc_matrix(self.__n_objects, self.__n_symbols))
-            G = self.generate_network()
-            nx.relabel_nodes(G, first_gen, copy=False)
+            for k, v in first_gen.items() :
+                v.update_language(elg.random_assoc_matrix(self.__n_objects, self.__n_symbols))
+            G = nx.relabel_nodes(self.generate_network(), first_gen)
 
             step_avg_payoffs = []
             for step_num in range(self.__n_time_steps) :
@@ -68,8 +68,7 @@ class Simulation :
 
         # pick random agent and replace with new one on graph
         np.random.shuffle(new_agents)
-        new_G = self.generate_network()
-        new_G = nx.relabel_nodes(new_G, {idx:agent for idx, agent in enumerate(new_agents)})
+        new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_agents)})
 
         # return new graph
         return new_G, np.mean(individual_payoffs)
