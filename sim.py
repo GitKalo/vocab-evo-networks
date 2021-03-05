@@ -79,7 +79,7 @@ class Simulation :
         sum_payoffs = sum(total_payoffs)
         normalized_payoffs = [x / sum_payoffs for x in total_payoffs]
 
-        new_agents = []
+        new_generation = []
         for n in range(len(agents)) :
             # pick agent proportional to fitness
             parent = agents[util.pick_item(normalized_payoffs)]
@@ -88,11 +88,14 @@ class Simulation :
             child = elg.Agent(n, self.__n_objects, self.__n_symbols)
             child.update_language(elg.sample(parent, self.__n_learning_samples))
 
-            new_agents.append(child)
+            new_generation.append(child)
 
-        # pick random agent and replace with new one on graph
-        np.random.shuffle(new_agents)
-        new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_agents)})
+        # Generate new network
+        if self.__network_update == 'regenerate' :
+            new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_generation)})
+        elif self.__network_update == 'relabel' :
+            # MOT IMPLEMENTED YET
+            new_G = nx.relabel_nodes(G, {})
 
         # return new graph
         return new_G, np.mean(individual_payoffs)
