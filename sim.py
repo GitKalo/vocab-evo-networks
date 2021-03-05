@@ -26,12 +26,12 @@ class Simulation :
         self.__n_symbols = symbols
         self.__n_learning_samples = 1
 
-        if network_type in network_types :
+        if network_type in self.__class__.network_types :
             self.__network_type = network_type
         else :
             raise ValueError("Network type not recognized.")
 
-        if network_update in network_updates :
+        if network_update in self.__class__.network_updates :
             self.__network_update = network_update
         else :
             raise ValueError("Network update strategy is not recognized.")
