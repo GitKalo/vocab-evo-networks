@@ -35,6 +35,7 @@ class Simulation :
             self.__network_update = network_update
         else :
             raise ValueError("Network update strategy is not recognized.")
+
     def run(self) :
         run_avg_payoffs = []
         for i_run in range(self.__n_runs) :
