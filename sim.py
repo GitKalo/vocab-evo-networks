@@ -5,8 +5,20 @@ import numpy as np
 import elg, util
 
 class Simulation :
+    network_types = [
+        'regular',
+        'random',
+        'scale-free',
+        'clustered'
+    ]
+
+    network_updates = [
+        'regenerate',
+        'relabel'
+    ]
+
     def __init__(self, pop_size=100, time_steps=100, runs=20, 
-        objects=elg.Agent.default_objects, symbols=elg.Agent.default_symbols):
+        objects=elg.Agent.default_objects, symbols=elg.Agent.default_symbols, network_type='regular', network_update='regenerate'):
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -14,6 +26,15 @@ class Simulation :
         self.__n_symbols = symbols
         self.__n_learning_samples = 1
 
+        if network_type in network_types :
+            self.__network_type = network_type
+        else :
+            raise ValueError("Network type not recognized.")
+
+        if network_update in network_updates :
+            self.__network_update = network_update
+        else :
+            raise ValueError("Network update strategy is not recognized.")
     def run(self) :
         run_avg_payoffs = []
         for i_run in range(self.__n_runs) :
