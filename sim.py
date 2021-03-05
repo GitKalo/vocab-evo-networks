@@ -97,6 +97,17 @@ class Simulation :
         # return new graph
         return new_G, np.mean(individual_payoffs)
 
+    def generate_network(self) :
+        if self.__network_type == 'regular' :
+            G = nx.complete_graph(self.__pop_size)
+        elif self.__network_type == 'random' :
+            G = nx.erdos_renyi_graph(self.__pop_size, 0.5)
+        elif self.__network_type == 'scale-free' :
+            G = nx.barabasi_albert_graph(self.__pop_size, 2)
+        elif self.__network_type == 'clustered' :
+            G = nx.powerlaw_cluster_graph(self.__pop_size, 2, 0.5)
+
+        return G
 
     def get_network_view(self) :
         # TODO: validate that network attribute exists
