@@ -50,6 +50,8 @@ class Simulation :
                 step_avg_payoffs.append(average_payoff)
             run_avg_payoffs.append(step_avg_payoffs)
 
+        self.__network = G
+
         fig, ax = plt.subplots()
         for payoff in run_avg_payoffs :
             ax.plot(payoff, color='blue')
@@ -95,8 +97,10 @@ class Simulation :
         # return new graph
         return new_G, np.mean(individual_payoffs)
 
-    def generate_network(self, type='regular') :
-        return nx.complete_graph(self.__pop_size)
+
+    def get_network_view(self) :
+        # TODO: validate that network attribute exists
+        return self.__network.copy(as_view=True)
 
 if __name__ == '__main__' :
     pop_size = 10
