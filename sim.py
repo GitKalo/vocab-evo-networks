@@ -67,7 +67,9 @@ class Simulation :
             new_agents.append(child)
 
         # pick random agent and replace with new one on graph
-        new_G = nx.complete_graph(new_agents)
+        np.random.shuffle(new_agents)
+        new_G = self.generate_graph()
+        new_G = nx.relabel_nodes(new_G, {idx:agent for idx, agent in enumerate(new_agents)})
 
         # return new graph
         return new_G, np.mean(individual_payoffs)
