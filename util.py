@@ -14,7 +14,6 @@ def pick_item(list_prob) :
             count += 1
     except AssertionError :
         print("Assertion error -- probability distribution must be strict (items in list should sum up to 1)")
-        return -1
 
 # taken from https://stackoverflow.com/questions/13214809/pretty-print-2d-python-list
 def pp_matrix(matrix) :
