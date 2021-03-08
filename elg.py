@@ -14,12 +14,6 @@ class Agent :
         self.passive_matrix = [[0] * n_objects] * n_symbols
         self.assoc_matrix = [[0] * n_symbols] * n_objects
 
-    def speak(self, listener) :
-        print("Agent", self.id, "speaking to agent", listener.id)
-        obj = np.random.randint(len(self.active_matrix))
-        sym = util.pick_item(self.active_matrix[obj])
-        print("Agent", self.id, "is using symbol", sym, "to talk about object", obj)
-
     def update_language(self, assoc_matrix) :
         self.set_assoc_matrix(assoc_matrix)
         self.update_active_matrix()
