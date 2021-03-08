@@ -63,7 +63,11 @@ def sample(agent, k) :
 
     for obj in range(len(agent.active_matrix)) :
         for _ in range(k) :
-            response = util.pick_item(agent.active_matrix[obj])
+            try :
+                response = util.pick_item(agent.active_matrix[obj])
+            except AssertionError as err :
+                print(err)
+                continue
             assoc[obj][response] += 1
 
     return assoc
