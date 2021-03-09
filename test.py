@@ -10,7 +10,7 @@ class TestUtil(unittest.TestCase) :
         sum_items = sum(list_items)
         list_prob = [i/sum_items for i in list_items]
         item = util.pick_item(list_prob)
-        self.assertLess(item, len(list_prob))
+        self.assertLess(item, len(list_prob), 'Returned index is out of range for the list provided.')
 
     def test_pick_item_wrong_list_distribution(self) :
         list_items = np.random.randint(1, 10, size=10)
