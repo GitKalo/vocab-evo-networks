@@ -1,6 +1,9 @@
 import numpy as np
 
 def pick_item(list_prob) :
+    if not isinstance(list_prob, list) :
+        raise TypeError('Argument must be a list.')
+
     sum_prob = np.sum(list_prob)
     assert (sum_prob == 1) or (sum_prob > 0.99 and round(sum_prob) == 1), \
         "Probability distribution must be strict (items in list should sum up to 1)"
