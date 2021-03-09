@@ -1,8 +1,14 @@
 import numpy as np
 
+import numbers
+
 def pick_item(list_prob) :
-    if not isinstance(list_prob, list) :
-        raise TypeError('Argument must be a list.')
+    if not (isinstance(list_prob, list) or isinstance(list_prob, np.ndarray)) :
+        raise TypeError('Argument must be a list (or numpy array).')
+    elif np.array(list_prob).size == 0 :
+        raise ValueError('Argument list must not be empty.')
+    elif not all(isinstance(x, numbers.Number) for x in list_prob) :
+        raise ValueError('Argument list must contain only numbers.')
 
     sum_prob = np.sum(list_prob)
     assert (sum_prob == 1) or (sum_prob > 0.99 and round(sum_prob) == 1), \
