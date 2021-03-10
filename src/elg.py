@@ -15,9 +15,12 @@ class Agent :
         self.assoc_matrix = [[0] * n_symbols] * n_objects
 
     def update_language(self, assoc_matrix) :
-        self.set_assoc_matrix(assoc_matrix)
-        self.update_active_matrix()
-        self.update_passive_matrix()
+        if assoc_matrix is None :
+            self.set_assoc_matrix([])
+        else :
+            self.set_assoc_matrix(assoc_matrix)
+            self.update_active_matrix()
+            self.update_passive_matrix()
 
     def update_active_matrix(self) :
         self.active_matrix = np.zeros(np.shape(self.assoc_matrix))
@@ -67,7 +70,7 @@ def sample(agent, k) :
                 response = util.pick_item(agent.active_matrix[obj])
             except AssertionError as err :
                 print(err)
-                continue
+                return None
             assoc[obj][response] += 1
 
     return assoc
