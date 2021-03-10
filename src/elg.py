@@ -1,6 +1,6 @@
 import numpy as np
 
-import util
+from . import util
 
 class Agent :
     default_objects = 5
