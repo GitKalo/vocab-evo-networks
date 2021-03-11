@@ -5,8 +5,8 @@ import unittest
 from context import src
 
 class TestELG(unittest.TestCase) :
-    def test_update_language(self) :
-        pass
+    def setUp(self) :
+        self.agent = src.elg.Agent(0)
 
     def test_update_active_matrix_empty(self) :
         # test empty assoc matrix
