@@ -28,7 +28,7 @@ class Agent :
         for i in range(len(self.active_matrix)) :
             row_sum = sum(self.assoc_matrix[i])
             for j in range(len(self.active_matrix[i])) :
-                self.active_matrix[i][j] = self.assoc_matrix[i][j] / row_sum
+                self.active_matrix[i][j] = (self.assoc_matrix[i][j] / row_sum) if row_sum != 0 else 0
 
     def update_passive_matrix(self) :
         self.passive_matrix = np.zeros(tuple(reversed(np.shape(self.assoc_matrix))))
