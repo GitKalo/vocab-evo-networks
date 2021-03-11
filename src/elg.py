@@ -19,8 +19,8 @@ class Agent :
             self.set_assoc_matrix([])
         else :
             self.set_assoc_matrix(assoc_matrix)
-            self.update_active_matrix()
-            self.update_passive_matrix()
+        self.update_active_matrix()
+        self.update_passive_matrix()
 
     def update_active_matrix(self) :
         self.active_matrix = np.zeros(np.shape(self.assoc_matrix))
