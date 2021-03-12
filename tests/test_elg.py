@@ -87,8 +87,10 @@ class TestELG(unittest.TestCase) :
                 self.agent.set_assoc_matrix(assoc_matrix)
                 self.agent.update_active_matrix()
                 self.assertEqual(np.shape(self.agent.active_matrix), s)
+                if self.agent.active_matrix.size == 0 : 
+                    self.skipTest("Empty active matrix (skipped subtest)")
                 for row in self.agent.active_matrix :
-                    with self.subTest() :
+                    with self.subTest(row=row) :
                         self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_update_passive_matrix_empty(self) :
