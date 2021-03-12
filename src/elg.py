@@ -38,14 +38,22 @@ class Agent :
             for i in range(len(self.passive_matrix[j])) :
                 self.passive_matrix[j][i] = (self.assoc_matrix[i][j] / col_sums[j]) if col_sums[j] != 0 else 0
 
+    def set_assoc_matrix(self, new_assoc_matrix) :
+        self.assoc_matrix = new_assoc_matrix
+        self.__n_objects = len(new_assoc_matrix)
+        self.__n_symbols = len(new_assoc_matrix[0])
+
     def set_active_matrix(self, new_active_matrix) :
         self.active_matrix = new_active_matrix
 
     def set_passive_matrix(self, new_passive_matrix) :
         self.passive_matrix = new_passive_matrix
 
-    def set_assoc_matrix(self, new_assoc_matrix) :
-        self.assoc_matrix = new_assoc_matrix
+    def get_n_obj(self) :
+        return self.__n_objects
+
+    def get_n_sym(self) :
+        return self.__n_symbols
 
     def get_id(self) :
         return self.__id
