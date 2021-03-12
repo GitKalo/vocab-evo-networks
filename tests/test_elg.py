@@ -152,7 +152,8 @@ class TestELG(unittest.TestCase) :
                         self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_random_assoc_matrix_shape(self) :
-        pass
+        s = tuple(np.random.randint(100, size=2))
+        self.assertEqual(s, np.shape(src.elg.random_assoc_matrix(*s)))
 
     def test_payoff_small(self) :
         pass
