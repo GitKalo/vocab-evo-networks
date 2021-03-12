@@ -40,8 +40,11 @@ class Agent :
 
     def set_assoc_matrix(self, new_assoc_matrix) :
         self.assoc_matrix = new_assoc_matrix
-        self.__n_objects = len(new_assoc_matrix)
-        self.__n_symbols = len(new_assoc_matrix[0])
+        if len(new_assoc_matrix) == 0 :
+            self.__n_objects = 0
+            self.__n_symbols = 0
+        else :
+            self.__n_objects, self.__n_symbols = np.shape(new_assoc_matrix)
 
     def set_active_matrix(self, new_active_matrix) :
         self.active_matrix = new_active_matrix
