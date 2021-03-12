@@ -92,15 +92,64 @@ class TestELG(unittest.TestCase) :
                         self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_update_passive_matrix_empty(self) :
-        # test empty assoc matrix
-        # test empty rows assoc matrix
-        pass
+        empty_vals = [
+            [],
+            [[], [], []]
+        ]
+
+        for val in empty_vals :
+            with self.subTest(assoc_matrix=val) :
+                self.agent.set_assoc_matrix(val)
+                self.agent.update_passive_matrix()
+                self.assertEqual(self.agent.passive_matrix.size, 0)
+                self.assertEqual(np.shape(self.agent.passive_matrix), np.shape(val)[::-1])
 
     def test_update_passive_matrix_small(self) :
-        pass
+        assoc_matrix = [
+            [6, 3],
+            [4, 1]
+        ]
+        expected_passive_matrix = np.array([
+            [0.6, 0.4],
+            [0.75, 0.25]
+        ])
+
+        self.agent.set_assoc_matrix(assoc_matrix)
+        self.agent.update_passive_matrix()
+        self.assertTrue(np.array_equal(self.agent.passive_matrix, expected_passive_matrix))
 
     def test_update_passive_matrix_large(self) :
-        pass
+        assoc_matrix = [
+            [4, 0, 5, 8, 1, 5, 5],
+            [3, 7, 5, 3, 9, 0, 1],
+            [8, 6, 2, 0, 2, 7, 3],
+            [1, 3, 4, 5, 4, 4, 7]
+        ]
+        expected_passive_matrix = np.array([
+            [0.25, 0.1875, 0.5, 0.0625],
+            [0, 0.4375, 0.375, 0.1875],
+            [0.3125, 0.3125, 0.125, 0.25],
+            [0.5, 0.1875, 0, 0.3125],
+            [0.0625, 0.5625, 0.125, 0.25],
+            [0.3125, 0, 0.4375, 0.25],
+            [0.3125, 0.0625, 0.1875, 0.4375]
+        ])
+
+        self.agent.set_assoc_matrix(assoc_matrix)
+        self.agent.update_passive_matrix()
+        self.assertTrue(np.array_equal(self.agent.passive_matrix, expected_passive_matrix))
+
+    def test_update_passive_matrix_sum(self) :
+        for i in range(10) :
+            s = tuple(np.random.randint(1, 100, size=2))
+            with self.subTest(assoc_matrix_shape=s) :
+                assoc_matrix = src.elg.random_assoc_matrix(*s)
+                self.agent.set_assoc_matrix(assoc_matrix)
+                self.agent.update_passive_matrix()
+                self.assertEqual(np.shape(self.agent.passive_matrix), s[::-1])
+                for row in self.agent.passive_matrix :
+                    with self.subTest(row=row) :
+                        self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_random_assoc_matrix_shape(self) :
         pass
