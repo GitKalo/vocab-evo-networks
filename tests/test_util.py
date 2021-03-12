@@ -23,7 +23,7 @@ class TestUtil(unittest.TestCase) :
 
         try :
             input_value = [1, 0.2]
-            src.util.pick_item(input_value)
+            self.assertRaises(AssertionError, src.util.pick_item, input_value)
         except ValueError :
             self.fail("pick_item raised unexpected ValueError on input " + str(input_value))
 

@@ -11,7 +11,7 @@ def pick_item(list_prob) :
         raise ValueError('Argument list must contain only numbers.')
 
     sum_prob = np.sum(list_prob)
-    assert (sum_prob == 1) or (sum_prob > 0.99 and round(sum_prob) == 1), \
+    assert (round(sum_prob - 1, 5) == 0), \
         "Probability distribution must be strict (items in list should sum up to 1)"
     a = np.random.random_sample(1)
     count, acc = 0, 0
