@@ -79,6 +79,17 @@ class TestELG(unittest.TestCase) :
         self.agent.update_active_matrix()
         self.assertTrue(np.array_equal(self.agent.active_matrix, expected_active_matrix))
 
+    def test_update_active_matrix_sum(self) :
+        for i in range(10) :
+            s = tuple(np.random.randint(100, size=2))
+            with self.subTest(shape=s) :
+                assoc_matrix = src.elg.random_assoc_matrix(*s)
+                self.agent.set_assoc_matrix(assoc_matrix)
+                self.agent.update_active_matrix()
+                self.assertEqual(np.shape(self.agent.active_matrix), s)
+                for row in self.agent.active_matrix :
+                    with self.subTest() :
+                        self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_update_passive_matrix_empty(self) :
         # test empty assoc matrix
