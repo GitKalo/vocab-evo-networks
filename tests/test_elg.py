@@ -82,7 +82,7 @@ class TestELG(unittest.TestCase) :
     def test_update_active_matrix_sum(self) :
         for i in range(10) :
             s = tuple(np.random.randint(100, size=2))
-            with self.subTest(shape=s) :
+            with self.subTest(assoc_matrix_shape=s) :
                 assoc_matrix = src.elg.random_assoc_matrix(*s)
                 self.agent.set_assoc_matrix(assoc_matrix)
                 self.agent.update_active_matrix()
