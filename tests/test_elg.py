@@ -156,7 +156,20 @@ class TestELG(unittest.TestCase) :
         self.assertEqual(s, np.shape(src.elg.random_assoc_matrix(*s)))
 
     def test_payoff_small(self) :
-        pass
+        agent_1 = src.elg.Agent(1)
+        agent_2 = src.elg.Agent(2)
+
+        agent_1.update_language([
+            [6, 6],
+            [4, 8]
+        ])
+        agent_2.update_language([
+            [2, 6],
+            [4, 4]
+        ])
+
+        payoff = src.elg.payoff(agent_1, agent_2)
+        self.assertAlmostEqual(payoff, 0.95635, 5)
 
     def test_payoff_large(self) :
         pass
