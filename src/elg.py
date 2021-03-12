@@ -68,8 +68,8 @@ def payoff(agent_1, agent_2) :
     # TODO: add check for correct shape of agents' matrices
     return 0.5 * sum(
         [sum(
-            agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(len(agent_1.assoc_matrix))
-            ) for i in range(len(agent_1.assoc_matrix[0]))]
+            agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(agent_1.get_n_obj())
+            ) for i in range(agent_1.get_n_sym())]
         )
 
 def sample(agent, k) :
