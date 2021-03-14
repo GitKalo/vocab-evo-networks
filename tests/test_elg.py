@@ -198,9 +198,9 @@ class TestELG(unittest.TestCase) :
             with self.subTest(p1=payoff_1_2, p2=payoff_2_1) :
                 self.assertEqual(payoff_1_2, payoff_2_1)
 
-    @unittest.expectedFailure
     def test_sample_none(self) :
-        self.fail()
+        sample = src.elg.sample(self.agent, 0)
+        self.assertEqual(sample.sum(), 0)
 
     @unittest.expectedFailure
     def test_sample_empty(self) :
