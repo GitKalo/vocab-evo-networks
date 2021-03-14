@@ -210,9 +210,15 @@ class TestELG(unittest.TestCase) :
         self.agent.set_active_matrix([[1, 2]])
         self.assertIsNone(src.elg.sample(self.agent, 1))
 
-    @unittest.expectedFailure
-    def test_sample_small_square(self) :
-        self.fail()
+    def test_sample_number(self) :
+        for i in range(10) :
+            k = np.random.randint(100)
+            with self.subTest(k=k) :
+                self.agent.update_language(src.elg.random_assoc_matrix(*np.random.randint(100, size=2)))
+                sample = src.elg.sample(self.agent, k)
+                for row in sample :
+                    with self.subTest(row=row) :
+                        self.assertEqual(sum(row), k)
 
     @unittest.expectedFailure
     def test_sample_small_rect(self) :
