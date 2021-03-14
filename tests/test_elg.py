@@ -141,14 +141,14 @@ class TestELG(unittest.TestCase) :
                         self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_random_assoc_matrix_shape(self) :
-        s = tuple(np.random.randint(100, size=2))
+        s = tuple(np.random.randint(1, 100, size=2))
         self.assertEqual(s, np.shape(src.elg.random_assoc_matrix(*s)))
 
     def test_payoff_different_shapes(self) :
         agent_1 = src.elg.Agent(1)
         agent_2 = src.elg.Agent(2)
 
-        agent_1.update_language(src.elg.random_assoc_matrix(*np.random.randint(50, size=2)))
+        agent_1.update_language(src.elg.random_assoc_matrix(*np.random.randint(1, 50, size=2)))
         agent_2.update_language(src.elg.random_assoc_matrix(*np.random.randint(50, 100, size=2)))
 
         self.assertRaises(ValueError, src.elg.payoff, agent_1, agent_2)
@@ -203,7 +203,7 @@ class TestELG(unittest.TestCase) :
         for i in range(10) :
             k = np.random.randint(100)
             with self.subTest(k=k) :
-                self.agent.update_language(src.elg.random_assoc_matrix(*np.random.randint(100, size=2)))
+                self.agent.update_language(src.elg.random_assoc_matrix(*np.random.randint(1, 100, size=2)))
                 sample = src.elg.sample(self.agent, k)
                 for row in sample :
                     with self.subTest(row=row) :
