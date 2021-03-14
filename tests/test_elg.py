@@ -206,9 +206,9 @@ class TestELG(unittest.TestCase) :
     def test_sample_empty(self) :
         self.fail()
 
-    @unittest.expectedFailure
     def test_sample_failed_pick_item(self) :
-        self.fail()
+        self.agent.set_active_matrix([[1, 2]])
+        self.assertIsNone(src.elg.sample(self.agent, 1))
 
     @unittest.expectedFailure
     def test_sample_small_square(self) :
