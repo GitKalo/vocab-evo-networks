@@ -171,32 +171,41 @@ class TestELG(unittest.TestCase) :
         payoff = src.elg.payoff(agent_1, agent_2)
         self.assertAlmostEqual(payoff, 0.95635, 5)
 
+    @unittest.expectedFailure
     def test_payoff_large(self) :
         pass
     
+    @unittest.expectedFailure
     def test_payoff_symmetry(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_none(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_empty(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_failed_pick_item(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_small_square(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_small_rect(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_large_square(self) :
-        pass
+        self.fail()
 
+    @unittest.expectedFailure
     def test_sample_large_rect(self) :
-        pass
+        self.fail()
 
 if __name__ == '__main__' :
     unittest.main()
