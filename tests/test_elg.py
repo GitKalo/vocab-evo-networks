@@ -175,9 +175,19 @@ class TestELG(unittest.TestCase) :
     def test_payoff_large(self) :
         pass
     
-    @unittest.expectedFailure
     def test_payoff_symmetry(self) :
-        self.fail()
+        for i in range(10) :
+            agent_1 = src.elg.Agent(1)
+            agent_2 = src.elg.Agent(2)
+
+            agent_1.update_language(src.elg.random_assoc_matrix(5, 5))
+            agent_2.update_language(src.elg.random_assoc_matrix(5, 5))
+
+            payoff_1_2 = src.elg.payoff(agent_1, agent_2)
+            payoff_2_1 = src.elg.payoff(agent_2, agent_1)
+
+            with self.subTest(p1=payoff_1_2, p2=payoff_2_1) :
+                self.assertEqual(payoff_1_2, payoff_2_1)
 
     @unittest.expectedFailure
     def test_sample_none(self) :
