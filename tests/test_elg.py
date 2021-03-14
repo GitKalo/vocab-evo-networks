@@ -155,6 +155,15 @@ class TestELG(unittest.TestCase) :
         s = tuple(np.random.randint(100, size=2))
         self.assertEqual(s, np.shape(src.elg.random_assoc_matrix(*s)))
 
+    def test_payoff_different_shapes(self) :
+        agent_1 = src.elg.Agent(1)
+        agent_2 = src.elg.Agent(2)
+
+        agent_1.update_language(src.elg.random_assoc_matrix(*np.random.randint(50, size=2)))
+        agent_2.update_language(src.elg.random_assoc_matrix(*np.random.randint(50, 100, size=2)))
+
+        self.assertRaises(ValueError, src.elg.payoff, agent_1, agent_2)
+
     def test_payoff_small(self) :
         agent_1 = src.elg.Agent(1)
         agent_2 = src.elg.Agent(2)
