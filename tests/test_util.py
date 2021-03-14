@@ -33,4 +33,4 @@ class TestUtil(unittest.TestCase) :
         self.assertRaises(TypeError, src.util.pick_item, (1, ['a', 3]))
 
 if __name__ == '__main__' :
-    unittest.main()
+    unittest.main(verbosity=2)
