@@ -3,6 +3,21 @@ import numpy as np
 import numbers
 
 def pick_item(list_prob) :
+    """
+    Randomly pick an item from a list containing the probabilities of picking different items.
+    The probability distribution that the list represents must be strict -- the
+    elements of the list must sum up to 1.
+    
+    Returns the index of the item picked.
+
+    >>> pick_item([0.1, 0.5, 0.4])
+    1                                   # random
+    >>> pick_item([1, 2, 3])
+    AssertionError: Probability distribution must be strict (items in list should sum up to 1)
+    >>> pick_item([])
+    ValueError: Argument list must not be empty.
+
+    """
     if not (isinstance(list_prob, list) or isinstance(list_prob, np.ndarray)) :
         raise TypeError('Argument must be a list (or numpy array).')
     elif np.array(list_prob).size == 0 :
@@ -22,8 +37,11 @@ def pick_item(list_prob) :
             return count
         count += 1
 
-# taken from https://stackoverflow.com/questions/13214809/pretty-print-2d-python-list
 def pp_matrix(matrix) :
+    """
+    Pretty-print a matrix (2D list). Used for debugging purposes during development.
+    Code taken from https://stackoverflow.com/questions/13214809/pretty-print-2d-python-list
+    """
     s = [[str(e) for e in row] for row in matrix]
     lens = [max(map(len, col)) for col in zip(*s)]
     fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
