@@ -39,12 +39,15 @@ class Agent :
                 self.passive_matrix[j][i] = (self.assoc_matrix[i][j] / col_sums[j]) if col_sums[j] != 0 else 0
 
     def set_assoc_matrix(self, new_assoc_matrix) :
-        self.assoc_matrix = new_assoc_matrix
         if len(new_assoc_matrix) == 0 :
             self.__n_objects = 0
             self.__n_symbols = 0
         else :
             self.__n_objects, self.__n_symbols = np.shape(new_assoc_matrix)
+            if not self.__n_symbols :
+                raise ValueError("Agents need at least one symbol.")
+        
+        self.assoc_matrix = new_assoc_matrix
 
     def set_active_matrix(self, new_active_matrix) :
         self.active_matrix = new_active_matrix

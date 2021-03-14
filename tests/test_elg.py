@@ -34,6 +34,9 @@ class TestELG(unittest.TestCase) :
                 self.assertEqual(np.shape(self.agent.active_matrix), shape)
                 self.assertEqual(np.shape(self.agent.passive_matrix), shape[::-1])
 
+    def test_update_language_no_symbols(self) :
+        self.assertRaises(ValueError, self.agent.update_language, [[]])
+
     def test_update_active_matrix_empty(self) :
         empty_vals = [
             [],
