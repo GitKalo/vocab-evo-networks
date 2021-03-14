@@ -169,9 +169,27 @@ class TestELG(unittest.TestCase) :
         payoff = src.elg.payoff(agent_1, agent_2)
         self.assertAlmostEqual(payoff, 0.95635, 5)
 
-    @unittest.expectedFailure
     def test_payoff_large(self) :
-        pass
+        agent_1 = src.elg.Agent(1)
+        agent_2 = src.elg.Agent(2)
+
+        agent_1.update_language([
+            [6, 2, 0, 2],
+            [3, 4, 1, 2],
+            [2, 3, 4, 1],
+            [4, 1, 5, 0],
+            [0, 3, 2, 5]
+        ])
+        agent_2.update_language([
+            [3, 2, 0, 5],
+            [1, 7, 2, 0],
+            [4, 0, 2, 4],
+            [0, 2, 8, 0],
+            [5, 1, 3, 1]
+        ])
+
+        payoff = src.elg.payoff(agent_1, agent_2)
+        self.assertAlmostEqual(payoff, 1.11467, 4)
     
     def test_payoff_symmetry(self) :
         for i in range(10) :
