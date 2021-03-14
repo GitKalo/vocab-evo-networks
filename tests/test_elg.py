@@ -202,9 +202,9 @@ class TestELG(unittest.TestCase) :
         sample = src.elg.sample(self.agent, 0)
         self.assertEqual(sample.sum(), 0)
 
-    @unittest.expectedFailure
     def test_sample_empty(self) :
-        self.fail()
+        self.agent.update_language([])
+        self.assertEqual(src.elg.sample(self.agent, 1).size, 0)
 
     def test_sample_failed_pick_item(self) :
         self.agent.set_active_matrix([[1, 2]])
