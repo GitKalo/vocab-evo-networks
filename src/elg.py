@@ -65,7 +65,6 @@ class Agent :
         return 'a[' + str(self.__id) + ']'
 
 def payoff(agent_1, agent_2) :
-    # TODO: add check for correct shape of agents' matrices
     return 0.5 * sum(
         [sum(
             agent_1.active_matrix[i][j] * agent_2.passive_matrix[j][i] + agent_2.active_matrix[i][j] * agent_1.passive_matrix[j][i] for j in range(agent_1.get_n_obj())
@@ -85,12 +84,6 @@ def sample(agent, k) :
             assoc[obj][response] += 1
 
     return assoc
-
-def random_matrix(n_rows, n_cols) :
-
-    # generate a random matrix of given size whose rows sum to 1
-
-    return None
 
 def random_assoc_matrix(n_rows, m_cols) :
     return np.random.randint(1, 10, size=(n_rows, m_cols))
