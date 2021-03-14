@@ -220,17 +220,5 @@ class TestELG(unittest.TestCase) :
                     with self.subTest(row=row) :
                         self.assertEqual(sum(row), k)
 
-    @unittest.expectedFailure
-    def test_sample_small_rect(self) :
-        self.fail()
-
-    @unittest.expectedFailure
-    def test_sample_large_square(self) :
-        self.fail()
-
-    @unittest.expectedFailure
-    def test_sample_large_rect(self) :
-        self.fail()
-
 if __name__ == '__main__' :
     unittest.main(verbosity=2)
