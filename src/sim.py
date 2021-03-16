@@ -94,6 +94,13 @@ class Simulation :
         plt.show()
 
     def next_generation(self, G) :
+        """
+        Simulates communication, reproduction, and langauge learning of agents
+        on a network.
+
+        Returns an updated version of the population embedded in the network
+        and the average payoff of single communication.
+        """
         agents = list(G.nodes)
         # Total payoff for each agent (over communication with all others)
         total_payoffs = []
