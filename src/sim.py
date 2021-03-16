@@ -121,30 +121,44 @@ class Simulation :
         sum_payoffs = sum(total_payoffs)
         normalized_payoffs = [x / sum_payoffs for x in total_payoffs]
 
-        # Create new generation (of the same size)
-        new_generation = []
-        for n in range(len(agents)) :
+        if self.__network_update == 'regenerate' :
+            # Create new generation (of the same size)
+            new_generation = []
+            for n in range(len(agents)) :
+                # Pick parent proportional to fitness
+                try :
+                    parent = agents[util.pick_item(normalized_payoffs)]
+                except AssertionError as err :
+                    print(err)
+                    break
+
+                # Create child that samples A from parent
+                child = elg.Agent(n, self.__n_objects, self.__n_symbols)
+                child.update_language(elg.sample(parent, self.__n_learning_samples))
+
+                new_generation.append(child)
+            # Generate new network and embed new generation
+            new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_generation)})
+        elif self.__network_update == 'relabel' :
             # Pick parent proportional to fitness
             try :
                 parent = agents[util.pick_item(normalized_payoffs)]
             except AssertionError as err :
                 print(err)
-                break
+                return
 
             # Create child that samples A from parent
-            child = elg.Agent(n, self.__n_objects, self.__n_symbols)
+            child = elg.Agent(parent.get_id(), self.__n_objects, self.__n_symbols)
             child.update_language(elg.sample(parent, self.__n_learning_samples))
 
-            new_generation.append(child)
+            # Pick random neighbour of parent to replace
+            parent_neighbors = list(nx.neighbors(G, parent))
+            neighbor = np.random.choice(parent_neighbors)
 
-        if self.__network_update == 'regenerate' :
-            # If regenerating entire network, generate new network and embed new generation
-            new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_generation)})
-        elif self.__network_update == 'relabel' :
-            # new_G = nx.relabel_nodes(G, {})
-            pass
+            # Generate new network by replacing neighbor with child
+            new_G = nx.relabel_nodes(G, {neighbor:child})
 
-        # Return new graph and the average payoff of single communication
+        # Return new network and the average payoff of single communication
         return new_G, np.mean(individual_payoffs)
 
     def generate_network(self) :
