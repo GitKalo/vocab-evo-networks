@@ -26,6 +26,8 @@ def pick_item(list_prob) :
         raise ValueError('Argument list must contain only numbers.')
 
     sum_prob = np.sum(list_prob)
+    if not sum_prob :
+        raise ValueError("Argument list contains only zeroes.") # TODO: add test for this
     assert (round(sum_prob - 1, 5) == 0), \
         "Probability distribution must be strict (items in list should sum up to 1)"
     a = np.random.random_sample(1)

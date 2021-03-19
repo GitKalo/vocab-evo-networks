@@ -119,7 +119,7 @@ class Simulation :
 
         # Generate list of normalized fitness scores
         sum_payoffs = sum(total_payoffs)
-        normalized_payoffs = [x / sum_payoffs for x in total_payoffs]
+        normalized_payoffs = [x / sum_payoffs if sum_payoffs else 0 for x in total_payoffs]
 
         if self.__network_update == 'regenerate' :
             # Create new generation (of the same size)
@@ -130,6 +130,11 @@ class Simulation :
                     parent = agents[util.pick_item(normalized_payoffs)]
                 except AssertionError as err :
                     print(err)
+                    raise
+                except ValueError as err :
+                    # TODO: Find a better way to report error
+                    print(err, "Proceeding with old generation.")
+                    new_generation = agents
                     break
 
                 # Create child that samples A from parent
@@ -158,8 +163,9 @@ class Simulation :
             # Generate new network by replacing neighbor with child
             new_G = nx.relabel_nodes(G, {neighbor:child})
 
+        average_payoff = np.mean(individual_payoffs) if individual_payoffs else None
         # Return new network and the average payoff of single communication
-        return new_G, np.mean(individual_payoffs)
+        return new_G, average_payoff
 
     def generate_network(self) :
         """
