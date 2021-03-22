@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import util
+import util
 
 class Agent :
     """

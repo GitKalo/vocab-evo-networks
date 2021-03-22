@@ -2,7 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import elg, util
+import elg, util
 
 class Simulation :
     """
