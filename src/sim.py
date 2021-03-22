@@ -40,20 +40,31 @@ class Simulation :
         'relabel'
     ]
 
-    def __init__(self, pop_size=100, time_steps=100, runs=20, 
-        objects=elg.Agent.default_objects, symbols=elg.Agent.default_symbols, network_type='regular', network_update='regenerate'):
+    def __init__(self, pop_size, time_steps, runs, network_type, network_update,
+        er_prob=None, ba_links=None, hk_prob=None, objects=elg.Agent.default_objects,
+        symbols=elg.Agent.default_symbols, sample_size=1) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
         self.__n_objects = objects
         self.__n_symbols = symbols
-        self.__n_learning_samples = 1
+        self.__n_learning_samples = sample_size
 
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
             self.__network_type = network_type
+            if network_type == 'random' and er_prob is None :
+                raise TypeError("For random networks, the er_prob argument should be passed.")
+            elif network_type == 'scale-free' and ba_links is None :
+                raise TypeError("For scale-free networks, the ba_links argument should be passed.")
+            elif network_type == 'clustered' and (ba_links is None or hk_prob is None) :
+                raise TypeError("For clustered networks, both the ba_links and hk_prob arguments should be passed.")
         else :
             raise ValueError("Network type not recognized.")
+
+        self.__er_prob = er_prob
+        self.__ba_links = ba_links
+        self.__hk_prob = hk_prob
 
         if network_update in self.__class__.network_updates :
             self.__network_update = network_update
@@ -174,11 +185,11 @@ class Simulation :
         if self.__network_type == 'regular' :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
-            G = nx.erdos_renyi_graph(self.__pop_size, 0.5)
+            G = nx.erdos_renyi_graph(self.__pop_size, self.__er_prob)
         elif self.__network_type == 'scale-free' :
-            G = nx.barabasi_albert_graph(self.__pop_size, 2)
+            G = nx.barabasi_albert_graph(self.__pop_size, self.__ba_links)
         elif self.__network_type == 'clustered' :
-            G = nx.powerlaw_cluster_graph(self.__pop_size, 2, 0.5)
+            G = nx.powerlaw_cluster_graph(self.__pop_size, self.__ba_links, self.__hk_prob)
 
         return G
 
