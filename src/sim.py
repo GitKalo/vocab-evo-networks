@@ -202,6 +202,21 @@ if __name__ == '__main__' :
     n_time_steps = 100
     n_runs = 20
 
-    simulation = Simulation(pop_size, n_time_steps, n_runs)
+    simulation = Simulation(pop_size, n_time_steps, n_runs, 
+    network_type='scale-free', network_update='regenerate', ba_links=2, sample_size=5)
 
     simulation.run()
+
+    # Plot and display the average payoff
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    for payoffs in simulation.get_avg_payoffs() :
+        ax1.plot(payoffs, color='blue')
+    ax1.set_xlabel('Time')
+    ax1.set_ylabel('Payoff')
+    ax1.set_title('Parental learning')
+
+    G_view = simulation.get_network_view()
+    nx.draw(G_view, ax=ax2)
+    ax2.set_title('Network')
+
+    plt.show()
