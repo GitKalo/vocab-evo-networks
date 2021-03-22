@@ -93,16 +93,7 @@ class Simulation :
             run_avg_payoffs.append(step_avg_payoffs)
 
         self.__network = G
-
-        # Plot and display the average payoff
-        fig, ax = plt.subplots()
-        for payoff in run_avg_payoffs :
-            ax.plot(payoff, color='blue')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Payoff')
-        ax.set_title('Parental learning, k = ' + str(self.__n_learning_samples))
-
-        plt.show()
+        self.__run_avg_payoffs = run_avg_payoffs
 
     def next_generation(self, G) :
         """
@@ -200,6 +191,9 @@ class Simulation :
         """
         # TODO: validate that network attribute exists
         return self.__network.copy(as_view=True)
+
+    def get_avg_payoffs(self) :
+        return self.__run_avg_payoffs
 
     # TODO: implement copy method
 
