@@ -61,7 +61,7 @@ class Simulation :
             elif network_type == 'clustered' and (ba_links is None or hk_prob is None) :
                 raise TypeError("For clustered networks, both the ba_links and hk_prob arguments should be passed.")
         else :
-            raise ValueError("Network type not recognized.")
+            raise ValueError("Network type '{}' not recognized.".format(network_type))
 
         self.__er_prob = er_prob
         self.__ba_links = ba_links
