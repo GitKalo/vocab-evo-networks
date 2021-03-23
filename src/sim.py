@@ -42,13 +42,13 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update,
         er_prob=None, ba_links=None, hk_prob=None, objects=elg.Agent.default_objects,
-        symbols=elg.Agent.default_symbols, sample_size=1) :
+        symbols=elg.Agent.default_symbols, sample_num=1) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
         self.__n_objects = objects
         self.__n_symbols = symbols
-        self.__n_learning_samples = sample_size
+        self.__n_learning_samples = sample_num
 
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
