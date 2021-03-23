@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from src import elg, util
 
@@ -183,6 +184,34 @@ class Simulation :
             G = nx.powerlaw_cluster_graph(self.__pop_size, self.__ba_links, self.__hk_prob)
 
         return G
+
+    def as_series(self, payoffs=True, network=True) :
+        return pd.Series(self.as_dict(payoffs, network))
+
+    def as_dict(self, payoffs=True, network=True) :
+        sim_dict = self.get_params()
+        if payoffs :
+            sim_dict.update({'payoffs':self.get_avg_payoffs()})
+        if network :
+            sim_dict.update({'network_dict': nx.convert.to_dict_of_dicts(self.get_network_view())})
+
+        return sim_dict
+
+    def get_params(self) :
+        params = {
+            'pop_size': self.__pop_size,
+            'time_steps': self.__n_time_steps,
+            'runs': self.__n_runs,
+            'vocab_size': (self.__n_objects, self.__n_symbols),
+            'sample_num': self.__n_learning_samples,
+            'network_type': self.__network_type,
+            'network_update': self.__network_update,
+            'er_prob': self.__er_prob,
+            'ba_links': self.__ba_links,
+            'hk_prob': self.__hk_prob
+        }
+
+        return params
 
     def get_network_view(self) :
         """
