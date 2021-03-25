@@ -185,15 +185,14 @@ class Simulation :
 
         return G
 
-    def as_series(self, payoffs=True, network=True) :
-        return pd.Series(self.as_dict(payoffs, network))
+    def as_series(self, payoffs=True) :
+        series = pd.Series(self.as_dict(payoffs))
+        return series
 
-    def as_dict(self, payoffs=True, network=True) :
+    def as_dict(self, payoffs=True) :
         sim_dict = self.get_params()
         if payoffs :
-            sim_dict.update({'payoffs':self.get_avg_payoffs()})
-        if network :
-            sim_dict.update({'network_dict': nx.convert.to_dict_of_dicts(self.get_network_view())})
+            sim_dict.update(dict(payoffs=self.get_avg_payoffs()))
 
         return sim_dict
 
