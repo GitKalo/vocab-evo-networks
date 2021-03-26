@@ -37,10 +37,10 @@ class Agent :
         Update the agent's association matrix and active/passive matrices 
         (derived from the former).
         """
-        if assoc_matrix is None :
-            self.set_assoc_matrix([])
+        if (assoc_matrix is None) or (len(assoc_matrix) == 0) :
+            self._set_assoc_matrix(np.array([[]]))
         else :
-            self.set_assoc_matrix(assoc_matrix)
+            self._set_assoc_matrix(np.array(assoc_matrix))
         self.update_active_matrix()
         self.update_passive_matrix()
 
@@ -66,7 +66,7 @@ class Agent :
             for i in range(len(self.passive_matrix[j])) :
                 self.passive_matrix[j][i] = (self.assoc_matrix[i][j] / col_sums[j]) if col_sums[j] != 0 else 0
 
-    def set_assoc_matrix(self, new_assoc_matrix) :
+    def _set_assoc_matrix(self, new_assoc_matrix) :
         """
         Set the association matrix of the agent, updating the attributes containing
         the number of objects and symbols in the process.
@@ -74,13 +74,7 @@ class Agent :
         Agents with a non-empty association matrix (can communicate about at least one object)
         must also be able to communicate about at least one symbol.
         """
-        if len(new_assoc_matrix) == 0 :
-            self.__n_objects = 0
-            self.__n_symbols = 0
-        else :
-            self.__n_objects, self.__n_symbols = np.shape(new_assoc_matrix)
-            if not self.__n_symbols :
-                raise ValueError("Agents need at least one symbol.")
+        self.__n_objects, self.__n_symbols = np.shape(new_assoc_matrix)
         
         self.assoc_matrix = new_assoc_matrix
 
@@ -147,6 +141,9 @@ def sample(agent, k) :
             except AssertionError as err :
                 print(err)
                 return None
+            except ValueError as err :
+                print(err)
+                break
             # Record response
             assoc[obj][response] += 1
 

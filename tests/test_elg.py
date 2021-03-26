@@ -9,11 +9,11 @@ class TestELG(unittest.TestCase) :
         self.agent = src.elg.Agent(0)
 
     def test_update_language_empty(self) :
-        empty_vals = [None, []]
+        empty_vals = [None, [], [[]]]
         for val in empty_vals :
             with self.subTest(assoc_matrix=val) :
                 self.agent.update_language(val)
-                self.assertEqual(self.agent.assoc_matrix, [])
+                self.assertEqual(self.agent.assoc_matrix.size, 0)
                 self.assertEqual(self.agent.active_matrix.size, 0)
                 self.assertEqual(self.agent.passive_matrix.size, 0)
 
@@ -34,14 +34,10 @@ class TestELG(unittest.TestCase) :
                 self.assertEqual(np.shape(self.agent.active_matrix), shape)
                 self.assertEqual(np.shape(self.agent.passive_matrix), shape[::-1])
 
-    def test_update_language_no_symbols(self) :
-        self.assertRaises(ValueError, self.agent.update_language, [[]])
-
     def test_update_active_matrix_empty(self) :
-        self.agent.set_assoc_matrix([])
-        self.agent.update_active_matrix()
+        self.agent.update_language([[]])
         self.assertEqual(self.agent.active_matrix.size, 0)
-        self.assertEqual(np.shape(self.agent.active_matrix), np.shape([]))
+        self.assertEqual(np.shape(self.agent.active_matrix), np.shape([[]]))
 
     def test_update_active_matrix_small(self) :
         assoc_matrix = [
@@ -53,8 +49,7 @@ class TestELG(unittest.TestCase) :
             [0.2, 0.8]
         ])
 
-        self.agent.set_assoc_matrix(assoc_matrix)
-        self.agent.update_active_matrix()
+        self.agent.update_language(assoc_matrix)
         self.assertTrue(np.array_equal(self.agent.active_matrix, expected_active_matrix))
 
     def test_update_active_matrix_large(self) :
@@ -71,8 +66,7 @@ class TestELG(unittest.TestCase) :
             [0.04, 0, 0.16, 0.2, 0.24, 0.12, 0.24]
         ])
 
-        self.agent.set_assoc_matrix(assoc_matrix)
-        self.agent.update_active_matrix()
+        self.agent.update_language(assoc_matrix)
         self.assertTrue(np.array_equal(self.agent.active_matrix, expected_active_matrix))
 
     def test_update_active_matrix_sum(self) :
@@ -80,18 +74,16 @@ class TestELG(unittest.TestCase) :
             s = tuple(np.random.randint(1, 100, size=2))
             with self.subTest(assoc_matrix_shape=s) :
                 assoc_matrix = src.elg.random_assoc_matrix(*s)
-                self.agent.set_assoc_matrix(assoc_matrix)
-                self.agent.update_active_matrix()
+                self.agent.update_language(assoc_matrix)
                 self.assertEqual(np.shape(self.agent.active_matrix), s)
                 for row in self.agent.active_matrix :
                     with self.subTest(row=row) :
                         self.assertAlmostEqual(sum(row), 1, places=5)
 
     def test_update_passive_matrix_empty(self) :
-        self.agent.set_assoc_matrix([])
-        self.agent.update_passive_matrix()
+        self.agent.update_language([[]])
         self.assertEqual(self.agent.passive_matrix.size, 0)
-        self.assertEqual(np.shape(self.agent.passive_matrix), np.shape([])[::-1])
+        self.assertEqual(np.shape(self.agent.passive_matrix), np.shape([[]])[::-1])
 
     def test_update_passive_matrix_small(self) :
         assoc_matrix = [
@@ -103,8 +95,7 @@ class TestELG(unittest.TestCase) :
             [0.75, 0.25]
         ])
 
-        self.agent.set_assoc_matrix(assoc_matrix)
-        self.agent.update_passive_matrix()
+        self.agent.update_language(assoc_matrix)
         self.assertTrue(np.array_equal(self.agent.passive_matrix, expected_passive_matrix))
 
     def test_update_passive_matrix_large(self) :
@@ -124,8 +115,7 @@ class TestELG(unittest.TestCase) :
             [0.3125, 0.0625, 0.1875, 0.4375]
         ])
 
-        self.agent.set_assoc_matrix(assoc_matrix)
-        self.agent.update_passive_matrix()
+        self.agent.update_language(assoc_matrix)
         self.assertTrue(np.array_equal(self.agent.passive_matrix, expected_passive_matrix))
 
     def test_update_passive_matrix_sum(self) :
@@ -133,8 +123,7 @@ class TestELG(unittest.TestCase) :
             s = tuple(np.random.randint(1, 100, size=2))
             with self.subTest(assoc_matrix_shape=s) :
                 assoc_matrix = src.elg.random_assoc_matrix(*s)
-                self.agent.set_assoc_matrix(assoc_matrix)
-                self.agent.update_passive_matrix()
+                self.agent.update_language(assoc_matrix)
                 self.assertEqual(np.shape(self.agent.passive_matrix), s[::-1])
                 for row in self.agent.passive_matrix :
                     with self.subTest(row=row) :
@@ -210,7 +199,7 @@ class TestELG(unittest.TestCase) :
         self.assertEqual(sample.sum(), 0)
 
     def test_sample_empty(self) :
-        self.agent.update_language([])
+        self.agent.update_language([[]])
         self.assertEqual(src.elg.sample(self.agent, 1).size, 0)
 
     def test_sample_failed_pick_item(self) :
