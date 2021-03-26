@@ -51,7 +51,7 @@ class Agent :
         self.active_matrix = np.zeros(np.shape(self.assoc_matrix))
 
         for i in range(len(self.active_matrix)) :
-            row_sum = sum(self.assoc_matrix[i])
+            row_sum = np.sum(self.assoc_matrix[i])
             for j in range(len(self.active_matrix[i])) :
                 self.active_matrix[i][j] = (self.assoc_matrix[i][j] / row_sum) if row_sum != 0 else 0
 
@@ -117,12 +117,14 @@ def payoff(a1, a2) :
     if np.shape(a1.assoc_matrix) != np.shape(a2.assoc_matrix) :
         raise ValueError("Payoff of communication can only be calculated for agents with the same number of objects/symbols.")
 
-    return 0.5 * sum(
-        [sum(
-            [a1.active_matrix[i][j] * a2.passive_matrix[j][i] + 
-                a2.active_matrix[i][j] * a1.passive_matrix[j][i] for j in range(a1.get_n_sym())]
-            ) for i in range(a1.get_n_obj())]
-        )
+    # return 0.5 * np.sum(
+    #     [np.sum(
+    #         [a1.active_matrix[i][j] * a2.passive_matrix[j][i] + 
+    #             a2.active_matrix[i][j] * a1.passive_matrix[j][i] for j in range(a1.get_n_sym())]
+    #         ) for i in range(a1.get_n_obj())]
+    #     )
+
+    return 0.5 * np.sum(np.diagonal(np.matmul(a1.active_matrix, a2.passive_matrix)) + np.diagonal(np.matmul(a2.active_matrix, a1.passive_matrix)))
 
 def sample(agent, k) :
     """
