@@ -3,6 +3,3 @@ __pycache__
 # Virtual environments
 venv
 env
-
-# Folder used to simulate and analyze results
-results
