@@ -50,10 +50,9 @@ class Agent :
         """
         self.active_matrix = np.zeros(np.shape(self.assoc_matrix))
 
+        row_sums = np.sum(self.assoc_matrix, axis=1)
         for i in range(len(self.active_matrix)) :
-            row_sum = np.sum(self.assoc_matrix[i])
-            for j in range(len(self.active_matrix[i])) :
-                self.active_matrix[i][j] = (self.assoc_matrix[i][j] / row_sum) if row_sum != 0 else 0
+            self.active_matrix[i] = self.assoc_matrix[i] / row_sums[i] if row_sums[i] != 0 else np.zeros(len(self.assoc_matrix[i]))
 
     def update_passive_matrix(self) :
         """
@@ -61,10 +60,9 @@ class Agent :
         """
         self.passive_matrix = np.zeros(tuple(reversed(np.shape(self.assoc_matrix))))
 
-        for j in range(len(self.passive_matrix)) :
-            col_sums = np.sum(self.assoc_matrix, axis=0)
-            for i in range(len(self.passive_matrix[j])) :
-                self.passive_matrix[j][i] = (self.assoc_matrix[i][j] / col_sums[j]) if col_sums[j] != 0 else 0
+        col_sums = np.sum(self.assoc_matrix, axis=0)
+        for i in range(len(self.passive_matrix)) :
+            self.passive_matrix[i] = self.assoc_matrix[:, i] / col_sums[i] if col_sums[i] != 0 else np.zeros(len(self.assoc_matrix))
 
     def _set_assoc_matrix(self, new_assoc_matrix) :
         """
