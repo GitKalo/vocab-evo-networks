@@ -121,8 +121,9 @@ class Simulation :
             total_payoffs.append(agent_total_payoff)
 
         # Generate list of normalized fitness scores
-        sum_payoffs = sum(total_payoffs)
-        normalized_payoffs = [x / sum_payoffs if sum_payoffs else 0 for x in total_payoffs]
+        sum_payoffs = np.sum(total_payoffs)
+        normalized_payoffs = total_payoffs
+        if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
 
         if self.__network_update == 'regenerate' :
             # Create new generation (of the same size)
