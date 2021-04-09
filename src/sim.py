@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from . import elg, util
+from . import agent, util
 
 class Simulation :
     """
@@ -42,8 +42,8 @@ class Simulation :
     ]
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update,
-        er_prob=None, ba_links=None, hk_prob=None, objects=elg.Agent.default_objects,
-        symbols=elg.Agent.default_symbols, sample_num=1) :
+        er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
+        symbols=agent.Agent.default_symbols, sample_num=1) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -79,9 +79,9 @@ class Simulation :
         run_avg_payoffs = []    # Contains the average payoffs for each run
         for i_run in range(self.__n_runs) :
             # Generate agents in first generation (with random matrices)
-            first_gen = {agent_id : elg.Agent(agent_id, self.__n_objects, self.__n_symbols) for agent_id in range(self.__pop_size)}
+            first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_symbols) for agent_id in range(self.__pop_size)}
             for k, v in first_gen.items() :
-                v.update_language(elg.random_assoc_matrix(self.__n_objects, self.__n_symbols))
+                v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_symbols))
             
             # Generate network and embed first generation
             G = nx.relabel_nodes(self.generate_network(), first_gen)
@@ -115,9 +115,10 @@ class Simulation :
             agent_total_payoff = 0
             list_connections = list(nx.neighbors(G, speaker))
             for listener in list_connections :
-                payoff = elg.payoff(speaker, listener)
+                payoff = agent.payoff(speaker, listener)
                 agent_total_payoff += payoff
                 individual_payoffs.append(payoff)
+            if agent_total_payoff : agent_total_payoff = agent_total_payoff / len(list_connections)
             total_payoffs.append(agent_total_payoff)
 
         # Generate list of normalized fitness scores
@@ -142,8 +143,8 @@ class Simulation :
                     break
 
                 # Create child that samples A from parent
-                child = elg.Agent(n, self.__n_objects, self.__n_symbols)
-                child.update_language(elg.sample(parent, self.__n_learning_samples))
+                child = agent.Agent(n, self.__n_objects, self.__n_symbols)
+                child.update_language(agent.sample(parent, self.__n_learning_samples))
 
                 new_generation.append(child)
             # Generate new network and embed new generation
@@ -157,8 +158,8 @@ class Simulation :
                 return
 
             # Create child that samples A from parent
-            child = elg.Agent(parent.get_id(), self.__n_objects, self.__n_symbols)
-            child.update_language(elg.sample(parent, self.__n_learning_samples))
+            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_symbols)
+            child.update_language(agent.sample(parent, self.__n_learning_samples))
 
             # Pick random neighbour of parent to replace
             parent_neighbors = list(nx.neighbors(G, parent))

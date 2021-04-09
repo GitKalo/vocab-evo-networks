@@ -4,9 +4,9 @@ import unittest
 
 from context import src
 
-class TestELG(unittest.TestCase) :
+class Testagent(unittest.TestCase) :
     def setUp(self) :
-        self.agent = src.elg.Agent(0)
+        self.agent = src.agent.Agent(0)
 
     def test_update_language_empty(self) :
         empty_vals = [None, [], [[]]]
@@ -73,7 +73,7 @@ class TestELG(unittest.TestCase) :
         for i in range(10) :
             s = tuple(np.random.randint(1, 100, size=2))
             with self.subTest(assoc_matrix_shape=s) :
-                assoc_matrix = src.elg.random_assoc_matrix(*s)
+                assoc_matrix = src.agent.random_assoc_matrix(*s)
                 self.agent.update_language(assoc_matrix)
                 self.assertEqual(np.shape(self.agent.active_matrix), s)
                 for row in self.agent.active_matrix :
@@ -122,7 +122,7 @@ class TestELG(unittest.TestCase) :
         for i in range(10) :
             s = tuple(np.random.randint(1, 100, size=2))
             with self.subTest(assoc_matrix_shape=s) :
-                assoc_matrix = src.elg.random_assoc_matrix(*s)
+                assoc_matrix = src.agent.random_assoc_matrix(*s)
                 self.agent.update_language(assoc_matrix)
                 self.assertEqual(np.shape(self.agent.passive_matrix), s[::-1])
                 for row in self.agent.passive_matrix :
@@ -131,20 +131,20 @@ class TestELG(unittest.TestCase) :
 
     def test_random_assoc_matrix_shape(self) :
         s = tuple(np.random.randint(1, 100, size=2))
-        self.assertEqual(s, np.shape(src.elg.random_assoc_matrix(*s)))
+        self.assertEqual(s, np.shape(src.agent.random_assoc_matrix(*s)))
 
     def test_payoff_different_shapes(self) :
-        agent_1 = src.elg.Agent(1)
-        agent_2 = src.elg.Agent(2)
+        agent_1 = src.agent.Agent(1)
+        agent_2 = src.agent.Agent(2)
 
-        agent_1.update_language(src.elg.random_assoc_matrix(*np.random.randint(1, 50, size=2)))
-        agent_2.update_language(src.elg.random_assoc_matrix(*np.random.randint(50, 100, size=2)))
+        agent_1.update_language(src.agent.random_assoc_matrix(*np.random.randint(1, 50, size=2)))
+        agent_2.update_language(src.agent.random_assoc_matrix(*np.random.randint(50, 100, size=2)))
 
-        self.assertRaises(ValueError, src.elg.payoff, agent_1, agent_2)
+        self.assertRaises(ValueError, src.agent.payoff, agent_1, agent_2)
 
     def test_payoff_small(self) :
-        agent_1 = src.elg.Agent(1)
-        agent_2 = src.elg.Agent(2)
+        agent_1 = src.agent.Agent(1)
+        agent_2 = src.agent.Agent(2)
 
         agent_1.update_language([
             [6, 6],
@@ -155,12 +155,12 @@ class TestELG(unittest.TestCase) :
             [4, 4]
         ])
 
-        payoff = src.elg.payoff(agent_1, agent_2)
+        payoff = src.agent.payoff(agent_1, agent_2)
         self.assertAlmostEqual(payoff, 0.95635, 5)
 
     def test_payoff_large(self) :
-        agent_1 = src.elg.Agent(1)
-        agent_2 = src.elg.Agent(2)
+        agent_1 = src.agent.Agent(1)
+        agent_2 = src.agent.Agent(2)
 
         agent_1.update_language([
             [6, 2, 0, 2],
@@ -177,41 +177,41 @@ class TestELG(unittest.TestCase) :
             [5, 1, 3, 1]
         ])
 
-        payoff = src.elg.payoff(agent_1, agent_2)
+        payoff = src.agent.payoff(agent_1, agent_2)
         self.assertAlmostEqual(payoff, 1.11467, 4)
     
     def test_payoff_symmetry(self) :
         for i in range(10) :
-            agent_1 = src.elg.Agent(1)
-            agent_2 = src.elg.Agent(2)
+            agent_1 = src.agent.Agent(1)
+            agent_2 = src.agent.Agent(2)
 
-            agent_1.update_language(src.elg.random_assoc_matrix(5, 5))
-            agent_2.update_language(src.elg.random_assoc_matrix(5, 5))
+            agent_1.update_language(src.agent.random_assoc_matrix(5, 5))
+            agent_2.update_language(src.agent.random_assoc_matrix(5, 5))
 
-            payoff_1_2 = src.elg.payoff(agent_1, agent_2)
-            payoff_2_1 = src.elg.payoff(agent_2, agent_1)
+            payoff_1_2 = src.agent.payoff(agent_1, agent_2)
+            payoff_2_1 = src.agent.payoff(agent_2, agent_1)
 
             with self.subTest(p1=payoff_1_2, p2=payoff_2_1) :
                 self.assertEqual(payoff_1_2, payoff_2_1)
 
     def test_sample_none(self) :
-        sample = src.elg.sample(self.agent, 0)
+        sample = src.agent.sample(self.agent, 0)
         self.assertEqual(sample.sum(), 0)
 
     def test_sample_empty(self) :
         self.agent.update_language([[]])
-        self.assertEqual(src.elg.sample(self.agent, 1).size, 0)
+        self.assertEqual(src.agent.sample(self.agent, 1).size, 0)
 
     def test_sample_failed_pick_item(self) :
         self.agent.set_active_matrix([[1, 2]])
-        self.assertIsNone(src.elg.sample(self.agent, 1))
+        self.assertIsNone(src.agent.sample(self.agent, 1))
 
     def test_sample_number(self) :
         for i in range(10) :
             k = np.random.randint(100)
             with self.subTest(k=k) :
-                self.agent.update_language(src.elg.random_assoc_matrix(*np.random.randint(1, 100, size=2)))
-                sample = src.elg.sample(self.agent, k)
+                self.agent.update_language(src.agent.random_assoc_matrix(*np.random.randint(1, 100, size=2)))
+                sample = src.agent.sample(self.agent, k)
                 for row in sample :
                     with self.subTest(row=row) :
                         self.assertEqual(sum(row), k)

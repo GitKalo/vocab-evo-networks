@@ -1,6 +1,6 @@
 import unittest, os
 
-import test_util, test_elg
+import test_util, test_agent
 
 tests = unittest.TestLoader().discover(os.getcwd())
 
