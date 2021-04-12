@@ -7,30 +7,30 @@ class Agent :
     An individual of the popualtion in the vocabulary evolution model.
     
     Each agent has an independent language composed of three matrices:
-        - Active matrix -- Probabilities of object-symbol associations
-        - Passive matrix -- Probabilities of symbol-object associations
-        - Association matrix -- A record of responses to object-symbol associations,
+        - Active matrix -- Probabilities of object-signal associations
+        - Passive matrix -- Probabilities of signal-object associations
+        - Association matrix -- A record of responses to object-signal associations,
             sampled depending on the simulation instance sampling method (or
             random if agent is in from the first generation).
 
     The active and passive matrices are derived from the association matrix by
-    normalizing the number of responses for each object-symbol pair.
+    normalizing the number of responses for each object-signal pair.
 
-    The number of objects and symbols in an agent's vocabulary, which determines the size
-    of the matrices described above, can be provided through the `n_objects` and `n_symbols`
-    at initialization. If not provided, the values of the `default_objects` and `default_symbols`
+    The number of objects and signals in an agent's vocabulary, which determines the size
+    of the matrices described above, can be provided through the `n_objects` and `n_signals`
+    at initialization. If not provided, the values of the `default_objects` and `default_signals`
     attributes are used instead.
     """
     default_objects = 5
-    default_symbols = 5
+    default_signals = 5
 
-    def __init__(self, agent_id, n_objects=default_objects, n_symbols=default_symbols) :
+    def __init__(self, agent_id, n_objects=default_objects, n_signals=default_signals) :
         self.__id = agent_id
         self.__n_objects = n_objects
-        self.__n_symbols = n_symbols
-        self.active_matrix = [[0] * n_symbols] * n_objects
-        self.passive_matrix = [[0] * n_objects] * n_symbols
-        self.assoc_matrix = [[0] * n_symbols] * n_objects
+        self.__n_signals = n_signals
+        self.active_matrix = [[0] * n_signals] * n_objects
+        self.passive_matrix = [[0] * n_objects] * n_signals
+        self.assoc_matrix = [[0] * n_signals] * n_objects
 
     def update_language(self, assoc_matrix) :
         """
@@ -67,12 +67,12 @@ class Agent :
     def _set_assoc_matrix(self, new_assoc_matrix) :
         """
         Set the association matrix of the agent, updating the attributes containing
-        the number of objects and symbols in the process.
+        the number of objects and signals in the process.
         
         Agents with a non-empty association matrix (can communicate about at least one object)
-        must also be able to communicate about at least one symbol.
+        must also be able to communicate about at least one signal.
         """
-        self.__n_objects, self.__n_symbols = np.shape(new_assoc_matrix)
+        self.__n_objects, self.__n_signals = np.shape(new_assoc_matrix)
         
         self.assoc_matrix = new_assoc_matrix
 
@@ -86,7 +86,7 @@ class Agent :
         return self.__n_objects
 
     def get_n_sym(self) :
-        return self.__n_symbols
+        return self.__n_signals
 
     def get_id(self) :
         return self.__id
@@ -98,16 +98,16 @@ def payoff(a1, a2) :
     """
     Calculate the total payoff of communication between two agents. The agents' matrices
     must have the same shape (they have to be communicating about the same number of objects
-    and symbols).
+    and signals).
 
     Intuitively, the payoff of communication represents how well two agents can understand 
     each other when conversing. Practically, it is calculated from the probability of
-    one agent emitting a certain symbol to talk about a certain object, multiplied by the probability
-    of the other agent inferring the initial object upon hearing the symbol, summed over all
-    objects and symbols, for each agent.
+    one agent emitting a certain signal to talk about a certain object, multiplied by the probability
+    of the other agent inferring the initial object upon hearing the signal, summed over all
+    objects and signals, for each agent.
     """
     if np.shape(a1.assoc_matrix) != np.shape(a2.assoc_matrix) :
-        raise ValueError("Payoff of communication can only be calculated for agents with the same number of objects/symbols.")
+        raise ValueError("Payoff of communication can only be calculated for agents with the same number of objects/signals.")
 
     # return 0.5 * np.sum(
     #     [np.sum(
@@ -122,11 +122,11 @@ def sample(agent, k) :
     """
     Construct an association matrix by sampling responses from `agent`. For
     each of `agent`'s objects, `k` responses are sampled by emitting a
-    symbol based on the emission probabilities specified by `agent`'s
+    signal based on the emission probabilities specified by `agent`'s
     active matrix.
 
     The values in the association matrix represents the number of time that
-    a symbol was emitted in reference to an object. Its size is the identical
+    a signal was emitted in reference to an object. Its size is the identical
     to that of `agent`'s active matrix.
     """
     assoc = np.zeros(np.shape(agent.assoc_matrix))

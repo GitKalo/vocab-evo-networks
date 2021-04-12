@@ -23,7 +23,7 @@ class Simulation :
         ...                     has a separate network structure and population. The final results reported
         ...                     by the simulation are averaged over all runs.
         objects : int           # The number of objects in every agent's language.
-        symbols : int           # The number of symbols in every agent's language.
+        signals : int           # The number of signals in every agent's language.
         network_type : str      # The type of network used, which determines the structure of the population.
         ...                     Must be one of the available network types listed in the `network_types` attribute.
         network_update : str    # The network update strategy used by the simulation. Must be one of the
@@ -43,12 +43,12 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update,
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
-        symbols=agent.Agent.default_symbols, sample_num=1) :
+        signals=agent.Agent.default_signals, sample_num=1) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
         self.__n_objects = objects
-        self.__n_symbols = symbols
+        self.__n_signals = signals
         self.__n_learning_samples = sample_num
 
         # Input validation for network type and update strategy
@@ -79,9 +79,9 @@ class Simulation :
         run_avg_payoffs = []    # Contains the average payoffs for each run
         for i_run in range(self.__n_runs) :
             # Generate agents in first generation (with random matrices)
-            first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_symbols) for agent_id in range(self.__pop_size)}
+            first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
             for k, v in first_gen.items() :
-                v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_symbols))
+                v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_signals))
             
             # Generate network and embed first generation
             G = nx.relabel_nodes(self.generate_network(), first_gen)
@@ -143,7 +143,7 @@ class Simulation :
                     break
 
                 # Create child that samples A from parent
-                child = agent.Agent(n, self.__n_objects, self.__n_symbols)
+                child = agent.Agent(n, self.__n_objects, self.__n_signals)
                 child.update_language(agent.sample(parent, self.__n_learning_samples))
 
                 new_generation.append(child)
@@ -158,7 +158,7 @@ class Simulation :
                 return
 
             # Create child that samples A from parent
-            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_symbols)
+            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
             child.update_language(agent.sample(parent, self.__n_learning_samples))
 
             # Pick random neighbour of parent to replace
@@ -203,7 +203,7 @@ class Simulation :
             'pop_size': self.__pop_size,
             'time_steps': self.__n_time_steps,
             'runs': self.__n_runs,
-            'vocab_size': (self.__n_objects, self.__n_symbols),
+            'vocab_size': (self.__n_objects, self.__n_signals),
             'sample_num': self.__n_learning_samples,
             'network_type': self.__network_type,
             'network_update': self.__network_update,
