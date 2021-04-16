@@ -47,7 +47,7 @@ class Simulation :
         'random'
     ]
 
-    def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning,
+    def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning='parental',
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
         signals=agent.Agent.default_signals, sample_num=1, sample_size=2) :
         self.__pop_size = pop_size
