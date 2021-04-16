@@ -151,7 +151,7 @@ class Simulation :
 
                 # Create child that samples A from parent
                 child = agent.Agent(n, self.__n_objects, self.__n_signals)
-                child.update_language(agent.sample(parent, self.__n_learning_samples))
+                child.update_language(self.get_sampled_matrix(parent, agents, normalized_payoffs))
 
                 new_generation.append(child)
             # Generate new network and embed new generation
@@ -165,7 +165,7 @@ class Simulation :
 
             # Create child that samples A from parent
             child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
-            child.update_language(agent.sample(parent, self.__n_learning_samples))
+            child.update_language(self.get_sampled_matrix(parent, agents, normalized_payoffs))
 
             # Pick random neighbour of parent to replace
             parent_neighbors = list(nx.neighbors(G, parent))
@@ -196,6 +196,24 @@ class Simulation :
             G = nx.powerlaw_cluster_graph(self.__pop_size, self.__ba_links, self.__hk_prob)
 
         return G
+
+    def get_sampled_matrix(self, parent, pop, payoffs) :
+        A = np.zeros(np.shape(parent.assoc_matrix))
+
+        if self.__learning_strategy == 'parental' :
+            A = np.add(A, agent.sample(parent, self.__n_learning_samples))
+        elif self.__learning_strategy == 'role-model' :
+            for _ in range(self.__n_agents_sampled) :
+                try :
+                    model = np.random.choice(pop, p=payoffs)
+                except ValueError :
+                    model = np.random.choice(pop)
+                A = np.add(A, agent.sample(model, self.__n_learning_samples))
+        elif self.__learning_strategy == 'random' :
+            for _ in range(self.__n_agents_sampled) :
+                A = np.add(A, agent.sample(np.random.choice(pop), self.__n_learning_samples))
+
+        return A
 
     def as_series(self, payoffs=True) :
         series = pd.Series(self.as_dict(payoffs))
