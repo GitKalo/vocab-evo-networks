@@ -132,14 +132,9 @@ class Simulation :
             for n in range(len(agents)) :
                 # Pick parent proportional to fitness
                 try :
-                    parent = agents[util.pick_item(normalized_payoffs)]
-                except AssertionError as err :
-                    print(err)
-                    raise
+                    parent = np.random.choice(agents, p=normalized_payoffs)
                 except ValueError as err :
-                    # TODO: Find a better way to report error
-                    print(err, "Proceeding with old generation.")
-                    new_generation = agents
+                    parent = np.random.choice(agents)
                     break
 
                 # Create child that samples A from parent
@@ -152,10 +147,9 @@ class Simulation :
         elif self.__network_update == 'relabel' :
             # Pick parent proportional to fitness
             try :
-                parent = agents[util.pick_item(normalized_payoffs)]
-            except AssertionError as err :
-                print(err)
-                return
+                parent = np.random.choice(agents, p=normalized_payoffs)
+            except ValueError as err :
+                parent = np.random.choice(agents)
 
             # Create child that samples A from parent
             child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
