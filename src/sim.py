@@ -49,13 +49,14 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning='parental',
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
-        signals=agent.Agent.default_signals, sample_num=1, sample_size=2) :
+        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
         self.__n_objects = objects
         self.__n_signals = signals
         self.__n_learning_samples = sample_num
+        self.__n_agents_sampled = agents_sampled
 
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
