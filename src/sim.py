@@ -147,7 +147,6 @@ class Simulation :
                     parent = np.random.choice(agents, p=normalized_payoffs)
                 except ValueError as err :
                     parent = np.random.choice(agents)
-                    break
 
                 # Create child that samples A from parent
                 child = agent.Agent(n, self.__n_objects, self.__n_signals)
