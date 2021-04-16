@@ -157,7 +157,11 @@ class Simulation :
 
             # Pick random neighbour of parent to replace
             parent_neighbors = list(nx.neighbors(G, parent))
-            neighbor = np.random.choice(parent_neighbors)
+            try :
+                neighbor = np.random.choice(parent_neighbors)
+            except ValueError :
+                # If parent has no neighbors, replace parent
+                neighbor = parent
 
             # Generate new network by replacing neighbor with child
             new_G = nx.relabel_nodes(G, {neighbor:child})
