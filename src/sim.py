@@ -49,7 +49,7 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning='parental',
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
-        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2) :
+        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2, p_mistake=0) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -57,6 +57,7 @@ class Simulation :
         self.__n_signals = signals
         self.__n_learning_samples = sample_num
         self.__n_agents_sampled = agents_sampled
+        self.__p_mistake = p_mistake
 
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
@@ -197,20 +198,17 @@ class Simulation :
         return G
 
     def get_sampled_matrix(self, parent, pop, payoffs) :
-        A = np.zeros(np.shape(parent.assoc_matrix))
-
         if self.__learning_strategy == 'parental' :
-            A = np.add(A, agent.sample(parent, self.__n_learning_samples))
+            A = agent.sample(parent, self.__n_learning_samples, self.__p_mistake)
         elif self.__learning_strategy == 'role-model' :
-            for _ in range(self.__n_agents_sampled) :
-                try :
-                    model = np.random.choice(pop, p=payoffs)
-                except ValueError :
-                    model = np.random.choice(pop)
-                A = np.add(A, agent.sample(model, self.__n_learning_samples))
+            try :
+                models = np.random.choice(pop, size=self.__n_agents_sampled, p=payoffs)
+            except ValueError :
+                models = np.random.choice(pop, size=self.__n_agents_sampled)
+            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
         elif self.__learning_strategy == 'random' :
-            for _ in range(self.__n_agents_sampled) :
-                A = np.add(A, agent.sample(np.random.choice(pop), self.__n_learning_samples))
+            models = np.random.choice(pop, size=self.__n_agents_sampled)
+            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
 
         return A
 
@@ -232,6 +230,9 @@ class Simulation :
             'runs': self.__n_runs,
             'vocab_size': (self.__n_objects, self.__n_signals),
             'sample_num': self.__n_learning_samples,
+            'agents_sampled': self.__n_agents_sampled,
+            'learning_strategy': self.__learning_strategy,
+            'p_mistake': self.__p_mistake,
             'network_type': self.__network_type,
             'network_update': self.__network_update,
             'er_prob': self.__er_prob,

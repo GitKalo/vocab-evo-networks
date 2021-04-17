@@ -24,11 +24,10 @@ class Agent :
     default_objects = 5
     default_signals = 5
 
-    def __init__(self, agent_id, n_objects=default_objects, n_signals=default_signals, p_mistake=0) :
+    def __init__(self, agent_id, n_objects=default_objects, n_signals=default_signals) :
         self.__id = agent_id
         self.__n_objects = n_objects
         self.__n_signals = n_signals
-        self.__p_mistake = p_mistake
         self.active_matrix = [[0] * n_signals] * n_objects
         self.passive_matrix = [[0] * n_objects] * n_signals
         self.assoc_matrix = [[0] * n_signals] * n_objects
@@ -119,7 +118,7 @@ def payoff(a1, a2) :
 
     return 0.5 * np.sum(np.diagonal(np.matmul(a1.active_matrix, a2.passive_matrix)) + np.diagonal(np.matmul(a2.active_matrix, a1.passive_matrix)))
 
-def sample(agent, k) :
+def sample(agent, k, p_mistake=0) :
     """
     Construct an association matrix by sampling responses from `agent`. For
     each of `agent`'s objects, `k` responses are sampled by emitting a
@@ -131,14 +130,15 @@ def sample(agent, k) :
     to that of `agent`'s active matrix.
     """
     assoc = np.zeros(np.shape(agent.assoc_matrix))
+    n_signals = agent.active_matrix[0].size
 
     for obj in range(len(agent.active_matrix)) :
         for _ in range(k) :
             try :
                 # Sample response
-                response = np.random.choice(self.__n_signals, agent.active_matrix[obj])
-                if self.__p_mistake and np.random.binomial(1, self.__p_mistake) :
-                    response = np.random.choice(self.__n_signals)
+                response = np.random.choice(n_signals, p=agent.active_matrix[obj])
+                if p_mistake and np.random.binomial(1, p_mistake) :
+                    response = np.random.choice(n_signals)
             except ValueError as err :
                 print(err)
                 break
