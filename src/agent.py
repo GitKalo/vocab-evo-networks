@@ -24,10 +24,11 @@ class Agent :
     default_objects = 5
     default_signals = 5
 
-    def __init__(self, agent_id, n_objects=default_objects, n_signals=default_signals) :
+    def __init__(self, agent_id, n_objects=default_objects, n_signals=default_signals, p_mistake=0) :
         self.__id = agent_id
         self.__n_objects = n_objects
         self.__n_signals = n_signals
+        self.__p_mistake = p_mistake
         self.active_matrix = [[0] * n_signals] * n_objects
         self.passive_matrix = [[0] * n_objects] * n_signals
         self.assoc_matrix = [[0] * n_signals] * n_objects
@@ -136,6 +137,8 @@ def sample(agent, k) :
             try :
                 # Sample response
                 response = np.random.choice(self.__n_signals, agent.active_matrix[obj])
+                if self.__p_mistake and np.random.binomial(1, self.__p_mistake) :
+                    response = np.random.choice(self.__n_signals)
             except ValueError as err :
                 print(err)
                 break
