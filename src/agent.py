@@ -135,10 +135,7 @@ def sample(agent, k) :
         for _ in range(k) :
             try :
                 # Sample response
-                response = util.pick_item(agent.active_matrix[obj])
-            except AssertionError as err :
-                print(err)
-                return None
+                response = np.random.choice(self.__n_signals, agent.active_matrix[obj])
             except ValueError as err :
                 print(err)
                 break
