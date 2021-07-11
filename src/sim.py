@@ -49,7 +49,7 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning='parental',
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
-        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2, p_mistake=0) :
+        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2, p_mistake=0, localize_learning=True) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -84,6 +84,8 @@ class Simulation :
             self.__learning_strategy = learning
         else :
             raise ValueError(f"Learning strategy '{learning}'' is not recognized.")
+
+        self.__localize_learning=localize_learning
 
     def run(self) :
         """
