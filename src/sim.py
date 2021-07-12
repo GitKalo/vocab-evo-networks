@@ -49,7 +49,7 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update, learning='parental',
         er_prob=None, ba_links=None, hk_prob=None, objects=agent.Agent.default_objects,
-        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2, p_mistake=0, localize_learning=True) :
+        signals=agent.Agent.default_signals, sample_num=1, agents_sampled=2, p_mistake=0, localize_learning=False) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
