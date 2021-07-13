@@ -133,7 +133,8 @@ class Simulation :
                 payoff = agent.payoff(speaker, listener)
                 agent_total_payoff += payoff
                 individual_payoffs.append(payoff)
-            if agent_total_payoff : agent_total_payoff = agent_total_payoff / len(list_connections)
+            if agent_total_payoff : 
+                agent_total_payoff = agent_total_payoff / len(list_connections)
             total_payoffs.append(agent_total_payoff)
 
         # Generate list of normalized fitness scores
