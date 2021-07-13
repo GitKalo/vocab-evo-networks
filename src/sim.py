@@ -106,8 +106,16 @@ class Simulation :
             step_avg_payoffs = []   # Contains the average payoffs for each time step
             for step_num in range(self.__n_time_steps) :
                 # Simulate communication and reproduction
-                G, average_payoff = self.next_generation(G)
-                step_avg_payoffs.append(average_payoff)
+                G, comm_payoffs, node_payoffs = self.next_generation(G)
+                
+                # If nodes are relabeled, record payoff for each node
+                if self.__network_update == 'relabel' :
+                    step_node_payoffs.append(node_payoffs)
+
+                # Record average payoff
+                macro_average_payoff = np.mean(comm_payoffs) if comm_payoffs else None
+                step_avg_payoffs.append(macro_average_payoff)
+            run_node_payoffs.append(step_node_payoffs)
             run_avg_payoffs.append(step_avg_payoffs)
 
         self.__network = G
@@ -195,9 +203,8 @@ class Simulation :
             # Generate new network by replacing neighbor with child
             new_G = nx.relabel_nodes(G, {neighbor:child})
 
-        average_payoff = np.mean(individual_payoffs) if individual_payoffs else None
-        # Return new network and the average payoff of single communication
-        return new_G, average_payoff
+        # Return new network and the individual payoffs for all agents
+        return new_G, individual_payoffs, total_payoffs
 
     def generate_network(self) :
         """
