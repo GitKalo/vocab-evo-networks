@@ -112,6 +112,7 @@ class Simulation :
 
         self.__network = G
         self.__run_avg_payoffs = run_avg_payoffs
+        self.__run_node_payoffs = run_node_payoffs
 
     def next_generation(self, G) :
         """
