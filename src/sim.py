@@ -30,7 +30,8 @@ class Simulation :
         ...                     available network update strategies listed in the `network_updates` attribute.
     """
     network_types = [
-        'regular',
+        'lattice',
+        'complete',
         'random',
         'scale-free',
         'clustered'
@@ -210,7 +211,12 @@ class Simulation :
         """
         Generate a network based on the `network_type` property.
         """
-        if self.__network_type == 'regular' :
+        if self.__network_type == 'lattice' :
+            dim_size = int(np.ceil(np.sqrt(self.__pop_size)))
+            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(dim_size, dim_size))
+            for n in list(G.nodes) :
+                if n >= self.__pop_size : G.remove_node(n)
+        elif self.__network_type == 'complete' :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
             G = nx.erdos_renyi_graph(self.__pop_size, self.__er_prob)
