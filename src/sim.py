@@ -100,8 +100,8 @@ class Simulation :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
         """
-        run_node_payoffs = []   # Node payoffs for each run, populated if network update is 'relabel'
-        run_avg_payoffs = []    # Contains the average payoffs for each run
+        run_node_payoffs = np.zeros((self.__n_runs, self.__n_time_steps, self.__pop_size))   # Node payoffs for each run, populated if network update is 'relabel'
+        run_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))    # Contains the average payoffs for each run
         for i_run in range(self.__n_runs) :
             # Generate agents in first generation (with random matrices)
             first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
@@ -111,21 +111,21 @@ class Simulation :
             # Generate network and embed first generation
             G = nx.relabel_nodes(self.generate_network(), first_gen)
 
-            step_node_payoffs = []   # Payoffs for each node,, populated if network update is 'relabel'
-            step_avg_payoffs = []   # Contains the average payoffs for each time step
+            step_node_payoffs = np.zeros((self.__n_time_steps, self.__pop_size))   # Payoffs for each node,, populated if network update is 'relabel'
+            step_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
             for step_num in range(self.__n_time_steps) :
                 # Simulate communication and reproduction
                 G, comm_payoffs, node_payoffs = self.next_generation(G)
                 
                 # If nodes are relabeled, record payoff for each node
                 if self.__network_update == 'relabel' :
-                    step_node_payoffs.append(node_payoffs)
+                    step_node_payoffs[step_num] = node_payoffs
 
                 # Record average payoff
-                macro_average_payoff = np.mean(comm_payoffs) if comm_payoffs else None
-                step_avg_payoffs.append(macro_average_payoff)
-            run_node_payoffs.append(step_node_payoffs)
-            run_avg_payoffs.append(step_avg_payoffs)
+                macro_average_payoff = np.mean(comm_payoffs) if comm_payoffs.size else None
+                step_avg_payoffs[step_num] = macro_average_payoff
+            run_node_payoffs[i_run] = step_node_payoffs
+            run_avg_payoffs[i_run] = step_avg_payoffs
 
         self.__network = G
         self.__run_avg_payoffs = run_avg_payoffs
@@ -141,9 +141,9 @@ class Simulation :
         """
         agents = list(G.nodes)
         # Total payoff for each agent (over communication with all others)
-        total_payoffs = []
+        total_payoffs = np.array([])
         # Individual payoffs of single communication between every two agents 
-        individual_payoffs = []
+        individual_payoffs = np.array([])
 
         # TODO: change variable names (speaker/listener)
         for speaker in agents :
@@ -152,10 +152,10 @@ class Simulation :
             for listener in list_connections :
                 payoff = agent.payoff(speaker, listener)
                 agent_total_payoff += payoff
-                individual_payoffs.append(payoff)
+                individual_payoffs = np.append(individual_payoffs, payoff)
             if agent_total_payoff : 
                 agent_total_payoff = agent_total_payoff / len(list_connections)
-            total_payoffs.append(agent_total_payoff)
+            total_payoffs = np.append(total_payoffs, agent_total_payoff)
 
         # Generate list of normalized fitness scores
         sum_payoffs = np.sum(total_payoffs)
@@ -273,8 +273,8 @@ class Simulation :
         sim_dict = self.get_params()
         if include_payoffs :
             sim_dict.update(dict(
-                avg_payoffs=self.get_avg_payoffs(), 
-                node_payoffs=self.get_node_payoffs()
+                avg_payoffs=self.get_avg_payoffs().tolist(),
+                node_payoffs=self.get_node_payoffs().tolist()
                 ))
 
         return sim_dict
