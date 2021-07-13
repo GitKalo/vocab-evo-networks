@@ -265,7 +265,8 @@ class Simulation :
             'network_update': self.__network_update,
             'er_prob': self.__er_prob,
             'ba_links': self.__ba_links,
-            'hk_prob': self.__hk_prob
+            'hk_prob': self.__hk_prob,
+            'localize_learning': self.__localize_learning
         }
 
         return params
