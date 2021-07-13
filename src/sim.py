@@ -153,7 +153,13 @@ class Simulation :
 
                 # Create child that samples A from parent
                 child = agent.Agent(n, self.__n_objects, self.__n_signals)
-                child.update_language(self.get_sampled_matrix(parent, agents, normalized_payoffs))
+                if self.__localize_learning == True :
+                    parent_neighbors = list(nx.neighbors(G, parent))
+                    neighbor_mask = [a in parent_neighbors for a in agents]
+                    neighbor_payoffs = normalized_payoffs[neighbor_mask]
+                    child.update_language(self.get_sampled_matrix_local(parent, agents, normalized_payoffs))    # Change to include only neighbours
+                else :
+                    child.update_language(self.get_sampled_matrix_global(parent, agents, normalized_payoffs))
 
                 new_generation.append(child)
             # Generate new network and embed new generation
@@ -165,10 +171,6 @@ class Simulation :
             except ValueError as err :
                 parent = np.random.choice(agents)
 
-            # Create child that samples A from parent
-            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
-            child.update_language(self.get_sampled_matrix(parent, agents, normalized_payoffs))
-
             # Pick random neighbour of parent to replace
             parent_neighbors = list(nx.neighbors(G, parent))
             try :
@@ -176,6 +178,15 @@ class Simulation :
             except ValueError :
                 # If parent has no neighbors, replace parent
                 neighbor = parent
+            
+            # Create child that samples A from parent
+            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
+            if self.__localize_learning == True :
+                neighbor_mask = [a in parent_neighbors for a in agents]
+                neighbor_payoffs = normalized_payoffs[neighbor_mask]
+                child.update_language(self.get_sampled_matrix_local(parent, parent_neighbors, neighbor_payoffs)) # Change to include only neighbours
+            else :
+                child.update_language(self.get_sampled_matrix_global(parent, agents, normalized_payoffs))
 
             # Generate new network by replacing neighbor with child
             new_G = nx.relabel_nodes(G, {neighbor:child})
