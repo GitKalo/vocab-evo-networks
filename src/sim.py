@@ -91,6 +91,7 @@ class Simulation :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
         """
+        run_node_payoffs = []   # Node payoffs for each run, populated if network update is 'relabel'
         run_avg_payoffs = []    # Contains the average payoffs for each run
         for i_run in range(self.__n_runs) :
             # Generate agents in first generation (with random matrices)
@@ -101,6 +102,7 @@ class Simulation :
             # Generate network and embed first generation
             G = nx.relabel_nodes(self.generate_network(), first_gen)
 
+            step_node_payoffs = []   # Payoffs for each node,, populated if network update is 'relabel'
             step_avg_payoffs = []   # Contains the average payoffs for each time step
             for step_num in range(self.__n_time_steps) :
                 # Simulate communication and reproduction
@@ -241,14 +243,17 @@ class Simulation :
 
         return A
 
-    def as_series(self, payoffs=True) :
-        series = pd.Series(self.as_dict(payoffs))
+    def as_series(self, include_payoffs=True) :
+        series = pd.Series(self.as_dict(include_payoffs))
         return series
 
-    def as_dict(self, payoffs=True) :
+    def as_dict(self, include_payoffs=True) :
         sim_dict = self.get_params()
-        if payoffs :
-            sim_dict.update(dict(payoffs=self.get_avg_payoffs()))
+        if include_payoffs :
+            sim_dict.update(dict(
+                avg_payoffs=self.get_avg_payoffs(), 
+                node_payoffs=self.get_node_payoffs()
+                ))
 
         return sim_dict
 
@@ -282,6 +287,9 @@ class Simulation :
 
     def get_avg_payoffs(self) :
         return self.__run_avg_payoffs
+
+    def get_node_payoffs(self) :
+        return self.__run_node_payoffs
 
     # TODO: implement copy method
 
