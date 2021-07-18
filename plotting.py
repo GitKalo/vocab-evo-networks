@@ -62,7 +62,7 @@ def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
     elif type == 'hist' :
         if not time_step : time_step = len(runs[i_run])
         ax.hist(runs[i_run][time_step-1], bins=50)
-        ax.set_title(f"Payoff distribution for nodes at time step {time_step} for run {i_run + 1}")
+        ax.set_title(f"Payoff distribution at time step {time_step} for run {i_run + 1}")
     else :
         print(f"Unrecognized type {type}, must be either 'line' or 'hist'.")
         sys.exit()
