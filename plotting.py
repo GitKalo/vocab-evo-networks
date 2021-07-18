@@ -23,6 +23,34 @@ def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
 
     return ax
 
+# Plot payoffs over time for a set of runs for multiple simulation instances. 
+# All runs and (optionally) their mean is plotted.
+def plot_run_payoffs_all(sims_df, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
+    # Automatically calculate number of columns and rows for subplots if not specified
+    if not n_cols :
+        n_cols = int(np.ceil(np.sqrt(len(sims_df))))
+    if not n_rows :
+        n_rows = len(sims_df)//n_cols + int(np.ceil((len(sims_df)%n_cols)/n_cols))
+
+    fig, axs = plt.subplots(n_rows, n_cols, figsize=figsize)
+    for i, sim in sims_df.iterrows() :
+        # Determine which axis to plot on next
+        try :
+            ax_i, ax_j = i//n_cols, i%n_cols
+            ax = axs[ax_i][ax_j]
+        except TypeError :
+            try :
+                ax = axs[i]
+            except TypeError :
+                ax = axs
+
+        # Plot mean payoffs for simulation runs
+        v = None if not normalize else ast.literal_eval(sim.vocab_size)[0]
+        plot_run_payoffs(ax, sim.avg_payoffs, time_step_lim=sim.time_steps, mean=mean, v=v)
+        ax.set_title(f'Sim id: {i}')
+    
+    return fig, axs
+
 # Plot payoffs for all nodes for a single run. The `type` of the plot can be one of:
 # - 'line' -- plots the payoffs for all nodes over all time steps
 # - 'hist' -- plots the payoff distribution for nodes at a single time step, based on
@@ -67,26 +95,8 @@ if __name__ == '__main__' :
     except FileNotFoundError :
         sys.exit()
 
-    # Automatically calculate number of columns and rows for subplots
-    n_cols = int(np.ceil(np.sqrt(len(results_df))))
-    n_rows = len(results_df)//n_cols + int(np.ceil((len(results_df)%n_cols)/n_cols))
-
-    # Create figure and subplot axes, plot runs for each simulation instance
-    fig, axs = plt.subplots(n_rows, n_cols, figsize=(15, 8))
-    for i, sim in results_df.iterrows() :
-        # Determine which axis to plot on next
-        try :
-            ax_i, ax_j = i//n_cols, i%n_cols
-            ax = axs[ax_i][ax_j]
-        except TypeError :
-            try :
-                ax = axs[i]
-            except TypeError :
-                ax = axs
-
-        # Plot mean payoffs for simulation runs
-        plot_run_payoffs(ax, sim.avg_payoffs, time_step_lim=sim.time_steps)
-        ax.set_title(f'Sim id: {i}')
+    # Plot all runs in results dataframe
+    fig, axs = plot_run_payoffs_all(results_df)
 
     # Display simulation plot
     plt.show()
