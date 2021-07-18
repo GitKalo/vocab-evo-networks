@@ -23,7 +23,10 @@ def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
 
     return ax
 
-# 
+# Plot payoffs for all nodes for a single run. The `type` of the plot can be one of:
+# - 'line' -- plots the payoffs for all nodes over all time steps
+# - 'hist' -- plots the payoff distribution for nodes at a single time step, based on
+# the `time_step` argument (defaults to the last time step)
 def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
     if type == 'line' :
         ax.plot(runs[i_run])
