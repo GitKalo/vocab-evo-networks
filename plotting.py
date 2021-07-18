@@ -25,7 +25,7 @@ def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
 
 # Plot payoffs over time for a set of runs for multiple simulation instances. 
 # All runs and (optionally) their mean is plotted.
-def plot_run_payoffs_all(sims_df, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
+def plot_run_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
     # Automatically calculate number of columns and rows for subplots if not specified
     if not n_cols :
         n_cols = int(np.ceil(np.sqrt(len(sims_df))))
@@ -46,7 +46,8 @@ def plot_run_payoffs_all(sims_df, mean=True, normalize=False, n_cols=None, n_row
 
         # Plot mean payoffs for simulation runs
         v = None if not normalize else ast.literal_eval(sim.vocab_size)[0]
-        plot_run_payoffs(ax, sim.avg_payoffs, time_step_lim=sim.time_steps, mean=mean, v=v)
+        time_steps = sim.time_steps if not time_step_lim else time_step_lim
+        plot_run_payoffs(ax, sim.avg_payoffs, time_step_lim=time_steps, mean=mean, v=v)
         ax.set_title(f'Sim id: {i}')
     
     return fig, axs
