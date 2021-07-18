@@ -36,11 +36,11 @@ def plot_run_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False
     for i, sim in sims_df.iterrows() :
         # Determine which axis to plot on next
         try :
-            ax_i, ax_j = i//n_cols, i%n_cols
+            ax_i, ax_j = (i-1)//n_cols, (i-1)%n_cols
             ax = axs[ax_i][ax_j]
         except TypeError :
             try :
-                ax = axs[i]
+                ax = axs[i-1]
             except TypeError :
                 ax = axs
 
