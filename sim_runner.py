@@ -87,4 +87,15 @@ if __name__ == '__main__' :
     
     # Write CSV results to results file
     results_filepath = os.path.join(results_dirname, results_filename)
-    results_df.to_csv(results_filepath)
+
+    print(f"Saving to {results_filename}...")
+
+    filetype = results_filepath.split('.')[-1] 
+    if filetype == 'csv' :
+        results_df.to_csv(results_filepath)
+    elif filetype in ['parquet', 'parq'] :
+        print(results_df.info())
+        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding='json')
+    else :
+        print(f"Unrecognized file type '{filetype}'. Exiting...")
+        sys.exit()
