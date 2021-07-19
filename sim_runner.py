@@ -66,7 +66,7 @@ if __name__ == '__main__' :
     try :
         # If given a results path argument, extract file and directory name
         input_results_path = sys.argv[2]
-        if os.path.isfile(input_results_path) :
+        if len(input_results_path.split('.')) > 1 :
             results_filename = os.path.basename(input_results_path)
             results_dirname = os.path.dirname(input_results_path)
         else :
