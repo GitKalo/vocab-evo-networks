@@ -34,6 +34,8 @@ def plot_run_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False
 
     fig, axs = plt.subplots(n_rows, n_cols, figsize=figsize)
     for i, sim in sims_df.iterrows() :
+        i = int(i)  # Ensure index is in int format (not str)
+
         # Determine which axis to plot on next
         try :
             ax_i, ax_j = (i-1)//n_cols, (i-1)%n_cols
