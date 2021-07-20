@@ -71,7 +71,12 @@ class Simulation :
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
             self.__network_type = network_type
-            if network_type == 'random' and er_prob is None :
+            if network_type == 'lattice' :
+                if np.sqrt(self.__pop_size) % 1 > 0 :
+                    raise ValueError("For regular lattices, the pop size must be a square number.")
+                else :
+                    self.__lattice_dim_size = int(np.sqrt(self.__pop_size))
+            elif network_type == 'random' and er_prob is None :
                 raise TypeError("For random networks, the er_prob argument should be passed.")
             elif network_type == 'scale-free' and ba_links is None :
                 raise TypeError("For scale-free networks, the ba_links argument should be passed.")
@@ -220,10 +225,7 @@ class Simulation :
         Generate a network based on the `network_type` property.
         """
         if self.__network_type == 'lattice' :
-            dim_size = int(np.ceil(np.sqrt(self.__pop_size)))
-            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(dim_size, dim_size))
-            for n in list(G.nodes) :
-                if n >= self.__pop_size : G.remove_node(n)
+            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size))
         elif self.__network_type == 'complete' :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
