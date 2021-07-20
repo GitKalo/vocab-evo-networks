@@ -58,7 +58,8 @@ class Simulation :
                     sample_num=1, 
                     agents_sampled=2, 
                     p_mistake=0, 
-                    localize_learning=False) :
+                    localize_learning=False,
+                    periodic_lattice=False) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -88,6 +89,7 @@ class Simulation :
         self.__er_prob = er_prob
         self.__ba_links = ba_links
         self.__hk_prob = hk_prob
+        self.__periodic_lattice = periodic_lattice
 
         if network_update in self.__class__.network_updates :
             self.__network_update = network_update
@@ -225,7 +227,7 @@ class Simulation :
         Generate a network based on the `network_type` property.
         """
         if self.__network_type == 'lattice' :
-            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size))
+            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size, periodic=self.__periodic_lattice))
         elif self.__network_type == 'complete' :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
