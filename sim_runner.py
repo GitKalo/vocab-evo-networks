@@ -92,8 +92,6 @@ if __name__ == '__main__' :
     # Write CSV results to results file
     results_filepath = os.path.join(results_dirname, results_filename)
 
-    print(f"Saving to {results_filename}...")
-
     filetype = results_filepath.split('.')[-1] 
     if filetype == 'csv' :
         results_df.to_csv(results_filepath)
@@ -102,3 +100,5 @@ if __name__ == '__main__' :
     else :
         print(f"Unrecognized file type '{filetype}'. Exiting...")
         sys.exit()
+
+    print(f"Saving to {results_filename}...")
