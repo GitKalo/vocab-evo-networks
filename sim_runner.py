@@ -1,6 +1,8 @@
 import time, os, sys, json, errno
 
 import pandas as pd
+import numpy as np
+import networkx as nx
 
 from src import sim
 
@@ -102,3 +104,38 @@ if __name__ == '__main__' :
         sys.exit()
 
     print(f"Saving to {results_filename}...")
+
+    # Pickle networks if provided argument
+    try :
+        # Check for correct argument switch ('-n')
+        switch = sys.argv[3]
+        if not switch == '-n' :
+            print(f"Unrecognized switch '{switch}'. Exiting...")
+            sys.exit()
+
+        input_networks_dir = sys.argv[4]
+        if len(input_networks_dir.split('.')) > 1 :
+            print("Invalid directory for network output (not a directory). Exiting...")
+            sys.exit()
+
+        # Create networks output directory if non-existent
+        if not os.path.exists(input_networks_dir) :
+            try :
+                os.makedirs(input_networks_dir)
+            except OSError as exc :
+                if exc.errno != errno.EEXIST :
+                    raise
+
+        for sim_id, run_networks in sim_networks.items() :
+            sim_networks_dir = os.path.join(input_networks_dir, f'sim_{sim_id}_nwks')
+            try :
+                os.makedirs(sim_networks_dir)
+            except OSError as exc :
+                if exc.errno != errno.EEXIST :
+                    raise
+            
+            it = np.nditer(run_networks, flags=['refs_ok', 'c_index'])
+            for G in it :
+                nx.write_gpickle(G, os.path.join(sim_networks_dir, f'network_run_{it.index}.pickle'))
+    except IndexError :
+        pass
