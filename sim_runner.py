@@ -6,6 +6,8 @@ from src import sim
 
 __DEFAULT_RESULTS_DIR = './sim_results/'    # Default directory for writing CSV of sim results
 
+sim_networks = {}
+
 # Run simulation based on simulation runs dict.
 # The runs dict has simulation ids as keys, and parameters dicts as values.
 def run_sim(sim_params) :
@@ -27,9 +29,11 @@ def run_sim(sim_params) :
         sim_results.name = id
         res_series.append(sim_results)
 
+        sim_networks[id] = simulation.get_networks()
+
     # Create and return dataframe of simulation run results
     res_df = pd.DataFrame(res_series)
-    return res_df
+    return res_df, sim_networks
 
 # If run as standalone module, take simulation runs parameter file as input, run 
 # simulations, and output CSV file of results (which can also be given as input).
@@ -57,7 +61,7 @@ if __name__ == '__main__' :
     start_time = time.time()
     check_time = start_time
 
-    results_df = run_sim(sim_params)
+    results_df, _ = run_sim(sim_params)
 
     print("---  Finished in %.2f minutes (real time)  ---" % ((time.time() - start_time) / 60))
 

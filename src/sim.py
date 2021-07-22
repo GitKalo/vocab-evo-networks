@@ -103,6 +103,9 @@ class Simulation :
 
         self.__localize_learning=localize_learning
 
+        # Initialize list of networks
+        self.__run_networks = np.array([nx.Graph] * self.__n_runs)
+
     def run(self) :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
@@ -134,7 +137,8 @@ class Simulation :
             run_node_payoffs[i_run] = step_node_payoffs
             run_avg_payoffs[i_run] = step_avg_payoffs
 
-        self.__network = G
+            self.__run_networks[i_run] = G
+
         self.__run_avg_payoffs = run_avg_payoffs
         self.__run_node_payoffs = run_node_payoffs
 
@@ -303,13 +307,12 @@ class Simulation :
 
         return params
 
-    def get_network_view(self) :
+    def get_networks(self) :
         """
-        Get a read-only copy of the network. Can be used for plotting the
-        network or analyzing its properties.
+        Return the list of last-time-step networks for all runs.
         """
         # TODO: validate that network attribute exists
-        return self.__network.copy(as_view=True)
+        return self.__run_networks
 
     def get_avg_payoffs(self) :
         return self.__run_avg_payoffs
