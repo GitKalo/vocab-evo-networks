@@ -98,7 +98,7 @@ if __name__ == '__main__' :
     if filetype == 'csv' :
         results_df.to_csv(results_filepath)
     elif filetype in ['parquet', 'parq'] :
-        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding='json')
+        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding='json', row_group_offsets=1)
     else :
         print(f"Unrecognized file type '{filetype}'. Exiting...")
         sys.exit()
