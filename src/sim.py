@@ -196,7 +196,7 @@ class Simulation :
                     parent_neighbors = list(nx.neighbors(G, parent))
                     neighbor_mask = [a in parent_neighbors for a in agents]
                     neighbor_payoffs = normalized_payoffs[neighbor_mask]
-                    child.update_language(self.get_sampled_matrix_local(parent, agents, normalized_payoffs))    # Change to include only neighbours
+                    child.update_language(self.get_sampled_matrix_local(parent, parent_neighbors, neighbor_payoffs))    # Change to include only neighbours
                 else :
                     child.update_language(self.get_sampled_matrix_global(parent, agents, normalized_payoffs))
 
