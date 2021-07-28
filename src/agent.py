@@ -106,17 +106,13 @@ def payoff(a1, a2) :
     of the other agent inferring the initial object upon hearing the signal, summed over all
     objects and signals, for each agent.
     """
-    if np.shape(a1.assoc_matrix) != np.shape(a2.assoc_matrix) :
-        raise ValueError("Payoff of communication can only be calculated for agents with the same number of objects/signals.")
+    try :
+        payoff = 0.5 * np.sum(np.diagonal(np.matmul(a1.active_matrix, a2.passive_matrix)) + np.diagonal(np.matmul(a2.active_matrix, a1.passive_matrix)))
+    except ValueError :
+        print("Payoff of communication can only be calculated for agents with the same number of objects/signals.")
+        raise
 
-    # return 0.5 * np.sum(
-    #     [np.sum(
-    #         [a1.active_matrix[i][j] * a2.passive_matrix[j][i] + 
-    #             a2.active_matrix[i][j] * a1.passive_matrix[j][i] for j in range(a1.get_n_sym())]
-    #         ) for i in range(a1.get_n_obj())]
-    #     )
-
-    return 0.5 * np.sum(np.diagonal(np.matmul(a1.active_matrix, a2.passive_matrix)) + np.diagonal(np.matmul(a2.active_matrix, a1.passive_matrix)))
+    return payoff
 
 def sample(agent, k, p_mistake=0) :
     """
