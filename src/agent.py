@@ -139,6 +139,8 @@ def sample(agent, k, p_mistake=0) :
                 response = np.random.choice(n_signals, p=agent.active_matrix[obj])
                 if p_mistake and np.random.binomial(1, p_mistake) :
                     response = np.random.choice(n_signals)
+                else :
+                    response = np.random.choice(n_signals, p=agent.active_matrix[obj])
             except ValueError as err :
                 print(err)
                 break
