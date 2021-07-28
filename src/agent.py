@@ -136,7 +136,6 @@ def sample(agent, k, p_mistake=0) :
         for _ in range(k) :
             try :
                 # Sample response
-                response = np.random.choice(n_signals, p=agent.active_matrix[obj])
                 if p_mistake and np.random.binomial(1, p_mistake) :
                     response = np.random.choice(n_signals)
                 else :
