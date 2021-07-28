@@ -103,7 +103,7 @@ if __name__ == '__main__' :
         print(f"Unrecognized file type '{filetype}'. Exiting...")
         sys.exit()
 
-    print(f"Saving to {results_filename}...")
+    print(f"Saved to {results_filename}.")
 
     # Pickle networks if provided argument
     try :
