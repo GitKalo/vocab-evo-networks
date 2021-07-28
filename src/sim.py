@@ -31,6 +31,7 @@ class Simulation :
     """
     network_types = [
         'lattice',
+        'ring',
         'complete',
         'random',
         'scale-free',
@@ -50,6 +51,8 @@ class Simulation :
 
     def __init__(self, pop_size, time_steps, runs, network_type, network_update,
                     learning='parental',
+                    ring_rewire_prob=0,
+                    ring_neighbors=None,
                     er_prob=None,
                     ba_links=None, 
                     hk_prob=None, 
@@ -77,6 +80,8 @@ class Simulation :
                     raise ValueError("For regular lattices, the pop size must be a square number.")
                 else :
                     self.__lattice_dim_size = int(np.sqrt(self.__pop_size))
+            elif network_type == 'ring' and ring_neighbors is None :
+                raise TypeError("For ring graphs, the ring_neighbors argument should be passed.")
             elif network_type == 'random' and er_prob is None :
                 raise TypeError("For random networks, the er_prob argument should be passed.")
             elif network_type == 'scale-free' and ba_links is None :
@@ -86,6 +91,8 @@ class Simulation :
         else :
             raise ValueError(f"Network type '{network_type}' not recognized.")
 
+        self.__ring_rewire_prob = ring_rewire_prob
+        self.__ring_neighbors = ring_neighbors
         self.__er_prob = er_prob
         self.__ba_links = ba_links
         self.__hk_prob = hk_prob
@@ -232,6 +239,8 @@ class Simulation :
         """
         if self.__network_type == 'lattice' :
             G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size, periodic=self.__periodic_lattice))
+        elif self.__network_type == 'ring' :
+            G = nx.watts_strogatz_graph(self.__pop_size, self.__ring_neighbors, self.__ring_rewire_prob)
         elif self.__network_type == 'complete' :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
