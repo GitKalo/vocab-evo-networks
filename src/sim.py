@@ -318,7 +318,11 @@ class Simulation :
             'er_prob': self.__er_prob,
             'ba_links': self.__ba_links,
             'hk_prob': self.__hk_prob,
-            'localize_learning': self.__localize_learning
+            'localize_learning': self.__localize_learning,
+            'ring_rewire_prob': self.__ring_rewire_prob,
+            'ring_neighbors': self.__ring_neighbors,
+            'periodic_lattice': self.__periodic_lattice,
+            'n_payoff_reports': self.__n_payoff_reports
         }
 
         return params
