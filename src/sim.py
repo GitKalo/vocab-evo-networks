@@ -113,6 +113,7 @@ class Simulation :
 
         self.__n_payoff_reports = n_payoff_reports
         self.__i_payoff_reports = np.linspace(0, self.__n_time_steps - 1, n_payoff_reports, dtype=int)
+
         # Initialize list of networks
         self.__run_networks = np.array([nx.Graph] * self.__n_runs)
 
@@ -120,7 +121,7 @@ class Simulation :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
         """
-        run_node_payoffs = np.zeros((self.__n_runs, self.__n_time_steps, self.__pop_size))   # Node payoffs for each run, populated if network update is 'relabel'
+        run_node_payoffs = np.zeros((self.__n_runs, self.__n_payoff_reports, self.__pop_size))   # Node payoffs for each run, populated if network update is 'relabel'
         run_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))    # Contains the average payoffs for each run
         for i_run in range(self.__n_runs) :
             # Generate agents in first generation (with random matrices)
@@ -131,15 +132,20 @@ class Simulation :
             # Generate network and embed first generation
             G = nx.relabel_nodes(self.generate_network(), first_gen)
 
-            step_node_payoffs = np.zeros((self.__n_time_steps, self.__pop_size))   # Payoffs for each node,, populated if network update is 'relabel'
+            step_node_payoffs = np.zeros((self.__n_payoff_reports, self.__pop_size))   # Payoffs for each node,, populated if network update is 'relabel'
             step_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
+            reports_counter = 0
+
             for step_num in range(self.__n_time_steps) :
                 # Simulate communication and reproduction
                 G, node_payoffs = self.next_generation(G)
                 
                 # If nodes are relabeled, record payoff for each node
                 if self.__network_update == 'relabel' :
-                    step_node_payoffs[step_num] = node_payoffs
+                    if step_num in self.__i_payoff_reports :
+                        print(f'lol {step_num}')    # REMOVE
+                        step_node_payoffs[reports_counter] = node_payoffs
+                        reports_counter += 1
 
                 # Record average payoff
                 macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
