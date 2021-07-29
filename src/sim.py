@@ -143,7 +143,6 @@ class Simulation :
                 # If nodes are relabeled, record payoff for each node
                 if self.__network_update == 'relabel' :
                     if step_num in self.__i_payoff_reports :
-                        print(f'lol {step_num}')    # REMOVE
                         step_node_payoffs[reports_counter] = node_payoffs
                         reports_counter += 1
 
