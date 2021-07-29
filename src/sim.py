@@ -160,19 +160,12 @@ class Simulation :
         agents = list(G.nodes)
         # Total payoff for each agent (over communication with all others)
         total_payoffs = np.array([])
-        # Individual payoffs of single communication between every two agents 
-        # individual_payoffs = np.array([])
 
         # TODO: change variable names (speaker/listener)
         for speaker in agents :
             list_connections = list(nx.neighbors(G, speaker))
             agent_total_payoff = np.sum(agent.payoff(speaker, l) for l in list_connections)
-            # for listener in list_connections :
-            #     payoff = agent.payoff(speaker, listener)
-            #     agent_total_payoff += payoff
-                # individual_payoffs = np.append(individual_payoffs, payoff)
-            # if agent_total_payoff :
-            #     agent_total_payoff = agent_total_payoff / len(list_connections)
+
             try :
                 agent_total_payoff = agent_total_payoff / len(list_connections)
             except ZeroDivisionError :
