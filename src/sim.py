@@ -62,7 +62,8 @@ class Simulation :
                     agents_sampled=2, 
                     p_mistake=0, 
                     localize_learning=False,
-                    periodic_lattice=False) :
+                    periodic_lattice=False,
+                    n_payoff_reports=1000) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -110,6 +111,8 @@ class Simulation :
 
         self.__localize_learning=localize_learning
 
+        self.__n_payoff_reports = n_payoff_reports
+        self.__i_payoff_reports = np.linspace(0, self.__n_time_steps - 1, n_payoff_reports, dtype=int)
         # Initialize list of networks
         self.__run_networks = np.array([nx.Graph] * self.__n_runs)
 
