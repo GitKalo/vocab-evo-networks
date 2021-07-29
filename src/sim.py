@@ -132,22 +132,22 @@ class Simulation :
             step_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
             for step_num in range(self.__n_time_steps) :
                 # Simulate communication and reproduction
-                G, comm_payoffs, node_payoffs = self.next_generation(G)
+                G, node_payoffs = self.next_generation(G)
                 
                 # If nodes are relabeled, record payoff for each node
                 if self.__network_update == 'relabel' :
                     step_node_payoffs[step_num] = node_payoffs
 
                 # Record average payoff
-                macro_average_payoff = np.mean(comm_payoffs) if comm_payoffs.size else None
+                macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
                 step_avg_payoffs[step_num] = macro_average_payoff
             run_node_payoffs[i_run] = step_node_payoffs
             run_avg_payoffs[i_run] = step_avg_payoffs
 
-            self.__run_networks[i_run] = G
+            self.__run_networks[i_run] = G.copy()
 
-        self.__run_avg_payoffs = run_avg_payoffs
         self.__run_node_payoffs = run_node_payoffs
+        self.__run_avg_payoffs = run_avg_payoffs
 
     def next_generation(self, G) :
         """
@@ -161,18 +161,23 @@ class Simulation :
         # Total payoff for each agent (over communication with all others)
         total_payoffs = np.array([])
         # Individual payoffs of single communication between every two agents 
-        individual_payoffs = np.array([])
+        # individual_payoffs = np.array([])
 
         # TODO: change variable names (speaker/listener)
         for speaker in agents :
-            agent_total_payoff = 0
             list_connections = list(nx.neighbors(G, speaker))
-            for listener in list_connections :
-                payoff = agent.payoff(speaker, listener)
-                agent_total_payoff += payoff
-                individual_payoffs = np.append(individual_payoffs, payoff)
-            if agent_total_payoff : 
+            agent_total_payoff = np.sum(agent.payoff(speaker, l) for l in list_connections)
+            # for listener in list_connections :
+            #     payoff = agent.payoff(speaker, listener)
+            #     agent_total_payoff += payoff
+                # individual_payoffs = np.append(individual_payoffs, payoff)
+            # if agent_total_payoff :
+            #     agent_total_payoff = agent_total_payoff / len(list_connections)
+            try :
                 agent_total_payoff = agent_total_payoff / len(list_connections)
+            except ZeroDivisionError :
+                pass
+
             total_payoffs = np.append(total_payoffs, agent_total_payoff)
 
         # Generate list of normalized fitness scores
@@ -231,7 +236,7 @@ class Simulation :
             new_G = nx.relabel_nodes(G, {neighbor:child})
 
         # Return new network and the individual payoffs for all agents
-        return new_G, individual_payoffs, total_payoffs
+        return new_G, total_payoffs
 
     def generate_network(self) :
         """
