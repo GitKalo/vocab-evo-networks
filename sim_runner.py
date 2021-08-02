@@ -114,9 +114,9 @@ if __name__ == '__main__' :
             sys.exit()
 
         input_networks_dir = sys.argv[4]
-        if len(input_networks_dir.split('.')) > 1 :
-            print("Invalid directory for network output (not a directory). Exiting...")
-            sys.exit()
+        # if len(input_networks_dir.split('.')) > 1 :
+        #     print("Invalid directory for network output (not a directory). Exiting...")
+        #     sys.exit()
 
         # Create networks output directory if non-existent
         if not os.path.exists(input_networks_dir) :
