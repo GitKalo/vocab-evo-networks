@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from multiprocessing.pool import Pool
+
 from . import agent, util
 
 class Simulation :
@@ -125,41 +127,52 @@ class Simulation :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
         """
-        run_node_payoffs = np.zeros((self.__n_runs, self.__n_payoff_reports, self.__pop_size))   # Node payoffs for each run, populated if network update is 'relabel'
-        run_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))    # Contains the average payoffs for each run
-        for i_run in range(self.__n_runs) :
-            # Generate agents in first generation (with random matrices)
-            first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
-            for k, v in first_gen.items() :
-                v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_signals))
+
+        if self.__n_processes == 1 :
+            for i_run in range(self.__n_runs) :
+                _, run_avg_payoffs, run_node_payoffs, run_network = self.exec_run(i_run)
+
+                self.__sim_avg_payoffs[i_run] = run_avg_payoffs
+                self.__sim_node_payoffs[i_run] = run_node_payoffs
+                self.__sim_networks[i_run] = run_network.copy()
+        else :
+            with Pool(self.__n_processes) as pool :
+                results = pool.map(self.exec_run, range(self.__n_runs))
+                for i_run, avg, node, nwk in results :
+                    self.__sim_avg_payoffs[i_run] = avg
+                    self.__sim_node_payoffs[i_run] = node
+                    self.__sim_networks[i_run] = nwk.copy()
+
+    def exec_run(self, i_run) :
+        # Generate agents in first generation (with random matrices)
+        first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
+        for _, v in first_gen.items() :
+            v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_signals))
+        
+        # Generate network and embed first generation
+        G = nx.relabel_nodes(self.generate_network(), first_gen)
+
+        run_node_payoffs = np.zeros((self.__n_payoff_reports, self.__pop_size))   # Payoffs for each node, populated if network update is 'relabel'
+        run_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
+        reports_counter = 0
+
+        for step_num in range(self.__n_time_steps) :
+            # Simulate communication and reproduction
+            G, node_payoffs = self.next_generation(G)
             
-            # Generate network and embed first generation
-            G = nx.relabel_nodes(self.generate_network(), first_gen)
+            # If nodes are relabeled, record payoff for each node
+            if self.__network_update == 'relabel' :
+                if step_num in self.__i_payoff_reports :
+                    run_node_payoffs[reports_counter] = node_payoffs
+                    reports_counter += 1
 
-            step_node_payoffs = np.zeros((self.__n_payoff_reports, self.__pop_size))   # Payoffs for each node,, populated if network update is 'relabel'
-            step_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
-            reports_counter = 0
+            # Record average payoff
+            macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
+            run_avg_payoffs[step_num] = macro_average_payoff
 
-            for step_num in range(self.__n_time_steps) :
-                # Simulate communication and reproduction
-                G, node_payoffs = self.next_generation(G)
-                
-                # If nodes are relabeled, record payoff for each node
-                if self.__network_update == 'relabel' :
-                    if step_num in self.__i_payoff_reports :
-                        step_node_payoffs[reports_counter] = node_payoffs
-                        reports_counter += 1
+        run_network = G.copy()
 
-                # Record average payoff
-                macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
-                step_avg_payoffs[step_num] = macro_average_payoff
-            run_node_payoffs[i_run] = step_node_payoffs
-            run_avg_payoffs[i_run] = step_avg_payoffs
-
-            self.__run_networks[i_run] = G.copy()
-
-        self.__run_node_payoffs = run_node_payoffs
-        self.__run_avg_payoffs = run_avg_payoffs
+        return (i_run, run_avg_payoffs, run_node_payoffs, run_network)
 
     def next_generation(self, G) :
         """
