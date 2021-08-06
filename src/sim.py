@@ -114,9 +114,12 @@ class Simulation :
 
         self.__n_payoff_reports = n_payoff_reports
         self.__i_payoff_reports = np.linspace(0, self.__n_time_steps - 1, n_payoff_reports, dtype=int)
+        self.__n_processes = n_processes if n_processes else self.__n_runs  # Number of processes defaults to the number of runs
 
-        # Initialize list of networks
-        self.__run_networks = np.array([nx.Graph] * self.__n_runs)
+        # Initialize containers for payoff and networks reporting
+        self.__sim_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))     # Average payoffs for each run
+        self.__sim_node_payoffs = np.zeros((self.__n_runs, self.__n_payoff_reports, self.__pop_size))     # Node payoffs for each run, populated if network update is 'relabel'
+        self.__sim_networks = np.array([nx.Graph] * self.__n_runs)
 
     def run(self) :
         """
@@ -333,13 +336,13 @@ class Simulation :
         Return the list of last-time-step networks for all runs.
         """
         # TODO: validate that network attribute exists
-        return self.__run_networks
+        return self.__sim_networks
 
     def get_avg_payoffs(self) :
-        return self.__run_avg_payoffs
+        return self.__sim_avg_payoffs
 
     def get_node_payoffs(self) :
-        return self.__run_node_payoffs
+        return self.__sim_node_payoffs
 
     # TODO: implement copy method
 
