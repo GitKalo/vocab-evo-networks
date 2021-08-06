@@ -63,7 +63,8 @@ class Simulation :
                     p_mistake=0, 
                     localize_learning=False,
                     periodic_lattice=False,
-                    n_payoff_reports=1000) :
+                    n_payoff_reports=1000,
+                    n_processes=None) :
         self.__pop_size = pop_size
         self.__n_time_steps = time_steps
         self.__n_runs = runs
@@ -321,7 +322,8 @@ class Simulation :
             'ring_rewire_prob': self.__ring_rewire_prob,
             'ring_neighbors': self.__ring_neighbors,
             'periodic_lattice': self.__periodic_lattice,
-            'n_payoff_reports': self.__n_payoff_reports
+            'n_payoff_reports': self.__n_payoff_reports,
+            'n_processes': self.__n_processes
         }
 
         return params
