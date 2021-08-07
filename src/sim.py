@@ -186,13 +186,17 @@ class Simulation :
         # Total payoff for each agent (over communication with all others)
         total_payoffs = np.array([])
 
-        # TODO: change variable names (speaker/listener)
-        for speaker in agents :
-            list_connections = list(nx.neighbors(G, speaker))
-            agent_total_payoff = np.sum(agent.payoff(speaker, l) for l in list_connections)
+        # Calculate symmetric payoffs and add as graph attribute
+        payoffs = {(a1, a2): {'payoff': agent.payoff(a1, a2)} for a1, a2 in list(G.edges())}
+        nx.set_edge_attributes(G, payoffs)
 
+        # Calculate total payoffs
+        for a in agents :
+            links = G.edges(nbunch=a, data=True)
+            agent_total_payoff = np.sum([d['payoff'] for _, _, d in links])
+            
             try :
-                agent_total_payoff = agent_total_payoff / len(list_connections)
+                agent_total_payoff = agent_total_payoff / len(links)
             except ZeroDivisionError :
                 pass
 
