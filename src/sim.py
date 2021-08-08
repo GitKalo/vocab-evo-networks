@@ -144,6 +144,9 @@ class Simulation :
                     self.__sim_networks[i_run] = nwk.copy()
 
     def exec_run(self, i_run) :
+        # Re-seed rng to get different results in parallel processes
+        np.random.seed()
+
         # Generate agents in first generation (with random matrices)
         first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
         for _, v in first_gen.items() :
