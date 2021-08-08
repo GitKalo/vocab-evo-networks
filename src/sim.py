@@ -304,7 +304,10 @@ class Simulation :
             try :
                 models = np.random.choice(neighbors, size=self.__n_agents_sampled, p=neighbour_payoffs)
             except ValueError :
-                models = np.random.choice(neighbors, size=self.__n_agents_sampled)
+                try :
+                    models = np.random.choice(neighbors, size=self.__n_agents_sampled)
+                except ValueError :
+                    return
             A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
         elif self.__learning_strategy == 'random' :
             models = np.random.choice(neighbors, size=self.__n_agents_sampled)
