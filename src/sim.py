@@ -199,7 +199,7 @@ class Simulation :
             agent_total_payoff = np.sum([d['payoff'] for _, _, d in links])
             
             try :
-                agent_total_payoff = agent_total_payoff / len(links)
+                agent_total_payoff = float(agent_total_payoff) / len(links)
             except ZeroDivisionError :
                 pass
 
