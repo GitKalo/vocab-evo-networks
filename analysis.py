@@ -2,7 +2,7 @@ import pandas as pd
 
 import sys, ast
 
-# Import CSV of simulation results
+# Import simulation results
 def import_results(results_filepath) :
     try :
         filetype = results_filepath.split('.')[-1]
