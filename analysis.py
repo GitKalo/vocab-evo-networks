@@ -18,6 +18,13 @@ PARQUET_OBJECT_ENCODINGS = {
     'node_payoffs': 'json',
 }
 
+# Calculate standard errors of mean payoffs
+def std_err_estimator(avg_payoffs) :
+    stds = np.std(avg_payoffs, axis=0)
+    sqrt_sample_size = np.sqrt(len(avg_payoffs))
+    std_errs = stds / sqrt_sample_size
+    return std_errs
+
 # Get payoff normalized by distance between initial and final
 def norm_payoff(avg_payoffs, time_step) :
     return (avg_payoffs[time_step] - avg_payoffs[-1]) / (avg_payoffs[0] - avg_payoffs[-1])
