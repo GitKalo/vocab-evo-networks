@@ -80,3 +80,12 @@ def export_results(results_df, results_filepath=None) :
         results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding=PARQUET_OBJECT_ENCODINGS)
 
     print(f"Saved to {os.path.abspath(results_filepath)}.")
+
+# Combine results from multiple files into single dataframe
+def combine_results(res_files) :
+    dfs = []
+    for file in res_files :
+        dfs.append(import_results(file))
+    results_df = pd.concat(dfs)
+    results_df.reset_index(drop=True, inplace=True)
+    return results_df
