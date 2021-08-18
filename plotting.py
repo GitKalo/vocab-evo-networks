@@ -1,9 +1,10 @@
-from datetime import time
 import numpy as np
-import pandas as pd
+import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
-import ast, os, sys
+import ast, sys
+import analysis
 
 # Plot payoffs over time for a set of runs. Optinally plot the mean payoffs
 # over all runs as well (via the `mean` argument)
@@ -71,6 +72,33 @@ def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
         sys.exit()
 
     return ax
+
+# Update function for animation
+def update_animation_node_payoffs(num, G, results_df, pos, ax, i_sim=0, i_run=0,step_size=1, draw_params={}):
+    ax.clear()
+
+    # Draw network colored by node payoffs 
+    ts = num * step_size
+    node_payoffs = analysis.get_node_payoffs(results_df, i_sim, i_run, time_step=ts)
+    nx.draw(G, pos=pos, node_color=node_payoffs, ax=ax, **draw_params)
+
+    # Set the title
+    ax.set_title(f"Time step {ts}")
+
+# Run animation
+def run_animation(G, step_lim, step_size=1, gif_filename='ani.gif', interval=200, **draw_params):
+
+    # Build plot
+    fig, ax = plt.subplots(figsize=(10,6))
+
+    pos = nx.spring_layout(G, iterations=1000)
+
+    n_frames = step_lim//step_size
+
+    ani = animation.FuncAnimation(fig, update_animation_node_payoffs, frames=n_frames, fargs=(G, pos, ax, step_size, draw_params), interval=interval, repeat_delay=500)
+    ani.save(gif_filename, writer='imagemagick')
+
+    plt.show()
 
 if __name__ == '__main__' :
     # Get results filename
