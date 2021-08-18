@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import sys, ast, os, errno
 
@@ -16,6 +17,37 @@ PARQUET_OBJECT_ENCODINGS = {
     'avg_payoffs': 'json',
     'node_payoffs': 'json',
 }
+
+# Get payoff normalized by distance between initial and final
+def norm_payoff(avg_payoffs, time_step) :
+    return (avg_payoffs[time_step] - avg_payoffs[-1]) / (avg_payoffs[0] - avg_payoffs[-1])
+
+# Get absolute normalized payoffs
+def norm_payoff_abs(avg_payoffs, time_step) :
+    return np.abs((avg_payoffs[time_step] - avg_payoffs[-1]) / (avg_payoffs[0] - avg_payoffs[-1]))
+
+# Get relaxation time -- only applicable for monotonic payoff functions!
+def t_relax(avg_payoffs) :
+    return np.sum([norm_payoff(avg_payoffs, i) for i in range(len(avg_payoffs))])
+
+# Get list of distances to final payoff based on normalzed payoffs
+def get_distances(avg_payoffs) :
+    return [norm_payoff_abs(avg_payoffs, i) for i in range(len(avg_payoffs))]
+
+# Get convergence time based on pre-determined distance to final payoff (treshold parameter)
+def get_t_conv_treshold(distances, treshold) :
+    for i, d in enumerate(distances[::-1]) :
+        if d > treshold :
+            t_conv = len(distances) - (i - 1)
+            break
+
+    return t_conv
+
+# Convergence time based on payoffs -- micro average of simulation runs
+def t_conv(run_payoffs, treshold) :
+    all_distances = [get_distances(p) for p in run_payoffs]
+    all_t_conv = [get_t_conv_treshold(dist, treshold) for dist in all_distances]
+    return np.mean(all_t_conv)
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
