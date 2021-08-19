@@ -172,3 +172,15 @@ def combine_results(res_files) :
     results_df = pd.concat(dfs)
     results_df.reset_index(drop=True, inplace=True)
     return results_df
+
+# Index a results df by sim ID and run ID by exploding on payoff columns
+def reindex_df(results_df) :
+    new_df = results_df.explode(['avg_payoffs', 'node_payoffs'])
+    new_df['sim'] = new_df.index
+    new_df = new_df.reset_index(drop=True)
+    new_df['run'] = new_df.index
+    new_df = new_df.set_index(['sim', 'run'])
+    n_runs = new_df.runs.iloc[0]
+    new_df = new_df.rename(lambda x : x%n_runs, axis=0, level=1)
+
+    return new_df
