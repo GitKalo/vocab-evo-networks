@@ -52,11 +52,14 @@ def get_t_conv_treshold(distances, treshold) :
 
     return t_conv
 
-# Convergence time based on payoffs -- micro average of simulation runs
-def t_conv(run_payoffs, treshold) :
+def get_t_conv_runs(run_payoffs, treshold) :
     all_distances = [get_distances(p) for p in run_payoffs]
     all_t_conv = [get_t_conv_treshold(dist, treshold) for dist in all_distances]
-    return np.mean(all_t_conv)
+    return all_t_conv
+
+# Convergence time based on payoffs -- micro average of simulation runs
+def t_conv(run_payoffs, treshold) :
+    return np.mean(get_t_conv_runs(run_payoffs, treshold))
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
