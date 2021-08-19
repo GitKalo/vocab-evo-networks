@@ -167,8 +167,8 @@ def export_results(results_df, results_filepath=None) :
 # Combine results from multiple files into single dataframe
 def combine_results(res_files) :
     dfs = []
-    for file in res_files :
-        dfs.append(import_results(file))
+    for f in res_files :
+        dfs.append(import_results(f))
     results_df = pd.concat(dfs)
     results_df.reset_index(drop=True, inplace=True)
     return results_df
