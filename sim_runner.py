@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 
+import analysis
 from src import sim
 
 __DEFAULT_RESULTS_DIR = './sim_results/'    # Default directory for writing CSV of sim results
@@ -82,26 +83,12 @@ if __name__ == '__main__' :
         # If not given a results path argument, use default results output
         results_filename = base_filename + '_results.csv'
         results_dirname = __DEFAULT_RESULTS_DIR
-
-    # Create results output directory if non-existent
-    if not os.path.exists(results_dirname) :
-        try :
-            os.makedirs(results_dirname)
-        except OSError as exc :
-            if exc.errno != errno.EEXIST :
-                raise
     
     # Write CSV results to results file
     results_filepath = os.path.join(results_dirname, results_filename)
 
-    filetype = results_filepath.split('.')[-1] 
-    if filetype == 'csv' :
-        results_df.to_csv(results_filepath)
-    elif filetype in ['parquet', 'parq'] :
-        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding='json')
-    else :
-        print(f"Unrecognized file type '{filetype}'. Exiting...")
-        sys.exit()
+    # Export simulation results
+    analysis.export_results(results_df, results_filepath)
 
     print(f"Saved to {results_filename}.")
 
