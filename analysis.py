@@ -174,13 +174,24 @@ def combine_results(res_files) :
     return results_df
 
 # Index a results df by sim ID and run ID by exploding on payoff columns
-def reindex_df(results_df) :
-    new_df = results_df.explode(['avg_payoffs', 'node_payoffs'])
-    new_df['sim'] = new_df.index
-    new_df = new_df.reset_index(drop=True)
-    new_df['run'] = new_df.index
-    new_df = new_df.set_index(['sim', 'run'])
-    n_runs = new_df.runs.iloc[0]
-    new_df = new_df.rename(lambda x : x%n_runs, axis=0, level=1)
+def explode_results(results_df) :
+    exploded_df = results_df.explode(['avg_payoffs', 'node_payoffs'])
+    exploded_df['sim'] = exploded_df.index
+    exploded_df = exploded_df.reset_index(drop=True)
+    exploded_df['run'] = exploded_df.index
+    exploded_df = exploded_df.set_index(['sim', 'run'])
+    n_runs = exploded_df.runs.iloc[0]
+    exploded_df = exploded_df.rename(lambda x : x%n_runs, axis=0, level=1)
 
-    return new_df
+    return exploded_df
+
+# Index an exploded results df by sim ID, aggregating payoffs into list
+def implode_results(exploded_df) :
+    agg_df = pd.DataFrame()
+    for name, data in exploded_df.iteritems() :
+        if name not in ['avg_payoffs', 'node_payoffs'] :
+            agg_df[name] = data.groupby('sim').first()
+        else :
+            agg_df[name] = data.groupby('sim').aggregate(lambda s : s.tolist())
+
+    return agg_df
