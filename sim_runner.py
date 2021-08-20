@@ -88,9 +88,7 @@ if __name__ == '__main__' :
     results_filepath = os.path.join(results_dirname, results_filename)
 
     # Export simulation results
-    analysis.export_results(results_df, results_filepath)
-
-    print(f"Saved to {results_filename}.")
+    analysis.export_results(analysis.explode_results(results_df), results_filepath)
 
     # Pickle networks if provided argument
     try :
