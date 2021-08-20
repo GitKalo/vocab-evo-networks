@@ -121,6 +121,7 @@ class Simulation :
         # Initialize containers for payoff and networks reporting
         self.__sim_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))     # Average payoffs for each run
         self.__sim_node_payoffs = np.zeros((self.__n_runs, self.__n_payoff_reports, self.__pop_size))     # Node payoffs for each run, populated if network update is 'relabel'
+        self.__sim_node_langs = [[]] * self.__n_runs
         self.__sim_networks = np.array([nx.Graph] * self.__n_runs)
 
     def run(self) :
@@ -138,9 +139,10 @@ class Simulation :
         else :
             with Pool(self.__n_processes) as pool :
                 results = pool.map(self.exec_run, range(self.__n_runs))
-                for i_run, avg, node, nwk in results :
+                for i_run, avg, node, langs, nwk in results :
                     self.__sim_avg_payoffs[i_run] = avg
                     self.__sim_node_payoffs[i_run] = node
+                    self.__sim_node_langs[i_run] = langs
                     self.__sim_networks[i_run] = nwk.copy()
 
     def exec_run(self, i_run) :
@@ -157,6 +159,7 @@ class Simulation :
 
         run_node_payoffs = np.zeros((self.__n_payoff_reports, self.__pop_size))   # Payoffs for each node, populated if network update is 'relabel'
         run_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
+        run_langs = [[]] * self.__n_payoff_reports
         reports_counter = 0
 
         for step_num in range(self.__n_time_steps) :
@@ -167,6 +170,10 @@ class Simulation :
             if self.__network_update == 'relabel' :
                 if step_num in self.__i_payoff_reports :
                     run_node_payoffs[reports_counter] = node_payoffs
+        
+                    # Take snapshot of node languages
+                    run_langs[reports_counter] = [a.active_matrix for a in list(G.nodes)]
+        
                     reports_counter += 1
 
             # Record average payoff
@@ -175,7 +182,7 @@ class Simulation :
 
         run_network = G.copy()
 
-        return (i_run, run_avg_payoffs, run_node_payoffs, run_network)
+        return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, run_network)
 
     def next_generation(self, G) :
         """
@@ -360,6 +367,9 @@ class Simulation :
         """
         # TODO: validate that network attribute exists
         return self.__sim_networks
+
+    def get_node_langs(self) :
+        return self.__sim_node_langs
 
     def get_avg_payoffs(self) :
         return self.__sim_avg_payoffs
