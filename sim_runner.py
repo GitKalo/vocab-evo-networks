@@ -10,6 +10,7 @@ from src import sim
 __DEFAULT_RESULTS_DIR = './sim_results/'    # Default directory for writing CSV of sim results
 
 sim_networks = {}
+sim_node_langs = {}
 
 # Run simulation based on simulation runs dict.
 # The runs dict has simulation ids as keys, and parameters dicts as values.
@@ -33,10 +34,11 @@ def run_sim(sim_params) :
         res_series.append(sim_results)
 
         sim_networks[id] = simulation.get_networks()
+        sim_node_langs[id] = simulation.get_node_langs()
 
     # Create and return dataframe of simulation run results
     res_df = pd.DataFrame(res_series)
-    return res_df, sim_networks
+    return res_df, sim_networks, sim_node_langs
 
 # If run as standalone module, take simulation runs parameter file as input, run 
 # simulations, and output CSV file of results (which can also be given as input).
