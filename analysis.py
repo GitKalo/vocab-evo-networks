@@ -14,7 +14,7 @@ PARQUET_OBJECT_ENCODINGS = {
     'network_update': 'json',
     'er_prob': 'float',
     'ba_links': 'int',
-    'hk_prob': 'int',
+    'hk_prob': 'float',
     'ring_neighbors': 'int',
     'avg_payoffs': 'json',
     'node_payoffs': 'json',
@@ -163,7 +163,7 @@ def export_results(results_df, results_filepath=None) :
     elif file_extension == 'csv' :
         results_df.to_csv(results_filepath)
     elif file_extension in ['parq', 'parquet'] :
-        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding=PARQUET_OBJECT_ENCODINGS, row_group_offsets=50)
+        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding='json', row_group_offsets=50)
 
     print(f"Saved to {os.path.abspath(results_filepath)}.")
 
