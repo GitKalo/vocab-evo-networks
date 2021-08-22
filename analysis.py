@@ -191,6 +191,8 @@ def explode_results(results_df) :
 # Index an exploded results df by sim ID, aggregating payoffs into list
 def implode_results(exploded_df) :
     agg_df = pd.DataFrame()
+    exploded_df.index.name = 'sim'
+    
     for name, data in exploded_df.iteritems() :
         if name not in ['avg_payoffs', 'node_payoffs'] :
             agg_df[name] = data.groupby('sim').first()
