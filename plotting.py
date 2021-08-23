@@ -1,5 +1,6 @@
 import numpy as np
 import networkx as nx
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import animation
 
@@ -29,8 +30,9 @@ def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
 # Plot payoffs over time for a set of runs for multiple simulation instances. 
 # All runs and (optionally) their mean is plotted.
 def plot_run_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
-    # Reformat results
-    sims_df = analysis.implode_results(sims_df)
+    # Reformat results if provided as exploded df
+    if isinstance(sims_df.index, pd.MultiIndex) :
+        sims_df = analysis.implode_results(sims_df)
 
     # Automatically calculate number of columns and rows for subplots if not specified
     if not n_cols :
