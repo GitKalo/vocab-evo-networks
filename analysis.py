@@ -14,7 +14,7 @@ PARQUET_OBJECT_ENCODINGS = {
     'network_update': 'json',
     'er_prob': 'float',
     'ba_links': 'int',
-    'hk_prob': 'int',
+    'hk_prob': 'float',
     'ring_neighbors': 'int',
     'avg_payoffs': 'json',
     'node_payoffs': 'json',
@@ -63,7 +63,7 @@ def t_conv(run_payoffs, treshold) :
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
-    ts = -1 if not time_step else time_step
+    ts = 0 if not time_step else time_step
     node_payoffs = sims_df.iloc[i_sim].node_payoffs[i_run][ts-1]
     
     return node_payoffs
@@ -163,7 +163,7 @@ def export_results(results_df, results_filepath=None) :
     elif file_extension == 'csv' :
         results_df.to_csv(results_filepath)
     elif file_extension in ['parq', 'parquet'] :
-        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding=PARQUET_OBJECT_ENCODINGS, row_group_offsets=50)
+        results_df.to_parquet(results_filepath, engine='fastparquet', object_encoding=PARQUET_OBJECT_ENCODINGS, row_group_offsets=30)
 
     print(f"Saved to {os.path.abspath(results_filepath)}.")
 
@@ -191,6 +191,8 @@ def explode_results(results_df) :
 # Index an exploded results df by sim ID, aggregating payoffs into list
 def implode_results(exploded_df) :
     agg_df = pd.DataFrame()
+    exploded_df.index.name = 'sim'
+    
     for name, data in exploded_df.iteritems() :
         if name not in ['avg_payoffs', 'node_payoffs'] :
             agg_df[name] = data.groupby('sim').first()

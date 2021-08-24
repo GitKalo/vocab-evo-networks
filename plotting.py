@@ -1,5 +1,6 @@
 import numpy as np
 import networkx as nx
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import animation
 
@@ -29,6 +30,10 @@ def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
 # Plot payoffs over time for a set of runs for multiple simulation instances. 
 # All runs and (optionally) their mean is plotted.
 def plot_run_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
+    # Reformat results if provided as exploded df
+    if isinstance(sims_df.index, pd.MultiIndex) :
+        sims_df = analysis.implode_results(sims_df)
+
     # Automatically calculate number of columns and rows for subplots if not specified
     if not n_cols :
         n_cols = int(np.ceil(np.sqrt(len(sims_df))))
@@ -76,29 +81,30 @@ def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
     return ax
 
 # Update function for animation
-def update_animation_node_payoffs(num, G, results_df, pos, ax, i_sim=0, i_run=0,step_size=1, draw_params={}):
+def update_animation(num, G, node_colors, pos, ax, step_size=1, draw_params={}):
     ax.clear()
 
+    color_idx = num * step_size
+
     # Draw network colored by node payoffs 
-    ts = num * step_size
-    node_payoffs = analysis.get_node_payoffs(results_df, i_sim, i_run, time_step=ts)
-    nx.draw(G, pos=pos, node_color=node_payoffs, ax=ax, **draw_params)
+    nx.draw(G, pos=pos, node_color=node_colors[color_idx], ax=ax, **draw_params)
 
     # Set the title
-    ax.set_title(f"Time step {ts}")
+    ax.set_title(f"Report {color_idx}")
 
 # Run animation
-def run_animation(G, step_lim, step_size=1, gif_filename='ani.gif', interval=200, **draw_params):
+def run_animation(G, node_colors, step_lim, step_size=1, gif_filename='ani.gif', interval=200, **draw_params):
+    n_frames = step_lim // step_size
+    
+    if step_lim > len(node_colors) :
+        raise ValueError("Cannot animate more steps than provided in node_colors.")
 
     # Build plot
     fig, ax = plt.subplots(figsize=(10,6))
-
     pos = nx.spring_layout(G, iterations=1000)
 
-    n_frames = step_lim//step_size
-
-    ani = animation.FuncAnimation(fig, update_animation_node_payoffs, frames=n_frames, fargs=(G, pos, ax, step_size, draw_params), interval=interval, repeat_delay=500)
-    ani.save(gif_filename, writer='imagemagick')
+    ani = animation.FuncAnimation(fig, update_animation, frames=n_frames, fargs=(G, node_colors, pos, ax, step_size, draw_params), interval=interval, repeat_delay=500)
+    ani.save(gif_filename, writer='pillow')
 
     plt.show()
 
