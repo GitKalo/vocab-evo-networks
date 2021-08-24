@@ -331,7 +331,8 @@ class Simulation :
         if include_payoffs :
             sim_dict.update(dict(
                 avg_payoffs=self.get_avg_payoffs().tolist(),
-                node_payoffs=self.get_node_payoffs().tolist()
+                node_payoffs=self.get_node_payoffs().tolist(),
+                node_langs=self.get_node_langs()
                 ))
 
         return sim_dict
