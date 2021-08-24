@@ -63,7 +63,7 @@ def t_conv(run_payoffs, treshold) :
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
-    ts = -1 if not time_step else time_step
+    ts = 0 if not time_step else time_step
     node_payoffs = sims_df.iloc[i_sim].node_payoffs[i_run][ts-1]
     
     return node_payoffs
