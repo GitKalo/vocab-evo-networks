@@ -69,29 +69,36 @@ def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
     return node_payoffs
 
 # Get list of node colors based on distinct languages
-def get_node_colors(agents, index_lang) :
+def get_node_colors_pop(agents, index_lang) :
+    return get_node_colors_pop([a.active_matrix for a in agents], index_lang)
+
+# Get list of node colors based on distinct languages
+def get_node_colors_list(langs, index_lang) :
     colors = list(matplotlib.colors.XKCD_COLORS.values())
     node_colors = []
 
-    for a in agents :
+    for lang in langs :
         for i, l in enumerate(index_lang) :
-            if np.all(a.active_matrix == l) :
+            if np.all(lang == l) :
                 node_colors.append(colors[i])
 
     return node_colors
 
 # Get index of distinct languages in population
-def get_lang_index(agents) :
+def get_lang_index_pop(agents) :
+    return get_lang_index_pop([a.active_matrix for a in agents])
+
+def get_lang_index_list(langs) :
     index_lang = []
     dict_counts = {}
 
-    for a in agents :
-        if not np.any([np.all(a.active_matrix == l) for l in index_lang]) :
-            index_lang.append(a.active_matrix)
+    for lang in langs :
+        if not np.any([np.all(lang == l) for l in index_lang]) :
+            index_lang.append(lang)
             dict_counts[len(index_lang) - 1] = 1
         else :
             for i, l in enumerate(index_lang) :
-                if np.all(a.active_matrix == l) :
+                if np.all(lang == l) :
                     dict_counts[i] += 1
     
     return index_lang, dict_counts
