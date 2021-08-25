@@ -33,6 +33,7 @@ class Simulation :
     """
     network_types = [
         'lattice',
+        'lattice_extra',
         'ring',
         'complete',
         'random',
@@ -79,7 +80,7 @@ class Simulation :
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
             self.__network_type = network_type
-            if network_type == 'lattice' :
+            if network_type == 'lattice' or network_type == 'lattice_extra':
                 if np.sqrt(self.__pop_size) % 1 > 0 :
                     raise ValueError("For regular lattices, the pop size must be a square number.")
                 else :
@@ -275,8 +276,17 @@ class Simulation :
         """
         Generate a network based on the `network_type` property.
         """
-        if self.__network_type == 'lattice' :
+        if self.__network_type == 'lattice' or self.__network_type == 'lattice_extra' :
             G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size, periodic=self.__periodic_lattice))
+
+            if self.__network_type == 'lattice_extra' :
+                # Add a random edge
+                # nodes = np.random.choice(G.nodes, size=2, replace=False)
+                # G.add_edge(nodes[0], nodes[1])
+
+                # Remove a random edge
+                edge = list(G.edges)[np.random.choice(len(list(G.edges)))]
+                G.remove_edge(edge[0], edge[1])
         elif self.__network_type == 'ring' :
             G = nx.watts_strogatz_graph(self.__pop_size, self.__ring_neighbors, self.__ring_rewire_prob)
         elif self.__network_type == 'complete' :
