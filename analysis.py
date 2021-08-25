@@ -70,7 +70,7 @@ def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
 
 # Get list of node colors based on distinct languages
 def get_node_colors_pop(agents, index_lang) :
-    return get_node_colors_pop([a.active_matrix for a in agents], index_lang)
+    return get_node_colors_list([a.active_matrix for a in agents], index_lang)
 
 # Get list of node colors based on distinct languages
 def get_node_colors_list(langs, index_lang) :
@@ -98,7 +98,7 @@ def get_node_colors_seq(list_lang_reports) :
 
 # Get index of distinct languages in population
 def get_lang_index_pop(agents) :
-    return get_lang_index_pop([a.active_matrix for a in agents])
+    return get_lang_index_list([a.active_matrix for a in agents])
 
 def get_lang_index_list(langs) :
     index_lang = []
