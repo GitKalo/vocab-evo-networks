@@ -84,6 +84,18 @@ def get_node_colors_list(langs, index_lang) :
 
     return node_colors
 
+def get_node_colors_seq(list_lang_reports) :
+    node_color_seq = []
+
+    for list_langs in list_lang_reports :
+        index_lang, dict_counts = get_lang_index_list(list_langs)
+        sorted_langs = sorted(enumerate(index_lang), key=lambda l : dict_counts[l[0]], reverse=True)
+        sorted_langs = list(list(zip(*sorted_langs))[1])
+        node_colors = get_node_colors_list(list_langs, sorted_langs)
+        node_color_seq.append(node_colors)
+
+    return node_color_seq
+
 # Get index of distinct languages in population
 def get_lang_index_pop(agents) :
     return get_lang_index_pop([a.active_matrix for a in agents])
