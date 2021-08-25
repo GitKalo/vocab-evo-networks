@@ -90,10 +90,10 @@ def update_animation(num, G, node_colors, pos, ax, step_size=1, draw_params={}):
     nx.draw(G, pos=pos, node_color=node_colors[color_idx], ax=ax, **draw_params)
 
     # Set the title
-    ax.set_title(f"Report {color_idx}")
+    ax.set_title(f"Step {color_idx}")
 
 # Run animation
-def run_animation(G, node_colors, step_lim, step_size=1, gif_filename='ani.gif', interval=200, **draw_params):
+def run_animation(G, node_colors, step_lim, step_size=1, pos=None, interval=200, gif_filename='ani.gif', **draw_params):
     n_frames = step_lim // step_size
     
     if step_lim > len(node_colors) :
@@ -101,7 +101,7 @@ def run_animation(G, node_colors, step_lim, step_size=1, gif_filename='ani.gif',
 
     # Build plot
     fig, ax = plt.subplots(figsize=(10,6))
-    pos = nx.spring_layout(G, iterations=1000)
+    if not pos : pos = nx.spring_layout(G, iterations=1000)
 
     ani = animation.FuncAnimation(fig, update_animation, frames=n_frames, fargs=(G, node_colors, pos, ax, step_size, draw_params), interval=interval, repeat_delay=500)
     ani.save(gif_filename, writer='pillow')
