@@ -145,7 +145,7 @@ def import_networks(networks_folder, results_df) :
     for sim in range(len(results_df)) :
         sim_nwks = []
         for run in range(results_df.iloc[sim].runs) :
-            G = nx.read_gpickle(os.path.join(os.path.abspath(__file__), f'{networks_folder}/sim_{sim+1}_nwks/network_run_{run}.pickle')).item()
+            G = nx.read_gpickle(f'{networks_folder}/sim_{sim+1}_nwks/network_run_{run}.pickle').item()
             sim_nwks.append(G)
         
         networks.append(sim_nwks)
