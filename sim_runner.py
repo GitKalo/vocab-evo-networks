@@ -66,7 +66,7 @@ if __name__ == '__main__' :
     start_time = time.time()
     check_time = start_time
 
-    results_df, _ = run_sim(sim_params)
+    results_df, _, _ = run_sim(sim_params)
 
     print("---  Finished in %.2f minutes (real time)  ---" % ((time.time() - start_time) / 60))
 
