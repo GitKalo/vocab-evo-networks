@@ -219,6 +219,6 @@ def implode_results(exploded_df) :
         if name not in ['avg_payoffs', 'node_payoffs'] :
             agg_df[name] = data.groupby('sim').first()
         else :
-            agg_df[name] = data.groupby('sim').aggregate(lambda s : s.tolist())
+            agg_df[name] = data.groupby('sim').aggregate(lambda s : s.iloc[0] if len(s) == 1 else s.tolist())
 
     return agg_df
