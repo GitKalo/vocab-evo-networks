@@ -21,10 +21,10 @@ PARQUET_OBJECT_ENCODINGS = {
 }
 
 # Calculate standard errors of mean payoffs
-def std_err_estimator(avg_payoffs) :
-    stds = np.std(avg_payoffs, axis=0)
-    sqrt_sample_size = np.sqrt(len(avg_payoffs))
-    std_errs = stds / sqrt_sample_size
+def std_err(samples) :
+    std = np.std(samples)
+    sqrt_sample_size = np.sqrt(len(samples))
+    std_errs = std / sqrt_sample_size
     return std_errs
 
 # Get payoff normalized by distance between initial and final
