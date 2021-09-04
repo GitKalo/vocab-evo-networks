@@ -69,29 +69,33 @@ def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
     return node_payoffs
 
 # Get list of node colors based on distinct languages
-def get_node_colors_pop(agents, index_lang) :
-    return get_node_colors_list([a.active_matrix for a in agents], index_lang)
-
-# Get list of node colors based on distinct languages
-def get_node_colors_list(langs, index_lang) :
-    colors = list(matplotlib.colors.XKCD_COLORS.values())
+def get_node_colors_list(langs, index_lang, color_list=None) :
+    if color_list is None :
+        color_list = list(matplotlib.colors.XKCD_COLORS.values())
+    elif len(index_lang) > len(color_list) :
+        raise ValueError("Number of provided colors must be at least equal to the number of different languages.")
+        
     node_colors = []
 
     for lang in langs :
         for i, l in enumerate(index_lang) :
             if np.all(lang == l) :
-                node_colors.append(colors[i])
+                node_colors.append(color_list[i])
 
     return node_colors
 
-def get_node_colors_seq(list_lang_reports) :
+# Get list of node colors based on distinct languages
+def get_node_colors_pop(agents, index_lang, color_list=None) :
+    return get_node_colors_list([a.active_matrix for a in agents], index_lang, color_list)
+
+def get_node_colors_seq(list_lang_reports, color_list=None) :
     node_color_seq = []
 
     for list_langs in list_lang_reports :
         index_lang, dict_counts = get_lang_index_list(list_langs)
         sorted_langs = sorted(enumerate(index_lang), key=lambda l : dict_counts[l[0]], reverse=True)
         sorted_langs = list(list(zip(*sorted_langs))[1])
-        node_colors = get_node_colors_list(list_langs, sorted_langs)
+        node_colors = get_node_colors_list(list_langs, sorted_langs, color_list)
         node_color_seq.append(node_colors)
 
     return node_color_seq
