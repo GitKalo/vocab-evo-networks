@@ -37,6 +37,7 @@ class Simulation :
         'ring',
         'complete',
         'random',
+        'random_regular',
         'scale-free',
         'clustered'
     ]
@@ -66,6 +67,7 @@ class Simulation :
                     p_mistake=0, 
                     localize_learning=False,
                     periodic_lattice=False,
+                    rand_reg_degree=None,
                     n_payoff_reports=1000,
                     n_processes=None) :
         self.__pop_size = pop_size
@@ -89,6 +91,8 @@ class Simulation :
                 raise TypeError("For ring graphs, the ring_neighbors argument should be passed.")
             elif network_type == 'random' and er_prob is None :
                 raise TypeError("For random networks, the er_prob argument should be passed.")
+            elif network_type == 'random_regular' and rand_reg_degree is None :
+                raise TypeError("For random regular networks, the rand_reg_degree argument should be passed.")
             elif network_type == 'scale-free' and ba_links is None :
                 raise TypeError("For scale-free networks, the ba_links argument should be passed.")
             elif network_type == 'clustered' and (ba_links is None or hk_prob is None) :
@@ -102,6 +106,7 @@ class Simulation :
         self.__ba_links = ba_links
         self.__hk_prob = hk_prob
         self.__periodic_lattice = periodic_lattice
+        self.__rand_reg_degree = rand_reg_degree
 
         if network_update in self.__class__.network_updates :
             self.__network_update = network_update
@@ -293,6 +298,8 @@ class Simulation :
             G = nx.complete_graph(self.__pop_size)
         elif self.__network_type == 'random' :
             G = nx.erdos_renyi_graph(self.__pop_size, self.__er_prob)
+        elif self.__network_type == 'random_regular' :
+            G = nx.random_regular_graph(self.__rand_reg_degree, self.__pop_size)
         elif self.__network_type == 'scale-free' :
             G = nx.barabasi_albert_graph(self.__pop_size, self.__ba_links)
         elif self.__network_type == 'clustered' :
