@@ -81,7 +81,7 @@ def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
     return ax
 
 # Update function for animation
-def update_animation(num, G, node_colors, pos, ax, step_size=1, draw_params={}):
+def update_animation(num, G, node_colors, pos, ax, step_size=1, title=True, draw_params={}):
     ax.clear()
 
     color_idx = num * step_size
@@ -90,10 +90,11 @@ def update_animation(num, G, node_colors, pos, ax, step_size=1, draw_params={}):
     nx.draw(G, pos=pos, node_color=node_colors[color_idx], ax=ax, **draw_params)
 
     # Set the title
-    ax.set_title(f"Step {color_idx}")
+    if title :
+        ax.set_title(f"Step {color_idx}", pad=30)
 
 # Run animation
-def run_animation(G, node_colors, step_lim, step_size=1, pos=None, interval=200, gif_filename='ani.gif', **draw_params):
+def run_animation(G, node_colors, step_lim, step_size=1, pos=None, cbar=False, title=True, interval=200, gif_filename='ani.gif', **draw_params):
     n_frames = step_lim // step_size
     
     if step_lim > len(node_colors) :
@@ -103,7 +104,18 @@ def run_animation(G, node_colors, step_lim, step_size=1, pos=None, interval=200,
     fig, ax = plt.subplots(figsize=(10,6))
     if not pos : pos = nx.spring_layout(G, iterations=1000)
 
-    ani = animation.FuncAnimation(fig, update_animation, frames=n_frames, fargs=(G, node_colors, pos, ax, step_size, draw_params), interval=interval, repeat_delay=500)
+    ani = animation.FuncAnimation(fig, update_animation, frames=n_frames, fargs=(G, node_colors, pos, ax, step_size, title, draw_params), interval=interval, repeat_delay=500, save_count=100)
+
+    if cbar :
+        vmin = draw_params['vmin']
+        vmax = draw_params['vmax']
+        cmap = draw_params['cmap']
+
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        sm.set_array([])
+        cb = plt.colorbar(sm, ticks=np.linspace(vmin, vmax, 5))
+        cb.ax.tick_params(labelsize=16, length=10)
+
     ani.save(gif_filename, writer='pillow')
 
     plt.show()
