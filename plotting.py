@@ -11,7 +11,7 @@ import analysis
 # over all runs as well (via the `mean` argument)
 def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
     for run in runs :
-        ax.plot(run, color='blue', alpha=0.5)
+        ax.plot(run, color='blue', alpha=0.5, ls='-')
     
     if mean :
         mean_payoffs = np.mean(runs, axis=0)
