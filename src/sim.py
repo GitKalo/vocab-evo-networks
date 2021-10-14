@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.random.mtrand import sample
 import pandas as pd
 
 from multiprocessing.pool import Pool
@@ -66,6 +67,7 @@ class Simulation :
                     agents_sampled=2, 
                     p_mistake=0, 
                     localize_learning=False,
+                    include_parent=False,
                     periodic_lattice=False,
                     rand_reg_degree=None,
                     n_payoff_reports=1000,
@@ -119,6 +121,7 @@ class Simulation :
             raise ValueError(f"Learning strategy '{learning}'' is not recognized.")
 
         self.__localize_learning=localize_learning
+        self.__include_parent = include_parent
 
         self.__n_payoff_reports = n_payoff_reports
         self.__i_payoff_reports = np.linspace(0, self.__n_time_steps - 1, n_payoff_reports, dtype=int)
@@ -266,6 +269,8 @@ class Simulation :
             child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
             if self.__localize_learning == True :
                 sample_pool = parent_neighbors
+                if self.__include_parent == True :
+                    sample_pool = [parent, *parent_neighbors]
                 sample_mask = [a in sample_pool for a in agents]
                 sample_payoffs = normalized_payoffs[sample_mask]
             else :
