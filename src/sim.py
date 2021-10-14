@@ -261,15 +261,18 @@ class Simulation :
             except ValueError :
                 # If parent has no neighbors, replace parent
                 neighbor = parent
-            
-            # Create child that samples A from parent
+
+            # Create child
             child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
             if self.__localize_learning == True :
-                neighbor_mask = [a in parent_neighbors for a in agents]
-                neighbor_payoffs = normalized_payoffs[neighbor_mask]
-                child.update_language(self.get_sampled_matrix_local(parent, parent_neighbors, neighbor_payoffs)) # Change to include only neighbours
+                sample_pool = parent_neighbors
+                sample_mask = [a in sample_pool for a in agents]
+                sample_payoffs = normalized_payoffs[sample_mask]
             else :
-                child.update_language(self.get_sampled_matrix_global(parent, agents, normalized_payoffs))
+                sample_pool = agents
+                sample_payoffs = normalized_payoffs
+            
+            child.update_language(self.get_sampled_matrix(parent, sample_pool, sample_payoffs))
 
             # Generate new network by replacing neighbor with child
             new_G = nx.relabel_nodes(G, {neighbor:child})
@@ -307,35 +310,21 @@ class Simulation :
 
         return G
 
-    def get_sampled_matrix_global(self, parent, pop, pop_payoffs) :
+    def get_sampled_matrix(self, parent, sample_pool, sample_payoffs) :
         if self.__learning_strategy == 'parental' :
             A = agent.sample(parent, self.__n_learning_samples, self.__p_mistake)
-        elif self.__learning_strategy == 'role-model' :
-            try :
-                models = np.random.choice(pop, size=self.__n_agents_sampled, p=pop_payoffs)
-            except ValueError :
-                models = np.random.choice(pop, size=self.__n_agents_sampled)
-            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
-        elif self.__learning_strategy == 'random' :
-            models = np.random.choice(pop, size=self.__n_agents_sampled)
-            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
-
-        return A
-
-    def get_sampled_matrix_local(self, parent, neighbors, neighbour_payoffs) :
-        if self.__learning_strategy == 'parental' :
-            A = agent.sample(parent, self.__n_learning_samples, self.__p_mistake)
-        elif self.__learning_strategy == 'role-model' :
-            try :
-                models = np.random.choice(neighbors, size=self.__n_agents_sampled, p=neighbour_payoffs)
-            except ValueError :
+        else :
+            if self.__learning_strategy == 'role-model' :
                 try :
-                    models = np.random.choice(neighbors, size=self.__n_agents_sampled)
+                    models = np.random.choice(sample_pool, size=self.__n_agents_sampled, p=sample_payoffs)
                 except ValueError :
-                    return
-            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
-        elif self.__learning_strategy == 'random' :
-            models = np.random.choice(neighbors, size=self.__n_agents_sampled)
+                    try :
+                        models = np.random.choice(sample_pool, size=self.__n_agents_sampled)
+                    except ValueError :
+                        return
+            elif self.__learning_strategy == 'random' :
+                models = np.random.choice(sample_pool, size=self.__n_agents_sampled)
+
             A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
 
         return A
