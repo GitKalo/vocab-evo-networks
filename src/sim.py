@@ -365,6 +365,7 @@ class Simulation :
             'ba_links': self.__ba_links,
             'hk_prob': self.__hk_prob,
             'localize_learning': self.__localize_learning,
+            'include_parent': self.__include_parent,
             'ring_rewire_prob': self.__ring_rewire_prob,
             'ring_neighbors': self.__ring_neighbors,
             'periodic_lattice': self.__periodic_lattice,
