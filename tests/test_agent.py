@@ -205,10 +205,6 @@ class TestAgent(unittest.TestCase) :
         self.agent.update_language([[]])
         self.assertEqual(src.agent.sample(self.agent, 1).size, 0)
 
-    def test_sample_failed_pick_item(self) :
-        self.agent.set_active_matrix([[1, 2]])
-        self.assertIsNone(src.agent.sample(self.agent, 1))
-
     def test_sample_number(self) :
         for i in range(10) :
             k = np.random.randint(100)
