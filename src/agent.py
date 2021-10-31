@@ -76,12 +76,6 @@ class Agent :
         
         self.assoc_matrix = new_assoc_matrix
 
-    def set_active_matrix(self, new_active_matrix) :
-        self.active_matrix = new_active_matrix
-
-    def set_passive_matrix(self, new_passive_matrix) :
-        self.passive_matrix = new_passive_matrix
-
     def get_n_objects(self) :
         return self.__n_objects
 
