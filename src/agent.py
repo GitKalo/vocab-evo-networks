@@ -82,10 +82,10 @@ class Agent :
     def set_passive_matrix(self, new_passive_matrix) :
         self.passive_matrix = new_passive_matrix
 
-    def get_n_obj(self) :
+    def get_n_objects(self) :
         return self.__n_objects
 
-    def get_n_sym(self) :
+    def get_n_signals(self) :
         return self.__n_signals
 
     def get_id(self) :
