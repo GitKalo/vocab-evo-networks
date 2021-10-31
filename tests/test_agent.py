@@ -9,13 +9,16 @@ class TestAgent(unittest.TestCase) :
         self.agent = src.agent.Agent(0)
 
     def test_update_language_empty(self) :
-        empty_vals = [None, [], [[]]]
-        for val in empty_vals :
+        self.agent.update_language([[]])
+        self.assertEqual(self.agent.assoc_matrix.size, 0)
+        self.assertEqual(self.agent.active_matrix.size, 0)
+        self.assertEqual(self.agent.passive_matrix.size, 0)
+
+    def test_update_language_malformed(self) :
+        vals = [None, []]
+        for val in vals :
             with self.subTest(assoc_matrix=val) :
-                self.agent.update_language(val)
-                self.assertEqual(self.agent.assoc_matrix.size, 0)
-                self.assertEqual(self.agent.active_matrix.size, 0)
-                self.assertEqual(self.agent.passive_matrix.size, 0)
+                self.assertRaises(ValueError, self.agent.update_language, val)
 
     def test_update_language_shape(self) :
         shapes = [

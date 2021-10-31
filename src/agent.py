@@ -1,7 +1,5 @@
 import numpy as np
 
-from . import util
-
 class Agent :
     """
     An individual of the popualtion in the vocabulary evolution model.
@@ -28,19 +26,21 @@ class Agent :
         self.__id = agent_id
         self.__n_objects = n_objects
         self.__n_signals = n_signals
-        self.active_matrix = [[0] * n_signals] * n_objects
-        self.passive_matrix = [[0] * n_objects] * n_signals
-        self.assoc_matrix = [[0] * n_signals] * n_objects
+        self.update_language(np.zeros((n_objects, n_signals)))
 
     def update_language(self, assoc_matrix) :
         """
         Update the agent's association matrix and active/passive matrices 
         (derived from the former).
         """
-        if (assoc_matrix is None) or (len(assoc_matrix) == 0) :
-            self._set_assoc_matrix(np.array([[]]))
-        else :
-            self._set_assoc_matrix(np.array(assoc_matrix))
+        if assoc_matrix is None :
+            assoc_matrix = np.array([])
+        elif not isinstance(assoc_matrix, np.ndarray) :
+            assoc_matrix = np.array(assoc_matrix)
+        elif assoc_matrix.ndim != 2 :
+            raise ValueError("Agent language must be represented by a 2D matrix")
+
+        self._set_assoc_matrix(assoc_matrix)
         self.update_active_matrix()
         self.update_passive_matrix()
 
@@ -72,8 +72,12 @@ class Agent :
         Agents with a non-empty association matrix (can communicate about at least one object)
         must also be able to communicate about at least one signal.
         """
-        self.__n_objects, self.__n_signals = np.shape(new_assoc_matrix)
-        
+        try :
+            self.__n_objects = new_assoc_matrix.shape[0]            
+            self.__n_signals = new_assoc_matrix.shape[1]
+        except IndexError :
+            self.__n_signals = 0
+                    
         self.assoc_matrix = new_assoc_matrix
 
     def get_n_objects(self) :
