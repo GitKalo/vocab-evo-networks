@@ -4,7 +4,7 @@ import unittest
 
 from context import src
 
-class Testagent(unittest.TestCase) :
+class TestAgent(unittest.TestCase) :
     def setUp(self) :
         self.agent = src.agent.Agent(0)
 
