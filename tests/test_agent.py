@@ -216,5 +216,9 @@ class TestAgent(unittest.TestCase) :
                     with self.subTest(row=row) :
                         self.assertEqual(sum(row), k)
 
+    @unittest.skip("Not implemented")
+    def test_sample_method_equivalence(self) :
+        pass
+
 if __name__ == '__main__' :
     unittest.main(verbosity=2)

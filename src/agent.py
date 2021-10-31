@@ -144,6 +144,32 @@ def sample(agent, k, p_mistake=0) :
 
     return assoc
 
+def sample_from_matrix(active_matrix, k, p_mistake=0) :
+
+    if isinstance(active_matrix, np.ndarray) :
+        n_objects, n_signals = active_matrix.shape
+    else :
+        n_objects = len(active_matrix)
+        n_signals = len(active_matrix[0])
+
+    assoc = np.zeros((n_objects, n_signals))
+
+    for obj in range(n_objects) :
+        for _ in range(k) :
+            try :
+                # Sample response
+                if p_mistake and np.random.binomial(1, p_mistake) :
+                    response = np.random.choice(n_signals)
+                else :
+                    response = np.random.choice(n_signals, p=active_matrix[obj])
+            except ValueError as err :
+                print(err)
+                break
+            # Record response
+            assoc[obj][response] += 1
+
+    return assoc
+
 def random_assoc_matrix(n_rows, m_cols) :
     """
     Generate a random matrix of size `n_rows` by `m_cols`.
