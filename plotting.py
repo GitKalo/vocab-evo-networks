@@ -9,16 +9,17 @@ import analysis
 
 # Plot payoffs over time for a set of runs. Optinally plot the mean payoffs
 # over all runs as well (via the `mean` argument)
-def plot_run_payoffs(ax, runs, time_step_lim, mean=True, v=None) :
+def plot_run_payoffs(ax, runs, time_step_lim, mean=True, mean_text=True, v=None) :
     for run in runs :
         ax.plot(run, color='blue', alpha=0.5, ls='-')
     
     if mean :
         mean_payoffs = np.mean(runs, axis=0)
         ax.plot(mean_payoffs, color='orange')
-        
-        display_text = f'Mean payoff @ {time_step_lim} = {round(mean_payoffs[time_step_lim - 1], 2)}'
-        ax.text(0.95, 0.05, display_text, ha='right', transform=ax.transAxes)
+
+        if mean_text :
+            display_text = f'Mean payoff @ {time_step_lim} = {round(mean_payoffs[time_step_lim - 1], 2)}'
+            ax.text(0.95, 0.05, display_text, ha='right', transform=ax.transAxes)
 
     ax.set_xlabel('Time steps (t)')
     ax.set_ylabel('Mean payoff')
