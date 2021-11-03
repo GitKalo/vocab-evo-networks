@@ -203,24 +203,13 @@ class Simulation :
         and the average payoff of single communication.
         """
         agents = list(G.nodes)
-        # Total payoff for each agent (over communication with all others)
-        total_payoffs = np.array([])
 
         # Calculate symmetric payoffs and add as graph attribute
         payoffs = {(a1, a2): {'payoff': agent.payoff(a1, a2)} for a1, a2 in list(G.edges())}
         nx.set_edge_attributes(G, payoffs)
 
-        # Calculate total payoffs
-        for a in agents :
-            links = G.edges(nbunch=a, data=True)
-            agent_total_payoff = np.sum([d['payoff'] for _, _, d in links])
-            
-            try :
-                agent_total_payoff = float(agent_total_payoff) / len(links)
-            except ZeroDivisionError :
-                pass
-
-            total_payoffs = np.append(total_payoffs, agent_total_payoff)
+        # Calculate total payoffs for each agent (over communication with neighbors)
+        total_payoffs = np.fromiter(self.get_total_payoffs(G), float)
 
         # Generate list of normalized fitness scores
         sum_payoffs = np.sum(total_payoffs)
@@ -333,6 +322,18 @@ class Simulation :
             A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
 
         return A
+
+    def get_total_payoffs(self, G) :
+        for a in G :
+            links = G.edges(nbunch=a, data=True)
+            agent_total_payoff = np.sum([d['payoff'] for _, _, d in links])
+            
+            try :
+                agent_total_payoff = float(agent_total_payoff) / len(links)
+            except ZeroDivisionError :
+                pass
+
+            yield agent_total_payoff
 
     def as_series(self, include_payoffs=True) :
         series = pd.Series(self.as_dict(include_payoffs))
