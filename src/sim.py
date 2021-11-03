@@ -174,7 +174,7 @@ class Simulation :
 
         for step_num in range(self.__n_time_steps) :
             # Simulate communication and reproduction
-            G, node_payoffs = self.next_generation(G)
+            G, node_payoffs = self.next_step(G)
             
             # If nodes are relabeled, record payoff for each node
             if self.__network_update == 'relabel' :
@@ -194,7 +194,7 @@ class Simulation :
 
         return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, run_network)
 
-    def next_generation(self, G) :
+    def next_step(self, G) :
         """
         Simulates communication, reproduction, and langauge learning of agents
         on a network.
