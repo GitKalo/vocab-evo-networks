@@ -124,7 +124,7 @@ def import_results(results_filepath) :
     try :
         filetype = results_filepath.split('.')[-1]
         if filetype == 'csv' :
-            imported_df = pd.read_csv(results_filepath, index_col=0, converters={
+            imported_df = pd.read_csv(results_filepath, index_col=[0, 1], converters={
                 'avg_payoffs': ast.literal_eval,
                 'node_payoffs': ast.literal_eval
                 })
@@ -178,6 +178,10 @@ def export_results(results_df, results_filepath=None) :
         except OSError as exc :
             if exc.errno != errno.EEXIST :
                 raise
+
+    # Ensure results are in exploded (single run per row) format
+    if not isinstance(results_df.index, pd.MultiIndex) :
+        results_df = explode_results(results_df)
 
     if file_extension not in EXPORT_FILETYPES :
         print(f"Unrecognized or unsupported file extension '{file_extension}'.")

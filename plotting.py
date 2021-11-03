@@ -32,8 +32,7 @@ def plot_sim_payoffs(ax, runs, time_step_lim, mean=True, mean_text=True, v=None)
 # All runs and (optionally) their mean is plotted.
 def plot_sim_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
     # Reformat results if provided as exploded df
-    if isinstance(sims_df.index, pd.MultiIndex) :
-        sims_df = analysis.implode_results(sims_df)
+    sims_df = analysis.implode_results(sims_df)
 
     # Automatically calculate number of columns and rows for subplots if not specified
     if not n_cols :
