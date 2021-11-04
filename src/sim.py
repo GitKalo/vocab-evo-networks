@@ -303,23 +303,26 @@ class Simulation :
         return G
 
     def get_sampled_matrix(self, parent, sample_pool, sample_payoffs) :
-        if self._params['sample_strategy'] == 'parental' :
-            A = agent.sample(parent, self._params['sample_num'], self._params['sample_mistake_p'])
-        else :
-            if self._params['sample_strategy'] == 'role-model' :
-                try :
-                    models = np.random.choice(sample_pool, size=self._params['sample_size'], p=sample_payoffs)
-                except ValueError :
-                    try :
-                        models = np.random.choice(sample_pool, size=self._params['sample_size'])
-                    except ValueError :
-                        return
-            elif self._params['sample_strategy'] == 'random' :
-                models = np.random.choice(sample_pool, size=self._params['sample_size'])
+        # Sample from parent — number of samples used to maintain the same fidelity as neighbor sample
+        parent_sample = agent.sample(parent, self._params['sample_size'], self._params['sample_mistake_p'])
 
-            A = np.sum(list(map(lambda m : agent.sample(m, self._params['sample_num'], self._params['sample_mistake_p']), models)), axis=0)
+        # Sample from pool (neighbors for localized learning, population otherwise)
+        if self._params['sample_strategy'] == 'role-model' :
+            try :
+                neighbor_sample_models = np.random.choice(sample_pool, size=self._params['sample_size'], p=sample_payoffs)
+            except ValueError :
+                neighbor_sample_models = np.random.choice(sample_pool, size=self._params['sample_size'])
+        elif self._params['sample_strategy'] == 'random' :
+            neighbor_sample_models = np.random.choice(sample_pool, size=self._params['sample_size'])
 
-        return A
+        neighbor_sample = np.sum(list(map(lambda m : agent.sample(m, self._params['sample_num'], self._params['sample_mistake_p']), neighbor_sample_models)), axis=0)
+
+        # Scale sample based on influence
+        parent_sample_influence = parent_sample * (1 - self._params['sample_influence'])
+        neighbor_sample_influence = neighbor_sample * self._params['sample_influence']
+
+        # Return sampled matrix
+        return parent_sample_influence + neighbor_sample_influence
 
     def get_total_payoffs(self, G) :
         for a in G :
