@@ -349,7 +349,10 @@ class Simulation :
         return sim_dict
 
     def get_params(self) :
-        return self._params
+        output_params = self._params
+        del output_params['payoff_reports_i']
+        
+        return output_params
 
     def get_networks(self) :
         """
