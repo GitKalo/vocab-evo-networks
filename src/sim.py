@@ -120,7 +120,7 @@ class Simulation :
         self._params['payoff_reports_i'] = np.linspace(0, self._params['t_max'] - 1, self._params['payoff_reports_n'], dtype=int)
         
         # Default number of processes to the number of simulation runs
-        if not self._params['n_processes'] :
+        if self._params['n_processes'] is None :
             self._params['n_processes'] = self._params['n_runs']
 
         # Initialize results containers
