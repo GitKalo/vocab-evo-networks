@@ -148,7 +148,7 @@ def import_networks(networks_folder, results_df) :
 
     for sim in range(len(results_df)) :
         sim_nwks = []
-        for run in range(results_df.iloc[sim].runs) :
+        for run in range(results_df.iloc[sim].n_runs) :
             G = nx.read_gpickle(f'{networks_folder}/sim_{sim+1}_nwks/network_run_{run}.pickle').item()
             sim_nwks.append(G)
         
@@ -218,7 +218,7 @@ def explode_results(results_df) :
     exploded_df = exploded_df.reset_index(drop=True)
     exploded_df['run'] = exploded_df.index
     exploded_df = exploded_df.set_index(['sim', 'run'])
-    n_runs = exploded_df.runs.iloc[0]
+    n_runs = exploded_df.n_runs.iloc[0]
     exploded_df = exploded_df.rename(lambda x : x%n_runs, axis=0, level=1)
 
     return exploded_df
