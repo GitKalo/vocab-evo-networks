@@ -368,12 +368,12 @@ class Simulation :
         return self.__sim_node_payoffs
 
 if __name__ == '__main__' :
-    pop_size = 10
-    n_time_steps = 100
+    pop_size = 50
+    n_time_steps = 10000
     n_runs = 20
 
     simulation = Simulation(pop_size, n_time_steps, n_runs, 
-    network_type='scale-free', network_update='regenerate', ba_links=2, sample_size=5)
+    nwk_topology='scale-free', nwk_update='relabel', sample_strategy='role-model')
 
     simulation.run()
 
