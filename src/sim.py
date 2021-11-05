@@ -212,7 +212,8 @@ class Simulation :
         normalized_payoffs = total_payoffs
         if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
 
-        if self.__network_update == 'regenerate' :
+        # TODO: Fix function calls for 'regenerate'
+        if self._params['nwk_update'] == 'regenerate' :
             # Create new generation (of the same size)
             new_generation = []
             for n in range(len(agents)) :
@@ -223,8 +224,8 @@ class Simulation :
                     parent = np.random.choice(agents)
 
                 # Create child that samples A from parent
-                child = agent.Agent(n, self.__n_objects, self.__n_signals)
-                if self.__localize_learning == True :
+                child = agent.Agent(n, self._params['n_objects'], self._params['n_signals'])
+                if self._params['sample_localize'] == True :
                     parent_neighbors = list(nx.neighbors(G, parent))
                     neighbor_mask = [a in parent_neighbors for a in agents]
                     neighbor_payoffs = normalized_payoffs[neighbor_mask]
@@ -235,7 +236,7 @@ class Simulation :
                 new_generation.append(child)
             # Generate new network and embed new generation
             new_G = nx.relabel_nodes(self.generate_network(), {idx:agent for idx, agent in enumerate(new_generation)})
-        elif self.__network_update == 'relabel' :
+        elif self._params['nwk_update'] == 'relabel' :
             # Pick parent proportional to fitness
             try :
                 parent = np.random.choice(agents, p=normalized_payoffs)
@@ -251,10 +252,10 @@ class Simulation :
                 neighbor = parent
 
             # Create child
-            child = agent.Agent(parent.get_id(), self.__n_objects, self.__n_signals)
-            if self.__localize_learning == True :
+            child = agent.Agent(parent.get_id(), self._params['n_objects'], self._params['n_signals'])
+            if self._params['sample_localize'] == True :
                 sample_pool = parent_neighbors
-                if self.__include_parent == True :
+                if self._params['sample_include_parent'] == True :
                     sample_pool = [parent, *parent_neighbors]
                 sample_mask = [a in sample_pool for a in agents]
                 sample_payoffs = normalized_payoffs[sample_mask]
