@@ -54,32 +54,30 @@ class Simulation :
         'random'
     ]
 
-    def __init__(self, pop_size, time_steps, runs, network_type, network_update,
-                    learning='parental',
-                    ring_rewire_prob=0,
-                    ring_neighbors=None,
-                    er_prob=None,
-                    ba_links=None, 
-                    hk_prob=None, 
-                    objects=agent.Agent.default_objects,
-                    signals=agent.Agent.default_signals, 
-                    sample_num=1, 
-                    agents_sampled=2, 
-                    p_mistake=0, 
-                    localize_learning=False,
-                    include_parent=False,
-                    periodic_lattice=False,
-                    rand_reg_degree=None,
-                    n_payoff_reports=1000,
-                    n_processes=None) :
-        self.__pop_size = pop_size
-        self.__n_time_steps = time_steps
-        self.__n_runs = runs
-        self.__n_objects = objects
-        self.__n_signals = signals
-        self.__n_learning_samples = sample_num
-        self.__n_agents_sampled = agents_sampled
-        self.__p_mistake = p_mistake
+    _params = {}
+
+    _default_params = {
+        'nwk_update': 'relabel',
+        'nwk_lattice_periodic': True,
+        'nwk_ring_rewire_p': 0,
+        'nwk_ring_neighbors': None,
+        'nwk_random_p': None,
+        'nwk_sf_links': None, 
+        'nwk_clustered_p': None, 
+        'n_objects': agent.Agent.default_objects,
+        'n_signals': agent.Agent.default_signals,
+        'learning_strategy': 'role-model',
+        'sample_size': 2,
+        'sample_num': 1,
+        'sample_influence': 0.5,
+        'sample_mistake_p': 0,
+        'sample_localize': True,
+        'sample_inlcude_parent': False,    #TODO: phase out
+        'nwk_rand-reg_degree': None,
+        'n_payoff_reports': 1000,
+        'n_processes': None
+    }
+
 
         # Input validation for network type and update strategy
         if network_type in self.__class__.network_types :
