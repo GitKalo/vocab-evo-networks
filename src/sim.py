@@ -333,11 +333,11 @@ class Simulation :
 
             yield agent_total_payoff
 
-    def as_series(self, include_payoffs=True) :
+    def as_series(self, include_payoffs=False) :
         series = pd.Series(self.as_dict(include_payoffs))
         return series
 
-    def as_dict(self, include_payoffs=True) :
+    def as_dict(self, include_payoffs=False) :
         sim_dict = self.get_params()
         if include_payoffs :
             sim_dict.update(dict(
@@ -349,30 +349,7 @@ class Simulation :
         return sim_dict
 
     def get_params(self) :
-        params = {
-            'pop_size': self.__pop_size,
-            'time_steps': self.__n_time_steps,
-            'runs': self.__n_runs,
-            'vocab_size': (self.__n_objects, self.__n_signals),
-            'sample_num': self.__n_learning_samples,
-            'agents_sampled': self.__n_agents_sampled,
-            'learning_strategy': self.__learning_strategy,
-            'p_mistake': self.__p_mistake,
-            'network_type': self.__network_type,
-            'network_update': self.__network_update,
-            'er_prob': self.__er_prob,
-            'ba_links': self.__ba_links,
-            'hk_prob': self.__hk_prob,
-            'localize_learning': self.__localize_learning,
-            'include_parent': self.__include_parent,
-            'ring_rewire_prob': self.__ring_rewire_prob,
-            'ring_neighbors': self.__ring_neighbors,
-            'periodic_lattice': self.__periodic_lattice,
-            'n_payoff_reports': self.__n_payoff_reports,
-            'n_processes': self.__n_processes
-        }
-
-        return params
+        return self._params
 
     def get_networks(self) :
         """
