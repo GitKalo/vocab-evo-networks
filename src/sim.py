@@ -134,7 +134,7 @@ class Simulation :
         Executes the simulation, records the results, and displays them through `pyplot`.
         """
 
-        if self.__n_processes == 1 :
+        if self._params['n_processes'] == 1 :
             for i_run in range(self.__n_runs) :
                 _, run_avg_payoffs, run_node_payoffs, run_langs, run_network = self.exec_run(i_run)
 
@@ -143,8 +143,8 @@ class Simulation :
                 self.__sim_node_langs[i_run] = run_langs
                 self.__sim_networks[i_run] = run_network.copy()
         else :
-            with Pool(self.__n_processes) as pool :
-                results = pool.map(self.exec_run, range(self.__n_runs))
+            with Pool(self._params['n_processes']) as pool :
+                results = pool.map(self.exec_run, range(self._params['n_runs']))
                 for i_run, avg, node, langs, nwk in results :
                     self.__sim_avg_payoffs[i_run] = avg
                     self.__sim_node_payoffs[i_run] = node
