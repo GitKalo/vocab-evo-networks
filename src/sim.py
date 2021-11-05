@@ -124,7 +124,7 @@ class Simulation :
             self._params['n_processes'] = self._params['n_runs']
 
         # Initialize results containers
-        self.__avg_payoffs = np.zeros((self._params['n_runs'], self._params['t_max']))     # Average payoffs for each run
+        self.__sim_avg_payoffs = np.zeros((self._params['n_runs'], self._params['t_max']))     # Average payoffs for each run
         self.__sim_node_payoffs = np.zeros((self._params['n_runs'], self._params['payoff_reports_n'], self._params['pop_size']))     # Node payoffs for each run, populated if network update is 'relabel'
         self.__sim_node_langs = [[]] * self._params['n_runs']
         self.__sim_networks = np.array([nx.Graph] * self._params['n_runs'])
