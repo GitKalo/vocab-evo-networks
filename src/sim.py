@@ -156,25 +156,25 @@ class Simulation :
         np.random.seed()
 
         # Generate agents in first generation (with random matrices)
-        first_gen = {agent_id : agent.Agent(agent_id, self.__n_objects, self.__n_signals) for agent_id in range(self.__pop_size)}
+        first_gen = {agent_id : agent.Agent(agent_id, self._params['n_objects'], self._params['n_signals']) for agent_id in range(self._params['pop_size'])}
         for _, v in first_gen.items() :
-            v.update_language(agent.random_assoc_matrix(self.__n_objects, self.__n_signals))
+            v.update_language(agent.random_assoc_matrix(self._params['n_objects'], self._params['n_signals']))
         
         # Generate network and embed first generation
         G = nx.relabel_nodes(self.generate_network(), first_gen)
 
-        run_node_payoffs = np.zeros((self.__n_payoff_reports, self.__pop_size))   # Payoffs for each node, populated if network update is 'relabel'
-        run_avg_payoffs = np.zeros(self.__n_time_steps)   # Contains the average payoffs for each time step
-        run_langs = [[]] * self.__n_payoff_reports
+        run_avg_payoffs = np.zeros(self._params['t_max'])   # Contains the average payoffs for each time step
+        run_node_payoffs = np.zeros((self._params['payoff_reports_n'], self._params['pop_size']))   # Payoffs for each node, populated if network update is 'relabel'
+        run_langs = [[]] * self._params['payoff_reports_n']
         reports_counter = 0
 
-        for step_num in range(self.__n_time_steps) :
+        for step_num in range(self._params['t_max']) :
             # Simulate communication and reproduction
             G, node_payoffs = self.next_step(G)
             
             # If nodes are relabeled, record payoff for each node
-            if self.__network_update == 'relabel' :
-                if step_num in self.__i_payoff_reports :
+            if self._params['nwk_update'] == 'relabel' :
+                if step_num in self._params['payoff_reports_i'] :   #TODO: optimize (set or next_report_id)
                     run_node_payoffs[reports_counter] = node_payoffs
         
                     # Take snapshot of node languages
