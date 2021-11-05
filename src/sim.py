@@ -32,18 +32,18 @@ class Simulation :
         network_update : str    # The network update strategy used by the simulation. Must be one of the
         ...                     available network update strategies listed in the `network_updates` attribute.
     """
-    network_types = [
+    supported_topologies = [
         'lattice',
         'lattice_extra',
         'ring',
         'complete',
         'random',
-        'random_regular',
+        'rand-reg',
         'scale-free',
         'clustered'
     ]
 
-    network_updates = [
+    supported_update_strategies = [
         'regenerate',
         'relabel'
     ]
@@ -66,70 +66,68 @@ class Simulation :
         'nwk_clustered_p': None, 
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
-        'learning_strategy': 'role-model',
-        'sample_size': 2,
+        'sample_strategy': 'role-model',
+        'sample_localize': True,
+        'sample_size': 4,
         'sample_num': 1,
         'sample_influence': 0.5,
         'sample_mistake_p': 0,
-        'sample_localize': True,
         'sample_inlcude_parent': False,    #TODO: phase out
         'nwk_rand-reg_degree': None,
-        'n_payoff_reports': 1000,
+        'payoff_reports_n': 1000,
         'n_processes': None
     }
 
+    def __init__(self, pop_size, t_max, n_runs, nwk_topology, **kwargs) :
+        self._params['pop_size'] = pop_size
+        self._params['t_max'] = t_max
+        self._params['nwk_topology'] = nwk_topology
+        self._params['n_runs'] = n_runs
+
+        self._params.update(self._default_params)
+        for k, v in kwargs.items() :
+            if k in self._params :
+                self._params[k] = v
+            else :
+                raise ValueError(f"Unrecognized keyword argument: '{k}'")
 
         # Input validation for network type and update strategy
-        if network_type in self.__class__.network_types :
-            self.__network_type = network_type
-            if network_type == 'lattice' or network_type == 'lattice_extra':
-                if np.sqrt(self.__pop_size) % 1 > 0 :
+        if self._params['nwk_topology'] in self.__class__.supported_topologies :
+            if self._params['nwk_topology'] in ['lattice', 'lattice_extra'] :
+                if np.sqrt(self._params['pop_size']) % 1 > 0 :
                     raise ValueError("For regular lattices, the pop size must be a square number.")
                 else :
-                    self.__lattice_dim_size = int(np.sqrt(self.__pop_size))
-            elif network_type == 'ring' and ring_neighbors is None :
-                raise TypeError("For ring graphs, the ring_neighbors argument should be passed.")
-            elif network_type == 'random' and er_prob is None :
-                raise TypeError("For random networks, the er_prob argument should be passed.")
-            elif network_type == 'random_regular' and rand_reg_degree is None :
-                raise TypeError("For random regular networks, the rand_reg_degree argument should be passed.")
-            elif network_type == 'scale-free' and ba_links is None :
-                raise TypeError("For scale-free networks, the ba_links argument should be passed.")
-            elif network_type == 'clustered' and (ba_links is None or hk_prob is None) :
-                raise TypeError("For clustered networks, both the ba_links and hk_prob arguments should be passed.")
+                    self._params['nwk_lattice_dim_size'] = int(np.sqrt(self._params['pop_size']))
+            elif self._params['nwk_topology'] == 'ring' and self._params['nwk_ring_neighbors'] is None :
+                raise TypeError("For ring graphs, the 'nwk_ring_neighbors' parameter should be specified.")
+            elif self._params['nwk_topology'] == 'random' and self._params['nwk_random_p'] is None :
+                raise TypeError("For random networks, the 'nwk_random_p' parameter should be specified.")
+            elif self._params['nwk_topology'] == 'rand-reg' and self._params['nwk_rand-reg_degree'] is None :
+                raise TypeError("For random regular networks, the 'nwk_rand-reg_degree' parameter should be specified.")
+            elif self._params['nwk_topology'] == 'scale-free' and self._params['nwk_sf_links'] is None :
+                raise TypeError("For scale-free networks, the 'nwk_sf_links' parameter should be specified.")
+            elif self._params['nwk_topology'] == 'clustered' and (self._params['nwk_sf_links'] is None or self._params['nwk_clustered_p'] is None) :
+                raise TypeError("For clustered networks, both the 'nwk_sf_links' and 'nwk_clustered_p' parameters should be specified.")
         else :
-            raise ValueError(f"Network type '{network_type}' not recognized.")
+            raise ValueError(f"Unrecognized network topology: '{self._params['nwk_topology']}'")
 
-        self.__ring_rewire_prob = ring_rewire_prob
-        self.__ring_neighbors = ring_neighbors
-        self.__er_prob = er_prob
-        self.__ba_links = ba_links
-        self.__hk_prob = hk_prob
-        self.__periodic_lattice = periodic_lattice
-        self.__rand_reg_degree = rand_reg_degree
+        if self._params['nwk_update'] not in self.__class__.supported_update_strategies :
+            raise ValueError(f"Unrecognized network update strategy: '{self._params['nwk_update']}'")
 
-        if network_update in self.__class__.network_updates :
-            self.__network_update = network_update
-        else :
-            raise ValueError(f"Network update strategy '{network_update}'' is not recognized.")
+        if self._params['sample_strategy'] not in self.__class__.learning_strategies :
+            raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
 
-        if learning in self.__class__.learning_strategies :
-            self.__learning_strategy = learning
-        else :
-            raise ValueError(f"Learning strategy '{learning}'' is not recognized.")
+        self._params['payoff_reports_i'] = np.linspace(0, self._params['t_max'] - 1, self._params['payoff_reports_n'], dtype=int)
+        
+        # Default number of processes to the number of simulation runs
+        if not self._params['n_processes'] :
+            self._params['n_processes'] = self._params['n_runs']
 
-        self.__localize_learning=localize_learning
-        self.__include_parent = include_parent
-
-        self.__n_payoff_reports = n_payoff_reports
-        self.__i_payoff_reports = np.linspace(0, self.__n_time_steps - 1, n_payoff_reports, dtype=int)
-        self.__n_processes = n_processes if n_processes else self.__n_runs  # Number of processes defaults to the number of runs
-
-        # Initialize containers for payoff and networks reporting
-        self.__sim_avg_payoffs = np.zeros((self.__n_runs, self.__n_time_steps))     # Average payoffs for each run
-        self.__sim_node_payoffs = np.zeros((self.__n_runs, self.__n_payoff_reports, self.__pop_size))     # Node payoffs for each run, populated if network update is 'relabel'
-        self.__sim_node_langs = [[]] * self.__n_runs
-        self.__sim_networks = np.array([nx.Graph] * self.__n_runs)
+        # Initialize results containers
+        self.__avg_payoffs = np.zeros((self._params['n_runs'], self._params['t_max']))     # Average payoffs for each run
+        self.__sim_node_payoffs = np.zeros((self._params['n_runs'], self._params['payoff_reports_n'], self._params['pop_size']))     # Node payoffs for each run, populated if network update is 'relabel'
+        self.__sim_node_langs = [[]] * self._params['n_runs']
+        self.__sim_networks = np.array([nx.Graph] * self._params['n_runs'])
 
     def run(self) :
         """
