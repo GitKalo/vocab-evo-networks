@@ -390,8 +390,6 @@ class Simulation :
     def get_node_payoffs(self) :
         return self.__sim_node_payoffs
 
-    # TODO: implement copy method
-
 if __name__ == '__main__' :
     pop_size = 10
     n_time_steps = 100
