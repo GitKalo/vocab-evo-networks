@@ -54,8 +54,6 @@ class Simulation :
         'random'
     ]
 
-    _params = {}
-
     _default_params = {
         'nwk_update': 'relabel',
         'nwk_lattice_periodic': True,
@@ -79,6 +77,8 @@ class Simulation :
     }
 
     def __init__(self, pop_size, t_max, n_runs, nwk_topology, **kwargs) :
+        self._params = {}
+
         self._params['pop_size'] = pop_size
         self._params['t_max'] = t_max
         self._params['nwk_topology'] = nwk_topology
