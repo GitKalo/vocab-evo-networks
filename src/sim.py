@@ -275,10 +275,11 @@ class Simulation :
         """
         Generate a network based on the `network_type` property.
         """
-        if self.__network_type == 'lattice' or self.__network_type == 'lattice_extra' :
-            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self.__lattice_dim_size, self.__lattice_dim_size, periodic=self.__periodic_lattice))
+        nwk = self._params['nwk_topology']
+        if nwk in ['lattice', 'lattice_extra'] :
+            G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self._params['nwk_lattice_dim_size'], self._params['nwk_lattice_dim_size'], periodic=self._params['nwk_lattice_periodic']))
 
-            if self.__network_type == 'lattice_extra' :
+            if nwk == 'lattice_extra' :
                 # Add a random edge
                 # nodes = np.random.choice(G.nodes, size=2, replace=False)
                 # G.add_edge(nodes[0], nodes[1])
@@ -286,18 +287,18 @@ class Simulation :
                 # Remove a random edge
                 edge = list(G.edges)[np.random.choice(len(list(G.edges)))]
                 G.remove_edge(edge[0], edge[1])
-        elif self.__network_type == 'ring' :
-            G = nx.watts_strogatz_graph(self.__pop_size, self.__ring_neighbors, self.__ring_rewire_prob)
-        elif self.__network_type == 'complete' :
-            G = nx.complete_graph(self.__pop_size)
-        elif self.__network_type == 'random' :
-            G = nx.erdos_renyi_graph(self.__pop_size, self.__er_prob)
-        elif self.__network_type == 'random_regular' :
-            G = nx.random_regular_graph(self.__rand_reg_degree, self.__pop_size)
-        elif self.__network_type == 'scale-free' :
-            G = nx.barabasi_albert_graph(self.__pop_size, self.__ba_links)
-        elif self.__network_type == 'clustered' :
-            G = nx.powerlaw_cluster_graph(self.__pop_size, self.__ba_links, self.__hk_prob)
+        elif nwk == 'ring' :
+            G = nx.watts_strogatz_graph(self._params['pop_size'], self._params['nwk_ring_neighbors'], self._params['nwk_ring_rewire_p'])
+        elif nwk == 'complete' :
+            G = nx.complete_graph(self._params['pop_size'])
+        elif nwk == 'random' :
+            G = nx.erdos_renyi_graph(self._params['pop_size'], self._params['nwk_random_p'])
+        elif nwk == 'random_regular' :
+            G = nx.random_regular_graph(self._params['nwk_rand-reg_degree'], self._params['pop_size'])
+        elif nwk == 'scale-free' :
+            G = nx.barabasi_albert_graph(self._params['pop_size'], self._params['nwk_sf_links'])
+        elif nwk == 'clustered' :
+            G = nx.powerlaw_cluster_graph(self._params['pop_size'], self._params['nwk_sf_links'], self._params['nwk_clustered_p'])
 
         return G
 
