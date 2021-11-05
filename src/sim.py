@@ -303,21 +303,21 @@ class Simulation :
         return G
 
     def get_sampled_matrix(self, parent, sample_pool, sample_payoffs) :
-        if self.__learning_strategy == 'parental' :
-            A = agent.sample(parent, self.__n_learning_samples, self.__p_mistake)
+        if self._params['sample_strategy'] == 'parental' :
+            A = agent.sample(parent, self._params['sample_num'], self._params['sample_mistake_p'])
         else :
-            if self.__learning_strategy == 'role-model' :
+            if self._params['sample_strategy'] == 'role-model' :
                 try :
-                    models = np.random.choice(sample_pool, size=self.__n_agents_sampled, p=sample_payoffs)
+                    models = np.random.choice(sample_pool, size=self._params['sample_size'], p=sample_payoffs)
                 except ValueError :
                     try :
-                        models = np.random.choice(sample_pool, size=self.__n_agents_sampled)
+                        models = np.random.choice(sample_pool, size=self._params['sample_size'])
                     except ValueError :
                         return
-            elif self.__learning_strategy == 'random' :
-                models = np.random.choice(sample_pool, size=self.__n_agents_sampled)
+            elif self._params['sample_strategy'] == 'random' :
+                models = np.random.choice(sample_pool, size=self._params['sample_size'])
 
-            A = np.sum(list(map(lambda m : agent.sample(m, self.__n_learning_samples, self.__p_mistake), models)), axis=0)
+            A = np.sum(list(map(lambda m : agent.sample(m, self._params['sample_num'], self._params['sample_mistake_p']), models)), axis=0)
 
         return A
 
