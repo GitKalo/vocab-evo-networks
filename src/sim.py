@@ -72,7 +72,7 @@ class Simulation :
         'sample_num': 1,
         'sample_influence': 0.5,
         'sample_mistake_p': 0,
-        'sample_inlcude_parent': False,    #TODO: phase out
+        'sample_include_parent': False,    #TODO: phase out
         'nwk_rand-reg_degree': None,
         'payoff_reports_n': 1000,
         'n_processes': None
