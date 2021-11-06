@@ -26,7 +26,7 @@ def run_sim(sim_params) :
         check_time = time.time()
         simulation.run()
         runtime = time.time() - check_time
-        print("Ran simulation %s (of %i) in %.2f minutes." % (id, n_sim, runtime/60))
+        print(f"Ran simulation {int(id)+1} (of {n_sim}) in {runtime/60:.2f} minutes.")
 
         # Save simulation run results and parameters
         sim_results = simulation.as_series(include_payoffs=True).append(pd.Series({'runtime': runtime}))
