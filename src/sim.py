@@ -135,7 +135,7 @@ class Simulation :
         """
 
         if self._params['n_processes'] == 1 :
-            for i_run in range(self.__n_runs) :
+            for i_run in range(self._params['n_runs']) :
                 _, run_avg_payoffs, run_node_payoffs, run_langs, run_network = self.exec_run(i_run)
 
                 self.__sim_avg_payoffs[i_run] = run_avg_payoffs
