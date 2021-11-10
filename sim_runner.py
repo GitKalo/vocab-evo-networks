@@ -36,11 +36,7 @@ def run_sim(sim_params, include_payoffs=True, include_langs=False) :
     res_df = pd.DataFrame(res_series)
     return res_df, sim_networks
 
-# If run as standalone module, take simulation runs parameter file as input, run 
-# simulations, and output CSV file of results (which can also be given as input).
-# -- 1st argument: path to simulation paramter file
-# -- 2nd argument (optional): path to file or directory for writing results (by default
-#  outputted to './sim_results/')
+# If run as standalone module, read arguments, run sim, and record results
 if __name__ == '__main__' :
     parser = argparse.ArgumentParser(description="Run simulations and record their results.")
     parser.add_argument('param_filepath')
@@ -81,10 +77,8 @@ if __name__ == '__main__' :
         results_filename = base_filename + '_results.csv'   # Default results filename
         results_dirname = args.results_output_path
     
-    # Write CSV results to results file
+    # Export simulation results to results filepath
     results_filepath = os.path.join(results_dirname, results_filename)
-
-    # Export simulation results
     analysis.export_results(analysis.explode_results(results_df), results_filepath)
 
     # Pickle networks if provided argument
