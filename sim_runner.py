@@ -1,4 +1,4 @@
-import time, os, sys, json, errno
+import time, os, sys, json, errno, argparse
 
 import pandas as pd
 import numpy as np
@@ -18,7 +18,7 @@ def run_sim(sim_params) :
     n_sim = len(sim_params)
 
     res_series = []     # For storing results of simulation runs
-    for id, params in sim_params.items() :
+    for sim_id, params in sim_params.items() :
         # Create simulation object
         simulation = sim.Simulation(**params)
 
@@ -26,15 +26,15 @@ def run_sim(sim_params) :
         check_time = time.time()
         simulation.run()
         runtime = time.time() - check_time
-        print(f"Ran simulation {int(id)+1} (of {n_sim}) in {runtime/60:.2f} minutes.")
+        print(f"Ran simulation {int(sim_id)+1} (of {n_sim}) in {runtime/60:.2f} minutes.")
 
         # Save simulation run results and parameters
         sim_results = simulation.as_series(include_payoffs=True).append(pd.Series({'runtime': runtime}))
-        sim_results.name = id
+        sim_results.name = sim_id
         res_series.append(sim_results)
 
-        sim_networks[id] = simulation.get_networks()
-        sim_node_langs[id] = simulation.get_node_langs()
+        sim_networks[sim_id] = simulation.get_networks()
+        sim_node_langs[sim_id] = simulation.get_node_langs()
 
     # Create and return dataframe of simulation run results
     res_df = pd.DataFrame(res_series)
