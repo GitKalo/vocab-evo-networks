@@ -46,6 +46,16 @@ def run_sim(sim_params) :
 # -- 2nd argument (optional): path to file or directory for writing results (by default
 #  outputted to './sim_results/')
 if __name__ == '__main__' :
+    parser = argparse.ArgumentParser(description="Run simulations and record their results.")
+    parser.add_argument('param_filepath')
+    parser.add_argument('results_output_path')
+    parser.add_argument('-n', '--networks_dir')
+    parser.add_argument('--include-langs', action='store_true')
+
+    args = parser.parse_args()
+    print(args)
+    print(args.include_langs)
+
     # Get parameter filename
     try :
         param_filepath = sys.argv[1]
