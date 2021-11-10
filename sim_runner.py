@@ -10,11 +10,10 @@ from src import sim
 __DEFAULT_RESULTS_DIR = './sim_results/'    # Default directory for writing CSV of sim results
 
 sim_networks = {}
-sim_node_langs = {}
 
 # Run simulation based on simulation runs dict.
 # The runs dict has simulation ids as keys, and parameters dicts as values.
-def run_sim(sim_params) :
+def run_sim(sim_params, include_payoffs=True, include_langs=False) :
     n_sim = len(sim_params)
 
     res_series = []     # For storing results of simulation runs
@@ -29,16 +28,15 @@ def run_sim(sim_params) :
         print(f"Ran simulation {int(sim_id)+1} (of {n_sim}) in {runtime/60:.2f} minutes.")
 
         # Save simulation run results and parameters
-        sim_results = simulation.as_series(include_payoffs=True).append(pd.Series({'runtime': runtime}))
+        sim_results = simulation.as_series(include_payoffs=include_payoffs, include_langs=include_langs).append(pd.Series({'runtime': runtime}))
         sim_results.name = sim_id
         res_series.append(sim_results)
 
         sim_networks[sim_id] = simulation.get_networks()
-        sim_node_langs[sim_id] = simulation.get_node_langs()
 
     # Create and return dataframe of simulation run results
     res_df = pd.DataFrame(res_series)
-    return res_df, sim_networks, sim_node_langs
+    return res_df, sim_networks
 
 # If run as standalone module, take simulation runs parameter file as input, run 
 # simulations, and output CSV file of results (which can also be given as input).
@@ -49,7 +47,7 @@ if __name__ == '__main__' :
     parser = argparse.ArgumentParser(description="Run simulations and record their results.")
     parser.add_argument('param_filepath')
     parser.add_argument('results_output_path')
-    parser.add_argument('-n', '--networks_dir')
+    parser.add_argument('-n', '--networks-dir')
     parser.add_argument('--include-langs', action='store_true')
 
     args = parser.parse_args()
@@ -69,7 +67,7 @@ if __name__ == '__main__' :
     start_time = time.time()
     check_time = start_time
 
-    results_df, _, _ = run_sim(sim_params)
+    results_df, _ = run_sim(sim_params, include_langs=args.include_langs)
 
     print("---  Finished in %.2f minutes (real time)  ---" % ((time.time() - start_time) / 60))
 

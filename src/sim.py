@@ -336,18 +336,19 @@ class Simulation :
 
             yield agent_total_payoff
 
-    def as_series(self, include_payoffs=False) :
-        series = pd.Series(self.as_dict(include_payoffs))
+    def as_series(self, include_payoffs=False, include_langs=False) :
+        series = pd.Series(self.as_dict(include_payoffs, include_langs))
         return series
 
-    def as_dict(self, include_payoffs=False) :
+    def as_dict(self, include_payoffs=False, include_langs=False) :
         sim_dict = self.get_params()
         if include_payoffs :
             sim_dict.update(dict(
                 avg_payoffs=self.get_avg_payoffs().tolist(),
                 node_payoffs=self.get_node_payoffs().tolist(),
-                # node_langs=self.get_node_langs()
                 ))
+        if include_langs :
+            sim_dict.update(dict(node_langs=self.get_node_langs()))
 
         return sim_dict
 
