@@ -55,18 +55,13 @@ if __name__ == '__main__' :
     args = parser.parse_args()
 
     # Get parameter filename
-    try :
-        param_filepath = sys.argv[1]
-        param_filename = os.path.basename(param_filepath)
-    except IndexError :
-        print("No parameter file specified. Exiting...")
-        sys.exit()
-
+    param_filename = os.path.basename(args.param_filepath)
+    
     # Get parameter file
     try :
-        sim_params = json.load(open(param_filepath, mode='r'))
+        sim_params = json.load(open(args.param_filepath, mode='r'))
     except FileNotFoundError :
-        print(f"Could not find the parmeter file '{param_filename}'. Exiting...")
+        print(f"Could not find the parmeter file '{args.param_filepath}'. Exiting...")
         sys.exit()
 
     # Run simulations and record runtime
