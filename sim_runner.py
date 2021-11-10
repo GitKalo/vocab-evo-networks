@@ -73,21 +73,17 @@ if __name__ == '__main__' :
 
     print("---  Finished in %.2f minutes (real time)  ---" % ((time.time() - start_time) / 60))
 
-    # Get results output filename and directory
+    # Determine file and directory name
     base_filename = '_'.join(param_filename.split('_')[0:-1])
-    try :
-        # If given a results path argument, extract file and directory name
-        input_results_path = sys.argv[2]
-        if len(input_results_path.split('.')) > 1 :
-            results_filename = os.path.basename(input_results_path)
-            results_dirname = os.path.dirname(input_results_path)
-        else :
-            results_filename = base_filename + '_results.csv'   # Default results filename
-            results_dirname = input_results_path
-    except IndexError :
-        # If not given a results path argument, use default results output
-        results_filename = base_filename + '_results.csv'
-        results_dirname = __DEFAULT_RESULTS_DIR
+
+    # If given a filepath, extract filename and dirname
+    if len(args.results_output_path.split('.')) > 1 :
+        results_filename = os.path.basename(args.results_output_path)
+        results_dirname = os.path.dirname(args.results_output_path)
+    else :
+        # If only given a dirname, generate default filename
+        results_filename = base_filename + '_results.csv'   # Default results filename
+        results_dirname = args.results_output_path
     
     # Write CSV results to results file
     results_filepath = os.path.join(results_dirname, results_filename)
