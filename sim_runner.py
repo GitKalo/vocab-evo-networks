@@ -7,8 +7,6 @@ import networkx as nx
 import analysis
 from src import sim
 
-__DEFAULT_RESULTS_DIR = './sim_results/'    # Default directory for writing CSV of sim results
-
 sim_networks = {}
 
 # Run simulation based on simulation runs dict.
