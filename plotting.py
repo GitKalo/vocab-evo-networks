@@ -30,7 +30,7 @@ def plot_sim_payoffs(ax, runs, time_step_lim, mean=True, mean_text=True, v=None)
 
 # Plot payoffs over time for a set of runs for multiple simulation instances. 
 # All runs and (optionally) their mean is plotted.
-def plot_sim_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6)) :
+def plot_sim_payoffs_all(sims_df, time_step_lim=None, normalize=False, n_cols=None, n_rows=None, figsize=(10, 6), **kwargs) :
     # Reformat results if provided as exploded df
     sims_df = analysis.implode_results(sims_df)
 
@@ -57,7 +57,7 @@ def plot_sim_payoffs_all(sims_df, time_step_lim=None, mean=True, normalize=False
         # Plot mean payoffs for simulation runs
         v = None if not normalize else ast.literal_eval(sim.vocab_size)[0]
         time_steps = sim.t_max if not time_step_lim else time_step_lim
-        plot_sim_payoffs(ax, sim.avg_payoffs, time_step_lim=time_steps, mean=mean, v=v)
+        plot_sim_payoffs(ax, sim.avg_payoffs, time_step_lim=time_steps, v=v, **kwargs)
         ax.set_title(f'Sim id: {i}')
     
     return fig, axs
