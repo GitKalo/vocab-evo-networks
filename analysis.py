@@ -142,6 +142,15 @@ def import_results(results_filepath) :
         print("Exiting...")
         sys.exit()
 
+# Combine results from multiple files into single dataframe
+def import_results_multiple(list_results_filepaths) :
+    dfs = []
+    for f in list_results_filepaths :
+        dfs.append(implode_results(import_results(f)))
+    results_df = pd.concat(dfs)
+    results_df.reset_index(drop=True, inplace=True)
+    return results_df
+
 # Import all networks in folder
 def import_networks(networks_folder, results_df) :
     networks = []
@@ -201,15 +210,6 @@ def export_results(results_df, results_filepath=None) :
                 # results_df.to_csv(results_filepath)
 
     print(f"Saved to {os.path.abspath(results_filepath)}.")
-
-# Combine results from multiple files into single dataframe
-def combine_results(res_files) :
-    dfs = []
-    for f in res_files :
-        dfs.append(import_results(f))
-    results_df = pd.concat(dfs)
-    results_df.reset_index(drop=True, inplace=True)
-    return results_df
 
 # Index a results df by sim ID and run ID by exploding on payoff columns
 # Function is *not* idempotent, it will likely throw an error if attempting to apply
