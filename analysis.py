@@ -8,6 +8,17 @@ import sys, ast, os, errno
 EXPORT_FILETYPES = ['csv', 'parq', 'parquet']
 EXPORT_PATH_DEFAULT = './sim_results/results.parq'
 PARQUET_OBJECT_ENCODINGS = {
+    'sample_strategy': 'json',
+    'nwk_topology': 'json',
+    'nwk_update': 'json',
+    'nwk_random_p': 'float',
+    'nwk_sf_links': 'int',
+    'nwk_clustered_p': 'float',
+    'nwk_ring_neighbors': 'int',
+    'avg_payoffs': 'json',
+    'node_payoffs': 'json',
+
+    # unused params, left for compatibility
     'vocab_size': 'json',
     'learning_strategy': 'json',
     'network_type': 'json',
@@ -15,9 +26,7 @@ PARQUET_OBJECT_ENCODINGS = {
     'er_prob': 'float',
     'ba_links': 'int',
     'hk_prob': 'float',
-    'ring_neighbors': 'int',
-    'avg_payoffs': 'json',
-    'node_payoffs': 'json',
+    'ring_neighbors': 'int'
 }
 
 # Calculate standard errors of mean payoffs
