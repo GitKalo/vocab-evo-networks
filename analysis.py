@@ -43,23 +43,23 @@ def t_relax(avg_payoffs) :
 def get_distances(avg_payoffs) :
     return [norm_payoff_abs(avg_payoffs, i) for i in range(len(avg_payoffs))]
 
-# Get convergence time based on pre-determined distance to final payoff (treshold parameter)
-def get_t_conv_treshold(distances, treshold) :
+# Get convergence time based on pre-determined distance to final payoff (threshold parameter)
+def get_t_conv_threshold(distances, threshold) :
     for i, d in enumerate(distances[::-1]) :
-        if d > treshold :
+        if d > threshold :
             t_conv = len(distances) - (i - 1)
             break
 
     return t_conv
 
-def get_t_conv_runs(run_payoffs, treshold) :
+def get_t_conv_runs(run_payoffs, threshold) :
     all_distances = [get_distances(p) for p in run_payoffs]
-    all_t_conv = [get_t_conv_treshold(dist, treshold) for dist in all_distances]
+    all_t_conv = [get_t_conv_threshold(dist, threshold) for dist in all_distances]
     return all_t_conv
 
 # Convergence time based on payoffs -- micro average of simulation runs
-def t_conv(run_payoffs, treshold) :
-    return np.mean(get_t_conv_runs(run_payoffs, treshold))
+def t_conv(run_payoffs, threshold) :
+    return np.mean(get_t_conv_runs(run_payoffs, threshold))
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
