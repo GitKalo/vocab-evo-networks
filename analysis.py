@@ -212,6 +212,8 @@ def combine_results(res_files) :
     return results_df
 
 # Index a results df by sim ID and run ID by exploding on payoff columns
+# Function is *not* idempotent, it will likely throw an error if attempting to apply
+# multiple times to the same dataframe
 def explode_results(results_df) :
     exploded_df = results_df.explode(['avg_payoffs', 'node_payoffs'])
     exploded_df['sim'] = exploded_df.index
@@ -224,6 +226,7 @@ def explode_results(results_df) :
     return exploded_df
 
 # Index an exploded results df by sim ID, aggregating payoffs into list
+# Function is idempotent, it can safely be applied multiple times to the same dataset
 def implode_results(exploded_df) :
     agg_df = pd.DataFrame()
     exploded_df.index.name = 'sim'
