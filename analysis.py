@@ -37,12 +37,12 @@ def std_err(samples) :
     return std_errs
 
 # Get payoff normalized by distance between initial and final
-def norm_payoff(avg_payoffs, time_step) :
-    return (avg_payoffs[time_step] - avg_payoffs[-1]) / (avg_payoffs[0] - avg_payoffs[-1])
+def norm_payoff(avg_payoffs, start, final, absolute=True) :
+    norm = (avg_payoffs - final) / (start - final)
 
-# Get absolute normalized payoffs
-def norm_payoff_abs(avg_payoffs, time_step) :
-    return np.abs((avg_payoffs[time_step] - avg_payoffs[-1]) / (avg_payoffs[0] - avg_payoffs[-1]))
+    if absolute : norm = np.abs(norm)
+    
+    return norm
 
 # Get relaxation time -- only applicable for monotonic payoff functions!
 def t_relax(avg_payoffs) :
@@ -50,10 +50,13 @@ def t_relax(avg_payoffs) :
 
 # Get list of distances to final payoff based on normalzed payoffs
 def get_distances(avg_payoffs) :
-    return [norm_payoff_abs(avg_payoffs, i) for i in range(len(avg_payoffs))]
+    if not isinstance(avg_payoffs, np.ndarray) : avg_payoffs = np.array(avg_payoffs)
+    assert avg_payoffs.ndim == 1, "Function only works for 1D arrays"
+    return norm_payoff(avg_payoffs, avg_payoffs[0], avg_payoffs[-1], absolute=True)
 
 # Get convergence time based on pre-determined distance to final payoff (threshold parameter)
-def get_t_conv_threshold(distances, threshold) :
+def get_t_conv_single(distances, threshold) :
+    t_conv = len(distances) - 1
     for i, d in enumerate(distances[::-1]) :
         if d > threshold :
             t_conv = len(distances) - (i - 1)
@@ -61,14 +64,14 @@ def get_t_conv_threshold(distances, threshold) :
 
     return t_conv
 
-def get_t_conv_runs(run_payoffs, threshold) :
-    all_distances = [get_distances(p) for p in run_payoffs]
-    all_t_conv = [get_t_conv_threshold(dist, threshold) for dist in all_distances]
+def get_t_conv_runs(sim_payoffs, threshold) :
+    all_distances = [get_distances(p) for p in sim_payoffs]
+    all_t_conv = [get_t_conv_single(dist, threshold) for dist in all_distances]
     return all_t_conv
 
 # Convergence time based on payoffs -- micro average of simulation runs
-def t_conv(run_payoffs, threshold) :
-    return np.mean(get_t_conv_runs(run_payoffs, threshold))
+def t_conv(sim_payoffs, threshold) :
+    return np.mean(get_t_conv_runs(sim_payoffs, threshold))
 
 # Color nodes by total payoff
 def get_node_payoffs(sims_df, i_sim=0, i_run=0, time_step=None) :
