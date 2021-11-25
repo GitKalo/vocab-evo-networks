@@ -163,6 +163,7 @@ class Simulation :
         
         # Generate network and embed first generation
         G = nx.relabel_nodes(self.generate_network(), first_gen)
+        node_payoffs = np.zeros(self._params['pop_size'])
 
         run_avg_payoffs = np.zeros(self._params['t_max'])   # Contains the average payoffs for each time step
         run_node_payoffs = np.zeros((self._params['payoff_reports_n'], self._params['pop_size']))   # Payoffs for each node, populated if network update is 'relabel'
@@ -170,8 +171,13 @@ class Simulation :
         reports_counter = 0
 
         for step_num in range(self._params['t_max']) :
-            # Simulate communication and reproduction
-            G, node_payoffs = self.next_step(G)
+            # Decide whether to do a reproduction or a rewire step
+            if np.random.binomial(1, self._params['nwk_lambda']) :
+                # Rewire step
+                pass
+            else :
+                # Reproduction step
+                G, node_payoffs = self.step_reproduction(G)
             
             # If nodes are relabeled, record payoff for each node
             if self._params['nwk_update'] == 'relabel' :
@@ -191,7 +197,10 @@ class Simulation :
 
         return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, run_network)
 
-    def next_step(self, G) :
+    def step_rewire(self, G) :
+        pass
+
+    def step_reproduction(self, G) :
         """
         Simulates communication, reproduction, and langauge learning of agents
         on a network.
