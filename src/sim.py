@@ -54,6 +54,12 @@ class Simulation :
         'random'
     ]
 
+    rewire_strategies = [
+        'random-proportional',
+        'inverse-random',
+        'inverse-proportional'
+    ]
+
     _default_params = {
         'nwk_update': 'relabel',
         'nwk_lattice_periodic': True,
@@ -64,6 +70,7 @@ class Simulation :
         'nwk_clustered_p': None, 
         'nwk_rand-reg_degree': None,
         'nwk_lambda': 0,
+        'nwk_rewire_strategy': 'random-proportional',
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
@@ -114,6 +121,9 @@ class Simulation :
 
         if self._params['nwk_update'] not in self.__class__.supported_update_strategies :
             raise ValueError(f"Unrecognized network update strategy: '{self._params['nwk_update']}'")
+
+        if self._params['nwk_rewire_strategy'] not in self.__class__.rewire_strategies :
+            raise ValueError(f"Unrecognized rewire strategy: '{self._params['nwk_rewire_strategy']}'")
 
         if self._params['sample_strategy'] not in self.__class__.learning_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
