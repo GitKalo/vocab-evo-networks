@@ -208,7 +208,41 @@ class Simulation :
         return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, run_network)
 
     def step_rewire(self, G) :
-        pass
+        agents = list(G.nodes)
+
+        # Calculate symmetric payoffs and add as graph attribute
+        payoffs = {(a1, a2): {'payoff': agent.payoff(a1, a2)} for a1, a2 in list(G.edges())}
+        nx.set_edge_attributes(G, payoffs)
+
+        # Calculate total and normalized payoffs for each agent
+        total_payoffs = np.fromiter(self.get_total_payoffs(G), float)
+
+        sum_payoffs = np.sum(total_payoffs)
+        normalized_payoffs = total_payoffs
+        if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
+
+        # Pick agent for rewire and prepare rewire pools
+        a_source = np.random.choice(agents)
+
+        disconnect_pool = list(nx.neighbors(G, a_source))
+        disconnect_payoffs = normalized_payoffs[[a in disconnect_pool for a in agents]]
+
+        reconnect_pool = agents
+        reconnect_pool.remove(a_source)     # Prevent self-links
+        reconnect_payoffs = normalized_payoffs[[a in reconnect_pool for a in agents]]
+
+        # Rewire based on strategy
+        if self._params['nwk_rewire_strategy'] == 'uniform-proportional' :
+            # Disconnect with uniform prob, connect proportional to payoff
+            pass
+        elif self._params['nwk_rewire_strategy'] == 'inverse-uniform' :
+            # Disconnect inversely proportional to payoff, connect with uniform prob
+            pass
+        elif self._params['nwk_rewire_strategy'] == 'inverse-proportional' :
+            # Disconnect inversely proportional to payoff, connect proportional to payoff
+            pass
+
+        return G, total_payoffs
 
     def step_reproduction(self, G) :
         """
