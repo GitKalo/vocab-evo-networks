@@ -55,8 +55,8 @@ class Simulation :
     ]
 
     rewire_strategies = [
-        'random-proportional',
-        'inverse-random',
+        'uniform-proportional',
+        'inverse-uniform',
         'inverse-proportional'
     ]
 
@@ -70,7 +70,7 @@ class Simulation :
         'nwk_clustered_p': None, 
         'nwk_rand-reg_degree': None,
         'nwk_lambda': 0,
-        'nwk_rewire_strategy': 'random-proportional',
+        'nwk_rewire_strategy': 'uniform-proportional',
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
