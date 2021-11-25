@@ -62,6 +62,8 @@ class Simulation :
         'nwk_random_p': None,
         'nwk_sf_links': None, 
         'nwk_clustered_p': None, 
+        'nwk_rand-reg_degree': None,
+        'nwk_lambda': 0,
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
@@ -71,7 +73,6 @@ class Simulation :
         'sample_influence': 0.5,
         'sample_mistake_p': 0,
         'sample_include_parent': False,    #TODO: phase out
-        'nwk_rand-reg_degree': None,
         'payoff_reports_n': 1000,
         'n_processes': None
     }
