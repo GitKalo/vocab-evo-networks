@@ -261,10 +261,7 @@ class Simulation :
         # Calculate total payoffs for each agent (over communication with neighbors)
         total_payoffs = np.fromiter(self.get_total_payoffs(G), float)
 
-        # Generate list of normalized fitness scores
-        sum_payoffs = np.sum(total_payoffs)
-        normalized_payoffs = total_payoffs
-        if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
+        normalized_payoffs = self.get_normalized_payoffs(total_payoffs)
 
         # TODO: Fix function calls for 'regenerate'
         if self._params['nwk_update'] == 'regenerate' :
@@ -389,6 +386,13 @@ class Simulation :
                 pass
 
             yield agent_total_payoff
+
+    def get_normalized_payoffs(self, total_payoffs) :
+        sum_payoffs = np.sum(total_payoffs)
+        normalized_payoffs = total_payoffs
+        if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
+
+        return normalized_payoffs
 
     def as_series(self, include_payoffs=False, include_langs=False) :
         series = pd.Series(self.as_dict(include_payoffs, include_langs))
