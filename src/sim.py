@@ -54,10 +54,14 @@ class Simulation :
         'random'
     ]
 
-    rewire_strategies = [
-        'uniform-proportional',
-        'inverse-uniform',
-        'inverse-proportional'
+    rewire_disconnect_strategies = [
+        'uniform',
+        'inverse'
+    ]
+
+    rewire_reconnect_strategies = [
+        'uniform',
+        'proportional'
     ]
 
     _default_params = {
@@ -70,7 +74,8 @@ class Simulation :
         'nwk_clustered_p': None, 
         'nwk_rand-reg_degree': None,
         'nwk_lambda': 0,
-        'nwk_rewire_strategy': 'uniform-proportional',
+        'nwk_rewire_disconnect': 'uniform',
+        'nwk_rewire_reconnect': 'proportional',
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
@@ -122,8 +127,11 @@ class Simulation :
         if self._params['nwk_update'] not in self.__class__.supported_update_strategies :
             raise ValueError(f"Unrecognized network update strategy: '{self._params['nwk_update']}'")
 
-        if self._params['nwk_rewire_strategy'] not in self.__class__.rewire_strategies :
-            raise ValueError(f"Unrecognized rewire strategy: '{self._params['nwk_rewire_strategy']}'")
+        if self._params['nwk_rewire_disconnect'] not in self.__class__.rewire_disconnect_strategies :
+            raise ValueError(f"Unrecognized rewire disconnect strategy: '{self._params['nwk_rewire_disconnect']}'")
+
+        if self._params['nwk_rewire_reconnect'] not in self.__class__.rewire_reconnect_strategies :
+            raise ValueError(f"Unrecognized rewire reconnect strategy: '{self._params['nwk_rewire_reconnect']}'")
 
         if self._params['sample_strategy'] not in self.__class__.learning_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
@@ -231,15 +239,17 @@ class Simulation :
         reconnect_pool.remove(a_source)     # Prevent self-links
         reconnect_payoffs = normalized_payoffs[[a in reconnect_pool for a in agents]]
 
-        # Rewire based on strategy
-        if self._params['nwk_rewire_strategy'] == 'uniform-proportional' :
-            # Disconnect with uniform prob, connect proportional to payoff
+        # Pick agent to disconnect from based on strategy
+        if self._params['nwk_rewire_disconnect'] == 'uniform' :
             pass
-        elif self._params['nwk_rewire_strategy'] == 'inverse-uniform' :
-            # Disconnect inversely proportional to payoff, connect with uniform prob
+            
+        elif self._params['nwk_rewire_disconnect'] == 'inverse' :
             pass
-        elif self._params['nwk_rewire_strategy'] == 'inverse-proportional' :
-            # Disconnect inversely proportional to payoff, connect proportional to payoff
+
+        # Pick agent to reconnect to based on strategy
+        if self._params['nwk_rewire_reconnect'] == 'uniform' :
+            pass
+        elif self._params['nwk_rewire_reconnect'] == 'proportional' :
             pass
 
         return G, total_payoffs
