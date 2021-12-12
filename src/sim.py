@@ -369,6 +369,10 @@ class Simulation :
         # Sample from parent — number of samples used to maintain the same fidelity as neighbor sample
         parent_sample = agent.sample(parent, self._params['sample_size'], self._params['sample_mistake_p'])
 
+        # If there are no agents to sample from, use parent sample
+        if not sample_pool :
+            return parent_sample
+
         # Sample from pool (neighbors for localized learning, population otherwise)
         if self._params['sample_strategy'] == 'role-model' :
             try :
