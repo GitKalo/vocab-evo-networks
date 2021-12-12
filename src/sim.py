@@ -231,12 +231,11 @@ class Simulation :
 
         # Pick agent for rewire and prepare rewire pools
         disconnect_pool = []
-        while not disconnect_pool :
+        while not disconnect_pool :     # Ensure the agent we pick already has neighbors
             a_source = np.random.choice(agents)
-
             disconnect_pool = list(nx.neighbors(G, a_source))
-            disconnect_payoffs = normalized_payoffs[np.in1d(agents, disconnect_pool)]
-            disconnect_payoffs = self.get_normalized_payoffs(disconnect_payoffs)
+        disconnect_payoffs = normalized_payoffs[np.in1d(agents, disconnect_pool)]
+        disconnect_payoffs = self.get_normalized_payoffs(disconnect_payoffs)
 
         a_id = agents.index(a_source)
         reconnect_pool = np.delete(agents, a_id)     # Prevent self-links
