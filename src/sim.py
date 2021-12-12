@@ -192,7 +192,7 @@ class Simulation :
             # Decide whether to do a reproduction or a rewire step
             if np.random.binomial(1, self._params['nwk_lambda']) :
                 # Rewire step
-                pass
+                G, node_payoffs = self.step_rewire(G)
             else :
                 # Reproduction step
                 G, node_payoffs = self.step_reproduction(G)
@@ -234,26 +234,43 @@ class Simulation :
         while not disconnect_pool :     # Ensure the agent we pick already has neighbors
             a_source = np.random.choice(agents)
             disconnect_pool = list(nx.neighbors(G, a_source))
-        disconnect_payoffs = normalized_payoffs[np.in1d(agents, disconnect_pool)]
+        disconnect_payoffs = normalized_payoffs[np.isin(agents, disconnect_pool)]
         disconnect_payoffs = self.get_normalized_payoffs(disconnect_payoffs)
 
         a_id = agents.index(a_source)
         reconnect_pool = np.delete(agents, a_id)     # Prevent self-links
-        reconnect_payoffs = normalized_payoffs[np.in1d(agents, reconnect_pool)]
+        reconnect_payoffs = normalized_payoffs[np.isin(agents, reconnect_pool)]
         reconnect_payoffs = self.get_normalized_payoffs(reconnect_payoffs)
 
         # Pick agent to disconnect from based on strategy
         if self._params['nwk_rewire_disconnect'] == 'uniform' :
-            pass
-            
+            a_old = np.random.choice(disconnect_pool)
         elif self._params['nwk_rewire_disconnect'] == 'inverse' :
-            pass
+            if len(disconnect_pool) > 1 :
+                # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
+                a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
+            else :
+                a_old = disconnect_pool[0]
+
+        # Prevent same and duplicate connections
+        disconnect_mask = np.isin(reconnect_pool, disconnect_pool, invert=True)
+        reconnect_pool = reconnect_pool[disconnect_mask]
+        reconnect_payoffs = reconnect_payoffs[disconnect_mask]
+        reconnect_payoffs = self.get_normalized_payoffs(reconnect_payoffs)
 
         # Pick agent to reconnect to based on strategy
         if self._params['nwk_rewire_reconnect'] == 'uniform' :
-            pass
+            a_new = np.random.choice(reconnect_pool)
         elif self._params['nwk_rewire_reconnect'] == 'proportional' :
-            pass
+            try :
+                a_new = np.random.choice(reconnect_pool, p=reconnect_payoffs)
+            except ValueError :
+                # If no other connections exist in the population, 
+                # rewire to a random agent in the pool
+                a_new = np.random.choice(reconnect_pool)
+
+        G.remove_edge(a_source, a_old)
+        G.add_edge(a_source, a_new)
 
         return G, total_payoffs
 
