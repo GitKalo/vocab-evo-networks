@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib
 
-import sys, ast, os, errno
+import sys, ast, os, errno, pickle
 
 EXPORT_FILETYPES = ['csv', 'parq', 'parquet']
 EXPORT_PATH_DEFAULT = './sim_results/results.parq'
@@ -164,18 +164,22 @@ def import_results_multiple(list_results_filepaths) :
     return results_df
 
 # Import all networks in folder
-def import_networks(networks_folder, results_df) :
+def import_networks_dir(networks_folder, results_df) :
     networks = []
 
-    for sim in range(len(results_df)) :
+    for sim in range(results_df.index.get_level_values(0).nunique()) :
         sim_nwks = []
         for run in range(results_df.iloc[sim].n_runs) :
-            G = nx.read_gpickle(f'{networks_folder}/sim_{sim+1}_nwks/network_run_{run}.pickle').item()
+            G = nx.read_gpickle(f'{networks_folder}/sim_{sim}_nwks/network_run_{run}.pickle').item()
             sim_nwks.append(G)
         
         networks.append(sim_nwks)
 
     return networks
+
+def import_networks_file(networks_filepath) :
+    with open(networks_filepath, mode='rb') as networks_file :
+        return pickle.load(networks_file)
 
 # Export simulation results
 def export_results(results_df, results_filepath=None) :
