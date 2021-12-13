@@ -1,4 +1,4 @@
-import time, os, sys, json, errno, argparse
+import time, os, sys, json, errno, argparse, pickle
 
 import pandas as pd
 import numpy as np
@@ -41,7 +41,7 @@ if __name__ == '__main__' :
     parser = argparse.ArgumentParser(description="Run simulations and record their results.")
     parser.add_argument('param_filepath')
     parser.add_argument('results_output_path')
-    parser.add_argument('-n', '--networks-dir')
+    parser.add_argument('-n', '--networks-filepath')
     parser.add_argument('--include-langs', action='store_true')
 
     args = parser.parse_args()
@@ -82,23 +82,28 @@ if __name__ == '__main__' :
     analysis.export_results(analysis.explode_results(results_df), results_filepath)
 
     # Pickle networks if provided argument
-    if args.networks_dir is not None :
+    if args.networks_filepath is not None :
+        networks_dir = os.path.dirname(args.networks_filepath)
+
         # Create networks output directory if non-existent
-        if not os.path.exists(args.networks_dir) :
+        if not os.path.exists(networks_dir) :
             try :
-                os.makedirs(args.networks_dir)
+                os.makedirs(networks_dir)
             except OSError as exc :
                 if exc.errno != errno.EEXIST :
                     raise
 
-        for sim_id, run_networks in sim_networks.items() :
-            sim_networks_dir = os.path.join(args.networks_dir, f'sim_{sim_id}_nwks')
-            try :
-                os.makedirs(sim_networks_dir)
-            except OSError as exc :
-                if exc.errno != errno.EEXIST :
-                    raise
+        with open(os.path.join(args.networks_filepath), mode='wb') as networks_file :
+            pickle.dump(sim_networks, networks_file)
+
+        # for sim_id, run_networks in sim_networks.items() :
+        #     sim_networks_dir = os.path.join(args.networks_dir, f'sim_{sim_id}_nwks')
+        #     try :
+        #         os.makedirs(sim_networks_dir)
+        #     except OSError as exc :
+        #         if exc.errno != errno.EEXIST :
+        #             raise
             
-            it = np.nditer(run_networks, flags=['refs_ok', 'c_index'])
-            for G in it :
-                nx.write_gpickle(G, os.path.join(sim_networks_dir, f'network_run_{it.index}.pickle'))
+        #     it = np.nditer(run_networks, flags=['refs_ok', 'c_index'])
+        #     for G in it :
+        #         nx.write_gpickle(G, os.path.join(sim_networks_dir, f'network_run_{it.index}.pickle'))
