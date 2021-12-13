@@ -181,6 +181,8 @@ class Simulation :
         
         # Generate network and embed first generation
         G = nx.relabel_nodes(self.generate_network(), first_gen)
+        run_network_initial = G.copy()
+
         node_payoffs = np.zeros(self._params['pop_size'])
 
         run_avg_payoffs = np.zeros(self._params['payoff_reports_n'])   # Contains the average payoffs for each time step
@@ -220,7 +222,7 @@ class Simulation :
 
         run_network = G.copy()
 
-        return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, run_network)
+        return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, (run_network_initial, run_network))
 
     def step_rewire(self, G) :
         agents = list(G.nodes)
