@@ -155,20 +155,20 @@ class Simulation :
 
         if self._params['n_processes'] == 1 :
             for i_run in range(self._params['n_runs']) :
-                _, run_avg_payoffs, run_node_payoffs, run_langs, run_network = self.exec_run(i_run)
+                _, avg, node, langs, nwks = self.exec_run(i_run)
 
-                self.__sim_avg_payoffs[i_run] = run_avg_payoffs
-                self.__sim_node_payoffs[i_run] = run_node_payoffs
-                self.__sim_node_langs[i_run] = run_langs
-                self.__sim_networks[i_run] = run_network.copy()
+                self.__sim_avg_payoffs[i_run] = avg
+                self.__sim_node_payoffs[i_run] = node
+                self.__sim_node_langs[i_run] = langs
+                self.__sim_networks[i_run] = nwks
         else :
             with Pool(self._params['n_processes']) as pool :
                 results = pool.map(self.exec_run, range(self._params['n_runs']))
-                for i_run, avg, node, langs, nwk in results :
+                for i_run, avg, node, langs, nwks in results :
                     self.__sim_avg_payoffs[i_run] = avg
                     self.__sim_node_payoffs[i_run] = node
                     self.__sim_node_langs[i_run] = langs
-                    self.__sim_networks[i_run] = nwk.copy()
+                    self.__sim_networks[i_run] = nwks
 
     def exec_run(self, i_run) :
         # Re-seed rng to get different results in parallel processes
