@@ -143,7 +143,7 @@ class Simulation :
             self._params['n_processes'] = self._params['n_runs']
 
         # Initialize results containers
-        self.__sim_avg_payoffs = np.zeros((self._params['n_runs'], self._params['t_max']))     # Average payoffs for each run
+        self.__sim_avg_payoffs = np.zeros((self._params['n_runs'], self._params['payoff_reports_n']))     # Average payoffs for each run
         self.__sim_node_payoffs = np.zeros((self._params['n_runs'], self._params['payoff_reports_n'], self._params['pop_size']))     # Node payoffs for each run, populated if network update is 'relabel'
         self.__sim_node_langs = [[]] * self._params['n_runs']
         self.__sim_networks = np.array([nx.Graph] * self._params['n_runs'])
@@ -183,10 +183,12 @@ class Simulation :
         G = nx.relabel_nodes(self.generate_network(), first_gen)
         node_payoffs = np.zeros(self._params['pop_size'])
 
-        run_avg_payoffs = np.zeros(self._params['t_max'])   # Contains the average payoffs for each time step
+        run_avg_payoffs = np.zeros(self._params['payoff_reports_n'])   # Contains the average payoffs for each time step
         run_node_payoffs = np.zeros((self._params['payoff_reports_n'], self._params['pop_size']))   # Payoffs for each node, populated if network update is 'relabel'
         run_langs = [[]] * self._params['payoff_reports_n']
+
         reports_counter = 0
+        reports_next_step = 0
 
         for step_num in range(self._params['t_max']) :
             # Decide whether to do a reproduction or a rewire step
@@ -197,19 +199,24 @@ class Simulation :
                 # Reproduction step
                 G, node_payoffs = self.step_reproduction(G)
             
-            # If nodes are relabeled, record payoff for each node
-            if self._params['nwk_update'] == 'relabel' :
-                if step_num in self._params['payoff_reports_i'] :   #TODO: optimize (set or next_report_id)
+            # Record payoffs
+            if step_num == reports_next_step :   #TODO: optimize (set or next_report_id)
+                # If nodes are relabeled, record payoff for each node
+                if self._params['nwk_update'] == 'relabel' :
                     run_node_payoffs[reports_counter] = node_payoffs
         
-                    # Take snapshot of node languages
-                    run_langs[reports_counter] = [a.active_matrix for a in list(G.nodes)]
-        
-                    reports_counter += 1
+                # Record average payoffs
+                macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
+                run_avg_payoffs[reports_counter] = macro_average_payoff
 
-            # Record average payoff
-            macro_average_payoff = np.mean(node_payoffs) if node_payoffs.size else None
-            run_avg_payoffs[step_num] = macro_average_payoff
+                # Take snapshot of node languages
+                run_langs[reports_counter] = [a.active_matrix for a in list(G.nodes)]
+        
+                reports_counter += 1
+                try :
+                    reports_next_step = self._params['payoff_reports_i'][reports_counter]
+                except IndexError :     # Ignore error at last payoff report
+                    pass
 
         run_network = G.copy()
 
