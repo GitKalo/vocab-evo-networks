@@ -40,9 +40,10 @@ def run_sim(sim_params, include_payoffs=True, include_langs=False) :
 if __name__ == '__main__' :
     parser = argparse.ArgumentParser(description="Run simulations and record their results.")
     parser.add_argument('param_filepath')
-    parser.add_argument('results_output_path')
-    parser.add_argument('-n', '--networks-filepath')
+    parser.add_argument('results_output_filepath')
+    parser.add_argument('-n', '--networks-output-filepath')
     parser.add_argument('--include-langs', action='store_true')
+    parser.add_argument('-d', '--output-dir', help="Directory to export results and networks to. Overrides directory information in other arguments.")
 
     args = parser.parse_args()
 
@@ -65,30 +66,32 @@ if __name__ == '__main__' :
 
     print("---  Finished in %.2f minutes (real time)  ---" % ((time.time() - start_time) / 60))
 
-    # Determine file and directory name
+    # Determine output file and directory names
     base_filename = '_'.join(param_filename.split('_')[0:-1])
+    
+    results_filepath = args.results_output_filepath
+    results_filepath_default = f"../{base_filename}_results.parq"
+
+    if args.output_dir is not None :
+        results_filepath = os.path.join(args.output_dir, os.path.basename(results_filepath))
 
     try :
-        analysis.export_results(analysis.explode_results(results_df), args.results_output_path)
+        analysis.export_results(analysis.explode_results(results_df), results_filepath)
     except ValueError as e :
         print(e)
-        default_results_filepath = f"../{base_filename}_results.parq"
         print(f"Saving to default instead...")
-        analysis.export_results(analysis.explode_results(results_df), default_results_filepath)
+        analysis.export_results(analysis.explode_results(results_df), results_filepath_default)
 
-    # Pickle networks if provided argument
-    if args.networks_filepath is not None :
-        networks_dir = os.path.dirname(args.networks_filepath)
+    if args.networks_output_filepath is not None :
+        networks_filepath = args.networks_output_filepath
+        networks_filepath_default = f"../{base_filename}_networks.pickle"
 
-        # Create networks output directory if non-existent
-        if not os.path.exists(networks_dir) :
-            try :
-                os.makedirs(networks_dir)
-            except OSError as exc :
-                if exc.errno != errno.EEXIST :
-                    raise
+        if args.output_dir is not None :
+            networks_filepath = os.path.join(args.output_dir, os.path.basename(networks_filepath))
 
-        with open(os.path.join(args.networks_filepath), mode='wb') as networks_file :
-            pickle.dump(sim_networks, networks_file)
-
-        print(f"Saved networks to '{os.path.abspath(args.networks_filepath)}'.")
+        try :
+            analysis.export_networks_file(sim_networks, networks_filepath)
+        except ValueError as e :
+            print(e)
+            print(f"Saving to default instead...")
+            analysis.export_networks_file(sim_networks, networks_filepath_default)
