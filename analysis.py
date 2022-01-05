@@ -18,6 +18,7 @@ PARQUET_OBJECT_ENCODINGS = {
     'nwk_ring_neighbors': 'int',
     'avg_payoffs': 'json',
     'node_payoffs': 'json',
+    'node_langs': 'json',
 
     # unused params, left for compatibility
     'vocab_size': 'json',

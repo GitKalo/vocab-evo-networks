@@ -212,7 +212,7 @@ class Simulation :
                 run_avg_payoffs[reports_counter] = macro_average_payoff
 
                 # Take snapshot of node languages
-                run_langs[reports_counter] = [a.active_matrix for a in list(G.nodes)]
+                run_langs[reports_counter] = [a.active_matrix.tolist() for a in list(G.nodes)]
         
                 reports_counter += 1
                 try :
