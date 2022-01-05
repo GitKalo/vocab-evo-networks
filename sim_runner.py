@@ -95,15 +95,3 @@ if __name__ == '__main__' :
 
         with open(os.path.join(args.networks_filepath), mode='wb') as networks_file :
             pickle.dump(sim_networks, networks_file)
-
-        # for sim_id, run_networks in sim_networks.items() :
-        #     sim_networks_dir = os.path.join(args.networks_dir, f'sim_{sim_id}_nwks')
-        #     try :
-        #         os.makedirs(sim_networks_dir)
-        #     except OSError as exc :
-        #         if exc.errno != errno.EEXIST :
-        #             raise
-            
-        #     it = np.nditer(run_networks, flags=['refs_ok', 'c_index'])
-        #     for G in it :
-        #         nx.write_gpickle(G, os.path.join(sim_networks_dir, f'network_run_{it.index}.pickle'))
