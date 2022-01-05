@@ -192,9 +192,7 @@ def export_results(results_df, results_filepath=None) :
         results_filename = os.path.basename(results_filepath)
         file_extension = results_filepath.split('.')[-1]
     else :
-        print("Please provide a valid filepath, including a file extension.")
-        print("Exiting...")
-        sys.exit()
+        raise ValueError(f"Invalid filepath '{results_filepath}', must include a file extension.")
 
     # Create results output directory if non-existent
     if not os.path.exists(results_dirname) :
@@ -209,9 +207,7 @@ def export_results(results_df, results_filepath=None) :
         results_df = explode_results(results_df)
 
     if file_extension not in EXPORT_FILETYPES :
-        print(f"Unrecognized or unsupported file extension '{file_extension}'.")
-        print("Exiting...")
-        sys.exit()
+        raise ValueError(f"Unrecognized or unsupported file extension '{file_extension}'.")
     elif file_extension == 'csv' :
         results_df.to_csv(results_filepath)
     elif file_extension in ['parq', 'parquet'] :

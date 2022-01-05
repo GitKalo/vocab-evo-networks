@@ -68,18 +68,13 @@ if __name__ == '__main__' :
     # Determine file and directory name
     base_filename = '_'.join(param_filename.split('_')[0:-1])
 
-    # If given a filepath, extract filename and dirname
-    if len(args.results_output_path.split('.')) > 1 :
-        results_filename = os.path.basename(args.results_output_path)
-        results_dirname = os.path.dirname(args.results_output_path)
-    else :
-        # If only given a dirname, generate default filename
-        results_filename = base_filename + '_results.csv'   # Default results filename
-        results_dirname = args.results_output_path
-    
-    # Export simulation results to results filepath
-    results_filepath = os.path.join(results_dirname, results_filename)
-    analysis.export_results(analysis.explode_results(results_df), results_filepath)
+    try :
+        analysis.export_results(analysis.explode_results(results_df), args.results_output_path)
+    except ValueError as e :
+        print(e)
+        default_results_filepath = f"../{base_filename}_results.parq"
+        print(f"Saving to default instead...")
+        analysis.export_results(analysis.explode_results(results_df), default_results_filepath)
 
     # Pickle networks if provided argument
     if args.networks_filepath is not None :
