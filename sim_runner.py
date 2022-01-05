@@ -95,3 +95,5 @@ if __name__ == '__main__' :
 
         with open(os.path.join(args.networks_filepath), mode='wb') as networks_file :
             pickle.dump(sim_networks, networks_file)
+
+        print(f"Saved networks to {os.path.abspath(results_filepath)}.")
