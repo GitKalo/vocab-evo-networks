@@ -5,8 +5,9 @@ import matplotlib
 
 import sys, ast, os, errno, pickle
 
-EXPORT_FILETYPES = ['csv', 'parq', 'parquet']
-EXPORT_PATH_DEFAULT = './sim_results/results.parq'
+RESULTS_FILETYPES = ['csv', 'parq', 'parquet']
+RESULTS_PATH_DEFAULT = './sim_results/results.parq'
+NETWORKS_PATH_DEFAULT = './sim_networks/networks.pickle'
 PARQUET_OBJECT_ENCODINGS = {
     'sample_strategy': 'json',
     'nwk_topology': 'json',
@@ -184,7 +185,7 @@ def import_networks_file(networks_filepath) :
 # Export simulation results
 def export_results(results_df, results_filepath=None) :
     if not results_filepath :
-        results_filepath = EXPORT_PATH_DEFAULT
+        results_filepath =  RESULTS_PATH_DEFAULT
 
     # Extract file and directory name
     if len(results_filepath.lstrip('.').split('.')) > 1 :
@@ -206,7 +207,7 @@ def export_results(results_df, results_filepath=None) :
     if not isinstance(results_df.index, pd.MultiIndex) :
         results_df = explode_results(results_df)
 
-    if file_extension not in EXPORT_FILETYPES :
+    if file_extension not in RESULTS_FILETYPES :
         raise ValueError(f"Unrecognized or unsupported file extension '{file_extension}'.")
     elif file_extension == 'csv' :
         results_df.to_csv(results_filepath)
@@ -222,6 +223,34 @@ def export_results(results_df, results_filepath=None) :
                 # results_df.to_csv(results_filepath)
 
     print(f"Saved results to '{os.path.abspath(results_filepath)}'.")
+
+def export_networks_file(networks_dict, networks_filepath=None) :
+    if not networks_filepath :
+        networks_filepath = NETWORKS_PATH_DEFAULT
+    
+    # Extract file and directory name
+    if len(networks_filepath.lstrip('.').split('.')) > 1 :
+        networks_dirname = os.path.dirname(networks_filepath)
+        networks_filename = os.path.basename(networks_filepath)
+        file_extension = networks_filepath.split('.')[-1]
+    else :
+        raise ValueError(f"Invalid filepath '{networks_filepath}', must include a file extension.")
+
+    # Create output directory if non-existent
+    if not os.path.exists(networks_dirname) :
+        try :
+            os.makedirs(networks_dirname)
+        except OSError as exc :
+            if exc.errno != errno.EEXIST :
+                raise
+    
+    if file_extension != 'pickle' :
+        raise ValueError(f"Unrecognized or unsupported file extension '{file_extension}'. Can only save to '.pickle' files.")
+
+    with open(os.path.join(networks_filepath), mode='wb') as networks_file :
+        pickle.dump(networks_dict, networks_file)
+
+    print(f"Saved networks to '{os.path.abspath(networks_filepath)}'.")
 
 # Index a results df by sim ID and run ID by exploding on payoff columns
 # Function is *not* idempotent, it will likely throw an error if attempting to apply
