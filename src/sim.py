@@ -437,7 +437,7 @@ class Simulation :
 
         return normalized_payoffs
 
-    def as_series(self, include_payoffs=False, include_langs=False) :
+    def as_series(self, include_payoffs=True, include_langs=False) :
         series = pd.Series(self.as_dict(include_payoffs, include_langs))
         return series
 
