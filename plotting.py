@@ -55,7 +55,14 @@ def plot_sim_payoffs_all(sims_df, time_step_lim=None, normalize=False, n_cols=No
                 ax = axs
 
         # Plot mean payoffs for simulation runs
-        v = None if not normalize else ast.literal_eval(sim.vocab_size)[0]
+        if normalize :
+            try :
+                v = ast.literal_eval(sim.vocab_size)[0]
+            except AttributeError :     # If sim has no 'vocab_size'
+                if type(normalize) is not bool :
+                    v = normalize
+        else :
+            v = None
         time_steps = sim.payoff_reports_n if not time_step_lim else time_step_lim
         plot_sim_payoffs(ax, sim.avg_payoffs, time_step_lim=time_steps, v=v, **kwargs)
         ax.set_title(f'Sim id: {i}')
