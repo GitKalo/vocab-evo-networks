@@ -63,6 +63,8 @@ def get_t_conv_single(distances, threshold) :
         if d > threshold :
             t_conv = len(distances) - (i - 1)
             break
+    else :
+        t_conv = 1
 
     return t_conv
 
