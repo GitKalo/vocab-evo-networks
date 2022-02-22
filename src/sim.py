@@ -76,6 +76,7 @@ class Simulation :
         'nwk_rand-reg_degree': None,
         'nwk_lambda': 0,
         'nwk_rewire_disconnect': 'uniform',
+        'nwk_rewire_disconnect_total': None,
         'nwk_rewire_reconnect': 'uniform',
         'nwk_rewire_reconnect_margin': None,
         'n_objects': agent.Agent.default_objects,
@@ -131,6 +132,9 @@ class Simulation :
 
         if self._params['nwk_rewire_disconnect'] not in self.__class__.rewire_disconnect_strategies :
             raise ValueError(f"Unrecognized rewire disconnect strategy: '{self._params['nwk_rewire_disconnect']}'")
+
+        if self._params['nwk_rewire_disconnect'] != 'uniform' and self._params['nwk_rewire_disconnect_total'] is None :
+            raise TypeError("For non-'uniform' disconnect strategies, the 'nwk_rewire_disconnect_total' parameter should be specified.")
 
         if self._params['nwk_rewire_reconnect'] not in self.__class__.rewire_reconnect_strategies :
             raise ValueError(f"Unrecognized rewire reconnect strategy: '{self._params['nwk_rewire_reconnect']}'")
@@ -258,7 +262,11 @@ class Simulation :
             a_old = np.random.choice(disconnect_pool)
         else :
             disconnect_ids = [agents.index(a) for a in disconnect_pool]
-            disconnect_payoffs = self.get_normalized_payoffs(normalized_payoffs[disconnect_ids])
+
+            if self._params['nwk_rewire_disconnect_total'] :
+                disconnect_payoffs = self.get_normalized_payoffs(normalized_payoffs[disconnect_ids])
+            else :
+                disconnect_payoffs = self.get_normalized_payoffs([agent.payoff(a_source, a) for a in disconnect_pool])
 
             if len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
