@@ -56,7 +56,8 @@ class Simulation :
 
     rewire_disconnect_strategies = [
         'uniform',
-        'inverse'
+        'inverse',
+        'proportional'
     ]
 
     rewire_reconnect_strategies = [
@@ -258,13 +259,16 @@ class Simulation :
         # Pick agent to disconnect from based on strategy
         if self._params['nwk_rewire_disconnect'] == 'uniform' :
             a_old = np.random.choice(disconnect_pool)
-        elif self._params['nwk_rewire_disconnect'] == 'inverse' :
+        else :
             disconnect_ids = [agents.index(a) for a in disconnect_pool]
             disconnect_payoffs = self.get_normalized_payoffs(normalized_payoffs[disconnect_ids])
 
             if len(disconnect_pool) > 1 :
-                # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
-                a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
+                if self._params['nwk_rewire_disconnect'] == 'inverse' :
+                    # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
+                    a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
+                elif self._params['nwk_rewire_disconnect'] == 'proportional' :
+                    a_old = np.random.choice(disconnect_pool, p=disconnect_payoffs)
             else :
                 a_old = disconnect_pool[0]
 
