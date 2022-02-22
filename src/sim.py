@@ -76,6 +76,7 @@ class Simulation :
         'nwk_lambda': 0,
         'nwk_rewire_disconnect': 'uniform',
         'nwk_rewire_reconnect': 'proportional',
+        'nwk_rewire_reconnect_margin': 0.1,
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
@@ -274,12 +275,15 @@ class Simulation :
         elif self._params['nwk_rewire_reconnect'] == 'proportional' :
             reconnect_payoffs = self.get_normalized_payoffs(reconnect_payoffs[disconnect_mask])
 
-            try :
-                a_new = np.random.choice(reconnect_pool, p=reconnect_payoffs)
-            except ValueError :
-                # If no other connections exist in the population, 
-                # rewire to a random agent in the pool
+            if np.random.binomial(1, self._params['nwk_rewire_reconnect_margin']) :
+                # Chance to rewire to a random agent
                 a_new = np.random.choice(reconnect_pool)
+            else :
+                try :
+                    a_new = np.random.choice(reconnect_pool, p=reconnect_payoffs)
+                except ValueError :
+                    # If no other connections exist in the population, rewire to a random agent
+                    a_new = np.random.choice(reconnect_pool)
 
         G.remove_edge(a_source, a_old)
         G.add_edge(a_source, a_new)
