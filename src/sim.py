@@ -134,6 +134,9 @@ class Simulation :
         if self._params['nwk_rewire_reconnect'] not in self.__class__.rewire_reconnect_strategies :
             raise ValueError(f"Unrecognized rewire reconnect strategy: '{self._params['nwk_rewire_reconnect']}'")
 
+        if self._params['nwk_rewire_reconnect'] == 'proportional' and self._params['nwk_rewire_reconnect_margin'] is None :
+            raise TypeError("For the 'proportional' reconnect strategy, the 'nwk_rewire_reconnect_margin' parameter should be specified.")
+
         if self._params['sample_strategy'] not in self.__class__.learning_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
 
