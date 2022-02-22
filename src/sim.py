@@ -238,10 +238,7 @@ class Simulation :
 
         # Calculate total and normalized payoffs for each agent
         total_payoffs = np.fromiter(self.get_total_payoffs(G), float)
-
-        sum_payoffs = np.sum(total_payoffs)
-        normalized_payoffs = total_payoffs
-        if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
+        normalized_payoffs = self.get_normalized_payoffs(total_payoffs)
 
         # Pick agent for rewire and prepare rewire pools
 
