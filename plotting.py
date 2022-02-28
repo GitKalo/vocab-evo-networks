@@ -73,13 +73,13 @@ def plot_sim_payoffs_all(sims_df, time_step_lim=None, normalize=False, n_cols=No
 # - 'line' -- plots the payoffs for all nodes over all time steps
 # - 'hist' -- plots the payoff distribution for nodes at a single time step, based on
 # the `time_step` argument (defaults to the last time step)
-def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0) :
+def plot_node_payoffs(ax, runs, i_run=0, type='line', time_step=0, **kwargs) :
     if type == 'line' :
-        ax.plot(runs[i_run])
+        ax.plot(runs[i_run], **kwargs)
         ax.set_title(f"Node payoffs for run {i_run + 1}")
     elif type == 'hist' :
         if not time_step : time_step = len(runs[i_run])
-        ax.hist(runs[i_run][time_step-1], bins=50)
+        ax.hist(runs[i_run][time_step-1], bins=50, **kwargs)
         ax.set_title(f"Payoff distribution at time step {time_step} for run {i_run + 1}")
     else :
         print(f"Unrecognized type {type}, must be either 'line' or 'hist'.")
