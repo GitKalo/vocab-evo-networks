@@ -254,6 +254,8 @@ class Simulation :
                 run_reports_dict['rewires'][reports_counter] = rewire_counter
                 run_reports_dict['max_degree'][reports_counter] = max(dict(G.degree).values())
                 run_reports_dict['avg_shortest_path'][reports_counter] = self.avg_shortest_path_cc(G)
+                run_reports_dict['avg_clustering'][reports_counter] = nx.average_clustering(G)
+                run_reports_dict['transitivity'][reports_counter] = nx.transitivity(G)
 
                 reports_counter += 1
                 try :
