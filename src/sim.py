@@ -167,7 +167,7 @@ class Simulation :
         self.__sim_networks = np.array([nx.Graph] * self._params['n_runs'])
 
         self.__reports = {
-            'rewires': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'rewires': np.zeros((self._params['n_runs'], self._params['payoff_reports_n']), dtype=int),
             'max_degree': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
             'avg_path_length': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
             'avg_clustering': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
@@ -222,12 +222,14 @@ class Simulation :
 
         reports_counter = 0
         reports_next_step = 0
+        rewire_counter = 0
 
         for step_num in range(self._params['t_max']) :
             # Decide whether to do a reproduction or a rewire step
             if np.random.binomial(1, self._params['nwk_lambda']) :
                 # Rewire step
-                G, node_payoffs = self.step_rewire(G)
+                G, node_payoffs, rewire_success = self.step_rewire(G)
+                if rewire_success : rewire_counter += 1     # Record number of rewires
             else :
                 # Reproduction step
                 G, node_payoffs = self.step_reproduction(G)
@@ -244,7 +246,10 @@ class Simulation :
 
                 # Take snapshot of node languages
                 run_langs[reports_counter] = [a.active_matrix.tolist() for a in list(G.nodes)]
-        
+
+                # Generate reports
+                run_reports_dict['rewires'][reports_counter] = rewire_counter
+
                 reports_counter += 1
                 try :
                     reports_next_step = self._params['payoff_reports_i'][reports_counter]
@@ -273,7 +278,7 @@ class Simulation :
 
         # If we picked an isolated agent, do nothing
         if not disconnect_pool :
-            return G, total_payoffs
+            return G, total_payoffs, False
 
         a_id = agents.index(a_source)
         reconnect_pool = np.delete(agents, a_id)     # Prevent self-links
@@ -302,7 +307,7 @@ class Simulation :
                 if len(eligible) > 0 :
                     a_old = np.random.choice(eligible)
                 else :
-                    return G, total_payoffs
+                    return G, total_payoffs, False
             elif len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
                     # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
@@ -335,7 +340,7 @@ class Simulation :
         G.remove_edge(a_source, a_old)
         G.add_edge(a_source, a_new)
 
-        return G, total_payoffs
+        return G, total_payoffs, True
 
     def step_reproduction(self, G) :
         """
