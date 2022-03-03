@@ -190,11 +190,14 @@ class Simulation :
         else :
             with Pool(self._params['n_processes']) as pool :
                 results = pool.map(self.exec_run, range(self._params['n_runs']))
-                for i_run, avg, node, langs, nwks in results :
+                for i_run, avg, node, langs, nwks, reports_dict in results :
                     self.__sim_avg_payoffs[i_run] = avg
                     self.__sim_node_payoffs[i_run] = node
                     self.__sim_node_langs[i_run] = langs
                     self.__sim_networks[i_run] = nwks
+
+                    for k, v in reports_dict.items() :
+                        self.__reports[k][i_run] = v
 
     def exec_run(self, i_run) :
         # Re-seed rng to get different results in parallel processes
@@ -214,6 +217,8 @@ class Simulation :
         run_avg_payoffs = np.zeros(self._params['payoff_reports_n'])   # Contains the average payoffs for each time step
         run_node_payoffs = np.zeros((self._params['payoff_reports_n'], self._params['pop_size']))   # Payoffs for each node, populated if network update is 'relabel'
         run_langs = [[]] * self._params['payoff_reports_n']
+
+        run_reports_dict = {k: np.zeros(v.shape[1]) for k, v in self.__reports.items()}
 
         reports_counter = 0
         reports_next_step = 0
@@ -248,7 +253,7 @@ class Simulation :
 
         run_network = G.copy()
 
-        return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, (run_network_initial, run_network))
+        return (i_run, run_avg_payoffs, run_node_payoffs, run_langs, (run_network_initial, run_network), run_reports_dict)
 
     def step_rewire(self, G) :
         agents = list(G.nodes)
