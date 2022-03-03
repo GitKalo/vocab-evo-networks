@@ -181,12 +181,15 @@ class Simulation :
 
         if self._params['n_processes'] == 1 :
             for i_run in range(self._params['n_runs']) :
-                _, avg, node, langs, nwks = self.exec_run(i_run)
+                _, avg, node, langs, nwks, reports_dict = self.exec_run(i_run)
 
                 self.__sim_avg_payoffs[i_run] = avg
                 self.__sim_node_payoffs[i_run] = node
                 self.__sim_node_langs[i_run] = langs
                 self.__sim_networks[i_run] = nwks
+
+                for k, v in reports_dict.items() :
+                    self.__reports[k][i_run] = v
         else :
             with Pool(self._params['n_processes']) as pool :
                 results = pool.map(self.exec_run, range(self._params['n_runs']))
