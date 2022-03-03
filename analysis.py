@@ -20,6 +20,13 @@ PARQUET_OBJECT_ENCODINGS = {
     'node_payoffs': 'json',
     'node_langs': 'json',
 
+    # reports
+    'rewires': 'json',
+    'max_degree': 'json',
+    'avg_path_length': 'json',
+    'avg_clustering': 'json',
+    'transitivity': 'json',
+
     # unused params, left for compatibility
     'vocab_size': 'json',
     'learning_strategy': 'json',

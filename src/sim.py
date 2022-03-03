@@ -166,6 +166,14 @@ class Simulation :
         self.__sim_node_langs = [[]] * self._params['n_runs']
         self.__sim_networks = np.array([nx.Graph] * self._params['n_runs'])
 
+        self.__reports = {
+            'rewires': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'max_degree': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'avg_path_length': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'avg_clustering': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'transitivity': np.zeros((self._params['n_runs'], self._params['payoff_reports_n']))
+        }
+
     def run(self) :
         """
         Executes the simulation, records the results, and displays them through `pyplot`.
@@ -478,11 +486,11 @@ class Simulation :
 
         return normalized_payoffs
 
-    def as_series(self, include_payoffs=True, include_langs=False) :
-        series = pd.Series(self.as_dict(include_payoffs, include_langs))
+    def as_series(self, include_payoffs=True, include_langs=False, include_reports=True) :
+        series = pd.Series(self.as_dict(include_payoffs, include_langs, include_reports))
         return series
 
-    def as_dict(self, include_payoffs=False, include_langs=False) :
+    def as_dict(self, include_payoffs=False, include_langs=False, include_reports=False) :
         sim_dict = self.get_params()
         if include_payoffs :
             sim_dict.update(dict(
@@ -491,6 +499,8 @@ class Simulation :
                 ))
         if include_langs :
             sim_dict.update(dict(node_langs=self.get_node_langs()))
+        if include_reports :
+            sim_dict.update({k: v.tolist() for k, v in self.__reports.items()})
 
         return sim_dict
 
