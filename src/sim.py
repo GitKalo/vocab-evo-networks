@@ -275,12 +275,21 @@ class Simulation :
             if self._params['nwk_rewire_disconnect_total'] :
                 disconnect_payoffs = self.get_normalized_payoffs(normalized_payoffs[disconnect_ids])
             else :
-                disconnect_payoffs = self.get_normalized_payoffs([G.get_edge_data(a_source, a, None)['payoff'] for a in disconnect_pool])
+                disconnect_payoffs = self.get_normalized_payoffs(np.array([G.get_edge_data(a_source, a, None)['payoff'] for a in disconnect_pool]))
 
-            if self._params['nwk_rewire_disconnect'] == 'inverse-threshold' :
-                pass
-            elif self._params['nwk_rewire_disconnect'] == 'proportional-threshold':
-                pass
+            if self._params['nwk_rewire_disconnect'] in ['inverse-threshold', 'proportional-threshold'] :
+                disconnect_pool = np.array(disconnect_pool)     # Convert to ndarray for easier indexing
+                eligible_mask = disconnect_payoffs < self._params['nwk_rewire_threshold']
+
+                if self._params['nwk_rewire_disconnect'] == 'proportional-threshold':
+                    eligible_mask = ~eligible_mask
+                
+                eligible = disconnect_pool[eligible_mask]
+
+                if len(eligible) > 0 :
+                    a_old = np.random.choice(eligible)
+                else :
+                    return G, total_payoffs
             elif len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
                     # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
