@@ -266,7 +266,7 @@ class Simulation :
             if self._params['nwk_rewire_disconnect_total'] :
                 disconnect_payoffs = self.get_normalized_payoffs(normalized_payoffs[disconnect_ids])
             else :
-                disconnect_payoffs = self.get_normalized_payoffs([agent.payoff(a_source, a) for a in disconnect_pool])
+                disconnect_payoffs = self.get_normalized_payoffs([G.get_edge_data(a_source, a, None)['payoff'] for a in disconnect_pool])
 
             if len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
