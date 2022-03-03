@@ -23,7 +23,7 @@ PARQUET_OBJECT_ENCODINGS = {
     # reports
     'rewires': 'json',
     'max_degree': 'json',
-    'avg_path_length': 'json',
+    'avg_shortest_path': 'json',
     'avg_clustering': 'json',
     'transitivity': 'json',
 

@@ -168,8 +168,8 @@ class Simulation :
 
         self.__reports = {
             'rewires': np.zeros((self._params['n_runs'], self._params['payoff_reports_n']), dtype=int),
-            'max_degree': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
-            'avg_path_length': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
+            'max_degree': np.zeros((self._params['n_runs'], self._params['payoff_reports_n']), dtype=int),
+            'avg_shortest_path': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
             'avg_clustering': np.zeros((self._params['n_runs'], self._params['payoff_reports_n'])),
             'transitivity': np.zeros((self._params['n_runs'], self._params['payoff_reports_n']))
         }
@@ -252,6 +252,8 @@ class Simulation :
 
                 # Generate reports
                 run_reports_dict['rewires'][reports_counter] = rewire_counter
+                run_reports_dict['max_degree'][reports_counter] = max(dict(G.degree).values())
+                run_reports_dict['avg_shortest_path'][reports_counter] = self.avg_shortest_path_cc(G)
 
                 reports_counter += 1
                 try :
@@ -498,6 +500,12 @@ class Simulation :
         if sum_payoffs : normalized_payoffs = np.array(total_payoffs) / sum_payoffs
 
         return normalized_payoffs
+
+    def avg_shortest_path_cc(self, G) :
+        try :
+            return nx.average_shortest_path_length(G)
+        except nx.NetworkXError :
+            return nx.average_shortest_path_length(G.subgraph(max(nx.connected_components(G), key=len)))
 
     def as_series(self, include_payoffs=True, include_langs=False, include_reports=True) :
         series = pd.Series(self.as_dict(include_payoffs, include_langs, include_reports))
