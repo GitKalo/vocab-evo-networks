@@ -57,7 +57,9 @@ class Simulation :
     rewire_disconnect_strategies = [
         'uniform',
         'inverse',
-        'proportional'
+        'inverse-threshold',
+        'proportional',
+        'proportional-threshold'
     ]
 
     rewire_reconnect_strategies = [
@@ -79,6 +81,7 @@ class Simulation :
         'nwk_rewire_disconnect_total': None,
         'nwk_rewire_reconnect': 'uniform',
         'nwk_rewire_reconnect_margin': None,
+        'nwk_rewire_threshold': None,
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
         'sample_strategy': 'role-model',
@@ -135,6 +138,12 @@ class Simulation :
 
         if self._params['nwk_rewire_disconnect'] != 'uniform' and self._params['nwk_rewire_disconnect_total'] is None :
             raise TypeError("For non-'uniform' disconnect strategies, the 'nwk_rewire_disconnect_total' parameter should be specified.")
+
+        if self._params['nwk_rewire_disconnect'] in ['inverse-threshold', 'proportional-threshold'] :
+            if self._params['nwk_rewire_disconnect_total'] is not False :
+                raise TypeError("For '-threshold' disconnect strategies, payoffs should be individual, not total.")
+            if self._params['nwk_rewire_threshold'] is None :
+                raise TypeError("For '-threshold' disconnect strategies, the 'nwk_rewire_threshold' parameter should be specified.")
 
         if self._params['nwk_rewire_reconnect'] not in self.__class__.rewire_reconnect_strategies :
             raise ValueError(f"Unrecognized rewire reconnect strategy: '{self._params['nwk_rewire_reconnect']}'")
@@ -268,7 +277,11 @@ class Simulation :
             else :
                 disconnect_payoffs = self.get_normalized_payoffs([G.get_edge_data(a_source, a, None)['payoff'] for a in disconnect_pool])
 
-            if len(disconnect_pool) > 1 :
+            if self._params['nwk_rewire_disconnect'] == 'inverse-threshold' :
+                pass
+            elif self._params['nwk_rewire_disconnect'] == 'proportional-threshold':
+                pass
+            elif len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
                     # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
                     a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
