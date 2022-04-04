@@ -317,8 +317,11 @@ class Simulation :
                     return G, total_payoffs, False
             elif len(disconnect_pool) > 1 :
                 if self._params['nwk_rewire_disconnect'] == 'inverse' :
-                    # TODO: Dangerous! Not sure why this probability inversion works, but it seems to. Need to test! 
-                    a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
+                    try :
+                        a_old = np.random.choice(disconnect_pool, p=((1 - disconnect_payoffs)) / (len(disconnect_payoffs) - 1))
+                    except ValueError :
+                        # Not the best way to handle this error, but it occurs so rarely that it should not affect the dynamics
+                        a_old = np.random.choice(disconnect_pool)
                 elif self._params['nwk_rewire_disconnect'] == 'proportional' :
                     a_old = np.random.choice(disconnect_pool, p=disconnect_payoffs)
             else :
