@@ -91,6 +91,8 @@ class Simulation :
         'sample_influence': 0.5,
         'sample_mistake_p': 0,
         'sample_include_parent': False,    #TODO: phase out
+        'comp': False,
+        'comp_initp': None,
         'payoff_reports_n': 1000,
         'n_processes': None
     }
@@ -153,6 +155,9 @@ class Simulation :
 
         if self._params['sample_strategy'] not in self.__class__.learning_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
+
+        if self._params['comp'] and self._params['comp_initp'] is None :
+            raise ValueError(f"For competition simulations, initial proportion 'comp_initp' should be specified.")
 
         self._params['payoff_reports_i'] = np.linspace(0, self._params['t_max'] - 1, self._params['payoff_reports_n'], dtype=int)
         
