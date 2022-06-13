@@ -213,8 +213,34 @@ class Simulation :
 
         # Generate agents in first generation (with random matrices)
         first_gen = {agent_id : agent.Agent(agent_id, self._params['n_objects'], self._params['n_signals']) for agent_id in range(self._params['pop_size'])}
-        for _, v in first_gen.items() :
-            v.update_language(agent.random_assoc_matrix(self._params['n_objects'], self._params['n_signals']))
+
+        # If simulating competition dynamics, generate initial languages and generation
+        if self._params['comp'] :
+            # Generate languages A and B (binary, equal payoffs)
+            binary_dist = [1] + [0] * (self._params['n_objects'] - 1)
+            lang_a = np.array([np.random.permutation(binary_dist) for _ in range(self._params['n_signals'])])
+
+            max_payoff = np.count_nonzero(np.sum(lang_a, axis=0))   # Number of non-zero signal distributions is a proxy for max payoff in binary matrices
+            payoff_b = 0
+            while (max_payoff != payoff_b) :
+                lang_b = np.array([np.random.permutation(binary_dist) for _ in range(self._params['n_signals'])])
+                payoff_b = np.count_nonzero(np.sum(lang_b, axis=0))
+
+            # Determine number of A and B agents in population
+            num_a = int(np.round(self._params['pop_size'] * self._params['comp_initp']))
+            num_b = self._params['pop_size'] - num_a
+
+            # Update languages
+            agent_ids = np.array(list(first_gen.keys()))
+            np.random.shuffle(agent_ids)
+
+            for agent_a in agent_ids[:num_a] :
+                first_gen[agent_a].update_language(lang_a)
+            for agent_b in agent_ids[num_a:] :
+                first_gen[agent_b].update_language(lang_b)
+        else:
+            for _, v in first_gen.items() :
+                v.update_language(agent.random_assoc_matrix(self._params['n_objects'], self._params['n_signals']))
         
         # Generate network and embed first generation
         G = nx.relabel_nodes(self.generate_network(), first_gen)
