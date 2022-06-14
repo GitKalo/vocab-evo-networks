@@ -150,6 +150,7 @@ def import_results(results_filepath) :
     try :
         filetype = results_filepath.split('.')[-1]
         if filetype == 'csv' :
+            # TODO: add handling of other string columns
             imported_df = pd.read_csv(results_filepath, index_col=[0, 1], converters={
                 'avg_payoffs': ast.literal_eval,
                 'node_payoffs': ast.literal_eval
