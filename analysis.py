@@ -38,6 +38,9 @@ PARQUET_OBJECT_ENCODINGS = {
     'ring_neighbors': 'int'
 }
 
+EXPLODE_COLUMNS = ['avg_payoffs', 'node_payoffs', 'node_langs', \
+    'rewires', 'max_degree', 'avg_shortest_path', 'avg_clustering', 'transitivity']
+
 # Calculate standard errors of mean payoffs
 def std_err(samples) :
     std = np.std(samples)
@@ -266,7 +269,7 @@ def export_networks_file(networks_dict, networks_filepath=None) :
 # Function is *not* idempotent, it will likely throw an error if attempting to apply
 # multiple times to the same dataframe
 def explode_results(results_df) :
-    exploded_df = results_df.explode(['avg_payoffs', 'node_payoffs'])
+    exploded_df = results_df.explode([col for col in EXPLODE_COLUMNS if col in results_df.columns])
     exploded_df['sim'] = exploded_df.index
     exploded_df = exploded_df.reset_index(drop=True)
     exploded_df['run'] = exploded_df.index
