@@ -159,6 +159,10 @@ class Simulation :
         if self._params['comp'] and self._params['comp_initp'] is None :
             raise ValueError(f"For competition simulations, initial proportion 'comp_initp' should be specified.")
 
+        # Payoff reports cannot be more than time steps simulated
+        self._params['payoff_reports_n'] = min(self._params['t_max'], self._params['payoff_reports_n'])
+
+        # Determine which time steps to record reports on
         self._params['payoff_reports_i'] = np.linspace(0, self._params['t_max'] - 1, self._params['payoff_reports_n'], dtype=int)
         
         # Default number of processes to the number of simulation runs
@@ -269,7 +273,7 @@ class Simulation :
                 G, node_payoffs = self.step_reproduction(G)
             
             # Record payoffs
-            if step_num == reports_next_step :   #TODO: optimize (set or next_report_id)
+            if step_num == reports_next_step :
                 # If nodes are relabeled, record payoff for each node
                 if self._params['nwk_update'] == 'relabel' :
                     run_node_payoffs[reports_counter] = node_payoffs
