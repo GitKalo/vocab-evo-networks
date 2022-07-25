@@ -487,7 +487,7 @@ class Simulation :
             G = nx.complete_graph(self._params['pop_size'])
         elif nwk == 'random' :
             G = nx.erdos_renyi_graph(self._params['pop_size'], self._params['nwk_random_p'])
-        elif nwk == 'random_regular' :
+        elif nwk == 'rand-reg' :
             G = nx.random_regular_graph(self._params['nwk_rand-reg_degree'], self._params['pop_size'])
         elif nwk == 'scale-free' :
             G = nx.barabasi_albert_graph(self._params['pop_size'], self._params['nwk_sf_links'])
