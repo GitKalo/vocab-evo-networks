@@ -174,8 +174,8 @@ def get_lang_dist_dual(run_langs) :
     b_index, b_counts = next(langs_counts_sorted_iter)
     a_lang = langs_list_init[a_index]
     b_lang = langs_list_init[b_index]
-    print(np.array(a_lang))
-    print(np.array(b_lang))
+    # print(np.array(a_lang))
+    # print(np.array(b_lang))
 
     dists = [()] * len(run_langs)
 
@@ -208,6 +208,14 @@ def sorted_dict(d, sort_value_index=None, descending=True) :
         return {k:v for k,v in sorted(d.items(), key=lambda item: item[1], reverse=descending)}
     else :
         return {k:v for k,v in sorted(d.items(), key=lambda item: item[1][sort_value_index], reverse=descending)}
+
+def hamming_dist(a, b) :
+    if not isinstance(a, np.ndarray) :
+        a = np.array(a)
+    if not isinstance(b, np.ndarray) :
+        b = np.array(b)
+
+    return np.count_nonzero(a != b)
 
 # Import simulation results
 def import_results(results_filepath) :
