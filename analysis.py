@@ -145,6 +145,70 @@ def get_lang_index_list(langs) :
     
     return index_lang, dict_counts
 
+def get_lang_dist(run_langs) :
+    langs_list_init, langs_counts_init = get_lang_index_list(run_langs[0])
+    langs_counts_sorted_iter = iter(sorted_dict(langs_counts_init).items())
+
+    a_index, a_counts = next(langs_counts_sorted_iter)
+    b_index, b_counts = next(langs_counts_sorted_iter)
+    langs_ab = (langs_list_init[a_index], langs_list_init[b_index])
+
+    dists = [{}] * len(run_langs)
+
+    for i, t in enumerate(run_langs) :
+        langs_list, langs_counts = get_lang_index_list(t)
+        langs_counts_sorted = sorted_dict(langs_counts)
+        
+        langs_dist = {idx: [cnt, langs_list[idx]] for idx, cnt in langs_counts_sorted.items()}
+
+        dists[i] = langs_dist
+
+    return langs_ab, dists
+
+def get_lang_dist_dual(run_langs) :
+    
+    langs_list_init, langs_counts_init = get_lang_index_list(run_langs[0])
+    langs_counts_sorted_iter = iter(sorted_dict(langs_counts_init).items())
+
+    a_index, a_counts = next(langs_counts_sorted_iter)
+    b_index, b_counts = next(langs_counts_sorted_iter)
+    a_lang = langs_list_init[a_index]
+    b_lang = langs_list_init[b_index]
+    print(np.array(a_lang))
+    print(np.array(b_lang))
+
+    dists = [()] * len(run_langs)
+
+    for i, t in enumerate(run_langs) :
+        langs_list, langs_counts = get_lang_index_list(t)
+
+        try :
+            a_counts = langs_counts[langs_list.index(a_lang)]
+            del langs_counts[langs_list.index(a_lang)]
+        except ValueError : # Lang has gone extinct
+            a_counts = 0
+
+        try :
+            b_counts = langs_counts[langs_list.index(b_lang)]
+            del langs_counts[langs_list.index(b_lang)]
+        except ValueError :
+            b_counts = 0
+
+        other_counts = 0
+        for j in langs_counts :
+            other_counts += langs_counts[j]
+
+        dist = (a_counts, b_counts, other_counts)
+        dists[i] = dist
+
+    return dists
+
+def sorted_dict(d, sort_value_index=None, descending=True) :
+    if sort_value_index is None :
+        return {k:v for k,v in sorted(d.items(), key=lambda item: item[1], reverse=descending)}
+    else :
+        return {k:v for k,v in sorted(d.items(), key=lambda item: item[1][sort_value_index], reverse=descending)}
+
 # Import simulation results
 def import_results(results_filepath) :
     try :
