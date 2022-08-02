@@ -57,6 +57,14 @@ if __name__ == '__main__' :
         print(f"Could not find the parmeter file '{args.param_filepath}'. Exiting...")
         sys.exit()
 
+    common_params = {}
+    if 'common' in sim_params :
+        common_params = sim_params['common']
+        del sim_params['common']
+        
+        for sim_id, params in sim_params.items() :
+            sim_params[sim_id] = {**common_params, **params}
+
     # Run simulations and record runtime
     print("---  Starting simulation...  ---")
     start_time = time.time()
