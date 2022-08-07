@@ -6,3 +6,6 @@ env
 
 # MacOS files
 .DS_Store
+
+# Results folder from README example
+example_simulation

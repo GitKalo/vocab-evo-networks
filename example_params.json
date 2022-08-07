@@ -1,0 +1,16 @@
+{
+    "0": {
+        "pop_size": 30,
+        "t_max": 15000,
+        "n_runs": 4,
+        "nwk_topology": "scale-free",
+        "nwk_sf_links": 4
+    },
+    "1": {
+        "pop_size": 30,
+        "t_max": 15000,
+        "n_runs": 4,
+        "nwk_topology": "random",
+        "nwk_random_p": 0.1
+    }
+}

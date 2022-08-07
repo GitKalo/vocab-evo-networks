@@ -6,11 +6,39 @@ Research based on this model has been published and presented at the *Complex Ne
 
 ## Running simulations
 
-W.I.P.
+To run simulations, you need Python >=3.9 and the necessary third-party modules (most importantly NumPy, Pandas, and NetworkX). To install the latter, run something like the following (exact command may vary depending on your setup):
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Simulations can be run directly through a Python script by either importing the `Simulation` class from `src/sim.py` and initializing it with the necessary parameters, or by importing the `sim_runner` module and using its `run_sim` function with a dictionary of parameters. 
+
+However, a quicker and more user-friendly way to run simulations is through the command line, by using a `.json` **parameter file** specifying the relevant simulation parameters. An example parameter file `example_params.json` is provided. The example is very minimal. For details on available parameters, see the comments or help section of the `src/sim.py` module (e.g. by running `python -c "import src.sim as sim; help(sim)"`).
+
+If you have a parameter file, you can **run simulations** using the `sim_runner.py` script, like so (this particular example should take about two minutes to run):
+
+```bash
+python sim_runner.py example_params.json example_results.csv -n example_networks.pickle -d ./example_simulation
+```
+
+Briefly, this will run simulations based on the parameters provided in the `example_params.json` script and save the results to a new directory named `example_simulation` under the current working directory, which will contain the simulation results (`example_results.csv`) and serialized networks (`example_networks.pickle`). See `python sim_runner.py -h` for further details on the command line arguments. 
+
+There can sometimes be issues with saving results as CSV files, so it is recommended to save use parqet files instead. You can do so by simply changing the file extension of the respective command line argument to (e.g. to `example_results.parq`).
+
+To quickly **visualize the results**, you can use the `plotting.py` script through the command line like so:
+
+```bash
+python plotting.py example_simulation/example_results.csv
+```
+
+The `analysis.py` script contains various functions that can help in **analyzing simulation results**. Most of them are fairly atomic and easy to understand, but feel free to address the corresponding the authors (see below) for help.
 
 ## Authors
 
-All software was written by **Kaloyan Danovski** (kd1u18[at]southamptonalumni[dot]co[dot]uk). The model is developed and explored by **Kaloyan Danovski** and **Markus Brede**.
+All software was written by **Kaloyan Danovski**. The model is developed and explored by **Kaloyan Danovski** and **Markus Brede**.
+
+To get in touch, please email Kaloyan at kd1u18[at]southamptonalumni[dot]co[dot]uk.
 
 ## References
 
