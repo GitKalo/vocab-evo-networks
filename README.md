@@ -12,4 +12,6 @@ W.I.P.
 
 All software was written by **Kaloyan Danovski** (kd1u18[at]southamptonalumni[dot]co[dot]uk). The model is developed and explored by **Kaloyan Danovski** and **Markus Brede**.
 
+## References
+
 [1] Danovski, K., Brede, M. (2022). Effects of Population Structure on the Evolution of Linguistic Convention. In: Benito, R.M., Cherifi, C., Cherifi, H., Moro, E., Rocha, L.M., Sales-Pardo, M. (eds) Complex Networks & Their Applications X. COMPLEX NETWORKS 2021. Studies in Computational Intelligence, vol 1015. Springer, Cham. https://doi.org/10.1007/978-3-030-93409-5_57
