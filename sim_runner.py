@@ -53,11 +53,11 @@ def run_sim(sim_params, include_payoffs=True, include_langs=False) :
 # If run as standalone module, read arguments, run sim, and record results
 if __name__ == '__main__' :
     parser = argparse.ArgumentParser(description="Run simulations and record their results.")
-    parser.add_argument('param_filepath')
-    parser.add_argument('results_output_filepath')
-    parser.add_argument('-n', '--networks-output-filepath')
-    parser.add_argument('--include-langs', action='store_true')
-    parser.add_argument('-d', '--output-dir', help="Directory to export results and networks to. Overrides directory information in other arguments.")
+    parser.add_argument('param_filepath', help="Path to parameter file in JSON format.")
+    parser.add_argument('results_output_filepath', help="Path for results output. Valid file extensions are '.csv.' or '.parq'. If an ivalid filepath is given, a default one will be used instead.")
+    parser.add_argument('-n', '--networks-output-filepath', help="Path for serialized network output. Valid file extensions are '.pickle'. If an invalid filepath is given, a default one will be used instead.")
+    parser.add_argument('--include-langs', action='store_true', help="Whether to include agent languages in results report. Will be passed as an argument to `run_sim()` method and Simulation instance.")
+    parser.add_argument('-d', '--output-dir', help="Directory to export results and networks to. Overrides directory information in results and networks output arguments.")
 
     args = parser.parse_args()
 
@@ -92,10 +92,11 @@ if __name__ == '__main__' :
     base_filename = '_'.join(param_filename.split('_')[0:-1])
     
     results_filepath = args.results_output_filepath
-    results_filepath_default = f"../{base_filename}_results.parq"
+    results_filepath_default = f"./{base_filename}_results.parq"
 
     if args.output_dir is not None :
         results_filepath = os.path.join(args.output_dir, os.path.basename(results_filepath))
+        results_filepath_default = os.path.join(args.output_dir, os.path.basename(results_filepath_default))
 
     try :
         analysis.export_results(analysis.explode_results(results_df), results_filepath)
@@ -106,10 +107,11 @@ if __name__ == '__main__' :
 
     if args.networks_output_filepath is not None :
         networks_filepath = args.networks_output_filepath
-        networks_filepath_default = f"../{base_filename}_networks.pickle"
+        networks_filepath_default = f"./{base_filename}_networks.pickle"
 
         if args.output_dir is not None :
             networks_filepath = os.path.join(args.output_dir, os.path.basename(networks_filepath))
+            networks_filepath_default = os.path.join(args.output_dir, os.path.basename(networks_filepath_default))
 
         try :
             analysis.export_networks_file(sim_networks, networks_filepath)
