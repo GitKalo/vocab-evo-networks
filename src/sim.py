@@ -34,7 +34,6 @@ class Simulation :
     """
     supported_topologies = [
         'lattice',
-        'lattice_extra',
         'ring',
         'complete',
         'random',
@@ -114,7 +113,7 @@ class Simulation :
 
         # Input validation for network type and update strategy
         if self._params['nwk_topology'] in self.__class__.supported_topologies :
-            if self._params['nwk_topology'] in ['lattice', 'lattice_extra'] :
+            if self._params['nwk_topology'] == 'lattice' :
                 if np.sqrt(self._params['pop_size']) % 1 > 0 :
                     raise ValueError("For regular lattices, the pop size must be a square number.")
                 else :
@@ -470,17 +469,8 @@ class Simulation :
         Generate a network based on the `network_type` property.
         """
         nwk = self._params['nwk_topology']
-        if nwk in ['lattice', 'lattice_extra'] :
+        if nwk == 'lattice' :
             G = nx.convert_node_labels_to_integers(nx.grid_2d_graph(self._params['nwk_lattice_dim_size'], self._params['nwk_lattice_dim_size'], periodic=self._params['nwk_lattice_periodic']))
-
-            if nwk == 'lattice_extra' :
-                # Add a random edge
-                # nodes = np.random.choice(G.nodes, size=2, replace=False)
-                # G.add_edge(nodes[0], nodes[1])
-
-                # Remove a random edge
-                edge = list(G.edges)[np.random.choice(len(list(G.edges)))]
-                G.remove_edge(edge[0], edge[1])
         elif nwk == 'ring' :
             G = nx.watts_strogatz_graph(self._params['pop_size'], self._params['nwk_ring_neighbors'], self._params['nwk_ring_rewire_p'])
         elif nwk == 'complete' :
@@ -588,6 +578,9 @@ class Simulation :
         return self.__sim_node_payoffs
 
 if __name__ == '__main__' :
+
+    print("This module is used to run agent-based simulations. See `help(sim)` for further details. It will now run a quick sample simulation and plot the results.")
+
     pop_size = 50
     n_time_steps = 10000
     n_runs = 20
