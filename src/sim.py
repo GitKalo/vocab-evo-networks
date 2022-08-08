@@ -10,27 +10,91 @@ from . import agent
 class Simulation :
     """
     Simulations are independent and immutable instances of the vocabulary evolution 
-    model with certain parameters (see below).
+    model. They are described by the parameters provided.
     
     The parameters of the simulation are passed when the class is instantiated, and 
-    cannot be changed. The instance can then be run using the `run()` method, which 
-    executes the model with the specified parameters and records the results.
+    are immutable. An instance of the simulation using those parameteres can then 
+    be run using the `run()` method, which executes the model with the specified 
+    parameters and records the results. The results can later be retrieved through
+    the `as_series()` and `as_dict()` methods.
 
-    The parameters that can be specified to the Simulation are the following:
-        pop_size : int          # The number of agents in the population
-        time_steps : int        # The number of time steps at each run of the simulation.
-        ...                     Intuitively, every time step represents a new generation, although the 
-        ...                     details of what that entails differ base don the network update strategy.
-        runs : int              # The number of independent runs that the simulation executes. Each
-        ...                     has a separate network structure and population. The final results reported
-        ...                     by the simulation are averaged over all runs.
-        objects : int           # The number of objects in every agent's language.
-        signals : int           # The number of signals in every agent's language.
-        network_type : str      # The type of network used, which determines the structure of the population.
-        ...                     Must be one of the available network types listed in the `network_types` attribute.
-        network_update : str    # The network update strategy used by the simulation. Must be one of the
-        ...                     available network update strategies listed in the `network_updates` attribute.
+    Simulations can also be run using the `sim_runner.py` script, which will read
+    parameters from a `json` file, instantiate and run simulations, and record the
+    results. This is the most user-friendly and the recommended way to run simulations.
+    Run `python sim_runner.py -h` for further details.
+
+    Attributes
+    ----------
+        TODO: add attribute descriptions
+
+    Parameters (passed to `__init__` method)
+    ----------------------------------------
+        pop_size : int
+            The number of agents in the population; system size.
+        t_max : int
+            The number of time steps after which the simulations stops.
+        nwk_topology : str
+            The topology of the network underlying the population. See `supported_topologies` attribute.
+        n_runs : int
+            The number of independent realizations of the simulation to be run.
+        nwk_update : str
+            The network update strategy. See `supported_update_strategies` attribute. (default: 'relabel')
+        nwk_lattice_periodic : bool
+            For lattice topologies, whether to set periodic boundary conditions. (default: True)
+        nwk_ring_neighbors : int
+            For ring topologies, the number of neighbors for each node.
+        nwk_ring_rewire_p : float
+            For ring topologies, the probability of rewiring on initialization, used to generate Watts-Strogatz small-world networks. (default: 0)
+        nwk_random_p : float
+            For random topologies, the connection probability.
+        nwk_sf_links : int
+            For scale-free topologies (Albert-Barabasi model), the number of new links preferentially attached when a new node is added to the network.
+        nwk_clustered_p : float
+            For clustered topologies (Holme-Kim model), the probability of creating a triangle for each new connection.
+        nwk_rand-reg_degree : int
+            For random-regular graphs, the degree of each node.
+        nwk_lambda : float
+            The rewire probability; or the probability of a rewire event ocurring instead of a repoduction event at each time step. (default: 0)
+        nwk_rewire_disconnect : str
+            The rewire disconnect strategy. See `rewire_disconnect_strategies` attribute. (default: 'uniform')
+        nwk_rewire_disconnect_total : bool
+            Whether to use an agent's total payoffs when calculating probability for a neighbor to disconnect. If "False", will use local payoffs instead.
+        nwk_rewire_reconnect : str
+            The rewire reconnect strategy. See `rewire_reconnect_strategies` attribute. (default: 'uniform')
+        nwk_rewire_reconnect_margin : float
+            Probability of picking agent to rewire to uniformly at random, rather than with fitness-proportional probability.
+        nwk_rewire_threshold : float
+            Payoff threshold for neighbors to be eligibile to disconnect. Only used with certain `nwk_rewire_disconnect` strategies.
+        n_objects : int
+            Number of objects in agents' languages. (default: agent.Agent.default_objects)
+        n_signals : int
+            Number of signals in agents' languages. (default: agent.Agent.default_signals)
+        sample_strategy : str
+            The strategy employed for sampling during the learning process. See `supported_sampling_strategies` attribute. (default: 'fitness-proportional')
+        sample_localize : bool
+            Whether to localize sampling (sample only from parent's neighbors). If "False", new agents will sample from the entire population. (default: True)
+        sample_size : int
+            Number of agents to sample from during learning. (default: 4)
+        sample_num : int
+            Number of samples to draw per object from each agent during learning. (default: 1)
+        sample_influence : float
+            The neighbor influence; or how samples from neighbors are weighed vs samples from the parent. Values closer to one place more weight on neighbor sample at the expense of the parent sample, and vice versa. (default: 1)
+        sample_mistake_p : float
+            Probability of making a mistake when sampling for each object. (default: 0)
+        comp : bool
+            Whether to simulate language competition or not. Drastically changes simulations by initializing the population with only two languages. (default: False)
+        comp_initp : float
+            The initial language proportion for competition simulations. For example, a value of 0.2 will result in a 20:80 proportion of the two langauges at the initial generation.
+        payoff_reports_n : int
+            The number of times to record payoffs (as well as languages and network stats), evenly distributed along the number of time steps. (default: 1000)
+        n_processes : int
+            The number of system processes to use for running independent realizations of the simulation. Used for parallelization and drastically speeds up execution. If no value is set, defaults to the number of runs or the maximum number of available processors.
+
+    Methods
+    -------
+        TODO: Add method descriptions
     """
+
     supported_topologies = [
         'lattice',
         'ring',
