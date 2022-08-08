@@ -65,14 +65,15 @@ class Simulation :
         'proportional'
     ]
 
+    # Params that default to None require setting at initialization 
     _default_params = {
         'nwk_update': 'relabel',
         'nwk_lattice_periodic': True,
         'nwk_ring_rewire_p': 0,
         'nwk_ring_neighbors': None,
         'nwk_random_p': None,
-        'nwk_sf_links': None, 
-        'nwk_clustered_p': None, 
+        'nwk_sf_links': None,
+        'nwk_clustered_p': None,
         'nwk_rand-reg_degree': None,
         'nwk_lambda': 0,
         'nwk_rewire_disconnect': 'uniform',
@@ -86,7 +87,7 @@ class Simulation :
         'sample_localize': True,
         'sample_size': 4,
         'sample_num': 1,
-        'sample_influence': 0.5,
+        'sample_influence': 1,
         'sample_mistake_p': 0,
         'comp': False,
         'comp_initp': None,
@@ -155,6 +156,8 @@ class Simulation :
 
         if self._params['comp'] and self._params['comp_initp'] is None :
             raise ValueError(f"For competition simulations, initial proportion 'comp_initp' should be specified.")
+        else :
+            assert 0 <= self._params['comp_initp'] <= 1, "Initial proportion 'comp_initp' param must be in range [0, 1]."
 
         # Payoff reports cannot be more than time steps simulated
         self._params['payoff_reports_n'] = min(self._params['t_max'], self._params['payoff_reports_n'])
@@ -420,7 +423,7 @@ class Simulation :
                     parent_neighbors = list(nx.neighbors(G, parent))
                     neighbor_mask = [a in parent_neighbors for a in agents]
                     neighbor_payoffs = normalized_payoffs[neighbor_mask]
-                    child.update_language(self.get_sampled_matrix_local(parent, parent_neighbors, neighbor_payoffs))    # Change to include only neighbours
+                    child.update_language(self.get_sampled_matrix_local(parent, parent_neighbors, neighbor_payoffs))
                 else :
                     child.update_language(self.get_sampled_matrix_global(parent, agents, normalized_payoffs))
 
