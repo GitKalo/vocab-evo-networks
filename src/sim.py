@@ -111,7 +111,7 @@ class Simulation :
     ]
 
     supported_sampling_strategies = [
-        'fitness-proportional'
+        'fitness-proportional',
         'random'
     ]
 
@@ -217,10 +217,11 @@ class Simulation :
         if self._params['sample_strategy'] not in self.__class__.supported_sampling_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
 
-        if self._params['comp'] and self._params['comp_initp'] is None :
-            raise ValueError(f"For competition simulations, initial proportion 'comp_initp' should be specified.")
-        else :
-            assert 0 <= self._params['comp_initp'] <= 1, "Initial proportion 'comp_initp' param must be in range [0, 1]."
+        if self._params['comp'] :
+            if self._params['comp_initp'] is None :
+                raise ValueError(f"For competition simulations, initial proportion 'comp_initp' should be specified.")
+            else :
+                assert 0 <= self._params['comp_initp'] <= 1, "Initial proportion 'comp_initp' param must be in range [0, 1]."
 
         # Payoff reports cannot be more than time steps simulated
         self._params['payoff_reports_n'] = min(self._params['t_max'], self._params['payoff_reports_n'])
@@ -639,16 +640,13 @@ class Simulation :
     def get_node_payoffs(self) :
         return self.__sim_node_payoffs
 
-if __name__ == '__main__' :
+def main() :
+    pop_size = 20
+    n_time_steps = 5000
+    n_runs = 4
+    topology = 'scale-free'
 
-    print("This module is used to run agent-based simulations. See `help(sim)` for further details. It will now run a quick sample simulation and plot the results.")
-
-    pop_size = 50
-    n_time_steps = 10000
-    n_runs = 20
-
-    simulation = Simulation(pop_size, n_time_steps, n_runs, 
-    nwk_topology='scale-free', nwk_update='relabel', sample_strategy='fitness-proportional')
+    simulation = Simulation(pop_size, n_time_steps, n_runs, topology, nwk_sf_links=4)
 
     simulation.run()
 
@@ -656,12 +654,18 @@ if __name__ == '__main__' :
     fig, (ax1, ax2) = plt.subplots(1, 2)
     for payoffs in simulation.get_avg_payoffs() :
         ax1.plot(payoffs, color='blue')
-    ax1.set_xlabel('Time')
-    ax1.set_ylabel('Payoff')
-    ax1.set_title('Parental learning')
+    ax1.set_xlabel('Time steps')
+    ax1.set_ylabel('Average payoffs')
+    ax1.set_title('Results')
 
-    G_view = simulation.get_network_view()
-    nx.draw(G_view, ax=ax2)
+    Gs = simulation.get_networks()
+    nx.draw(Gs[0][1], ax=ax2)
     ax2.set_title('Network')
 
     plt.show()
+
+if __name__ == '__main__' :
+
+    print("This module is used to run agent-based simulations. See `help(sim)` for further details. It will now run a quick sample simulation and plot the results.")
+
+    main()
