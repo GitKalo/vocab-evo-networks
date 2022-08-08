@@ -1,8 +1,6 @@
-import time, os, sys, json, errno, argparse, pickle
+import time, os, sys, json, argparse
 
 import pandas as pd
-import numpy as np
-import networkx as nx
 
 import analysis
 from src import sim

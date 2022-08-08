@@ -1,12 +1,11 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.random.mtrand import sample
 import pandas as pd
 
 from multiprocessing.pool import Pool
 
-from . import agent, util
+from . import agent
 
 class Simulation :
     """
