@@ -47,9 +47,8 @@ class Simulation :
         'relabel'
     ]
 
-    learning_strategies = [
-        'parental',
-        'role-model',
+    supported_sampling_strategies = [
+        'fitness-proportional'
         'random'
     ]
 
@@ -83,7 +82,7 @@ class Simulation :
         'nwk_rewire_threshold': None,
         'n_objects': agent.Agent.default_objects,
         'n_signals': agent.Agent.default_signals,
-        'sample_strategy': 'role-model',
+        'sample_strategy': 'fitness-proportional',
         'sample_localize': True,
         'sample_size': 4,
         'sample_num': 1,
@@ -151,7 +150,7 @@ class Simulation :
         if self._params['nwk_rewire_reconnect'] == 'proportional' and self._params['nwk_rewire_reconnect_margin'] is None :
             raise TypeError("For the 'proportional' reconnect strategy, the 'nwk_rewire_reconnect_margin' parameter should be specified.")
 
-        if self._params['sample_strategy'] not in self.__class__.learning_strategies :
+        if self._params['sample_strategy'] not in self.__class__.supported_sampling_strategies :
             raise ValueError(f"Unrecognzied sampling strategy: '{self._params['sample_strategy']}'")
 
         if self._params['comp'] and self._params['comp_initp'] is None :
@@ -492,7 +491,7 @@ class Simulation :
             return parent_sample
 
         # Sample from pool (neighbors for localized learning, population otherwise)
-        if self._params['sample_strategy'] == 'role-model' :
+        if self._params['sample_strategy'] == 'fitness-proportional' :
             try :
                 neighbor_sample_models = np.random.choice(sample_pool, size=self._params['sample_size'], p=sample_payoffs)
             except ValueError :
@@ -583,7 +582,7 @@ if __name__ == '__main__' :
     n_runs = 20
 
     simulation = Simulation(pop_size, n_time_steps, n_runs, 
-    nwk_topology='scale-free', nwk_update='relabel', sample_strategy='role-model')
+    nwk_topology='scale-free', nwk_update='relabel', sample_strategy='fitness-proportional')
 
     simulation.run()
 
