@@ -89,7 +89,6 @@ class Simulation :
         'sample_num': 1,
         'sample_influence': 0.5,
         'sample_mistake_p': 0,
-        'sample_include_parent': False,    #TODO: phase out
         'comp': False,
         'comp_initp': None,
         'payoff_reports_n': 1000,
@@ -448,8 +447,6 @@ class Simulation :
             child = agent.Agent(parent.get_id(), self._params['n_objects'], self._params['n_signals'])
             if self._params['sample_localize'] == True :
                 sample_pool = parent_neighbors
-                if self._params['sample_include_parent'] == True :
-                    sample_pool = [parent, *parent_neighbors]
                 sample_mask = [a in sample_pool for a in agents]
                 sample_payoffs = normalized_payoffs[sample_mask]
             else :
