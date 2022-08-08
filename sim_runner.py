@@ -7,9 +7,25 @@ from src import sim
 
 sim_networks = {}
 
-# Run simulation based on simulation runs dict.
-# The runs dict has simulation ids as keys, and parameters dicts as values.
 def run_sim(sim_params, include_payoffs=True, include_langs=False) :
+    """
+    Runs simulations based on a dictionary of simulation parameters. The dictionary has simulation ids as keys, and parameters dicts as values.
+
+    Parameters
+    ----------
+    include_payoffs : bool (default: True)
+        Whether to include payoffs when returning simulation as series. Should be "True" in virtually all cases.
+    include_langs : bool (default: False)
+        Whether to record agent languages during the simulation. Greatly increases the size of simulation results.
+
+    Returns
+    -------
+    res_df
+        A DataFrame of simulation results.
+    sim_networks
+        A dictionary containing initial and final networks for all simulation runs.
+    """
+
     n_sim = len(sim_params)
 
     res_series = []     # For storing results of simulation runs
