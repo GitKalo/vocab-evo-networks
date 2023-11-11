@@ -43,4 +43,5 @@ To get in touch, please email Kaloyan at kaloyan[dot]danovski[at]gmail[dot]com.
 ## References
 
 [1] Danovski, K., Brede, M., 2022a. Effects of Population Structure on the Evolution of Linguistic Convention, in: Benito, R.M., Cherifi, C., Cherifi, H., Moro, E., Rocha, L.M., Sales-Pardo, M. (Eds.), Complex Networks & Their Applications X, Studies in Computational Intelligence. Springer International Publishing, Cham, pp. 693–704. https://doi.org/10.1007/978-3-030-93409-5_57
+
 [2] Danovski, K., Brede, M., 2022b. On the evolutionary language game in structured and adaptive populations. PLoS ONE 17, e0273608. https://doi.org/10.1371/journal.pone.0273608
