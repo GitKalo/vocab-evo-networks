@@ -2,7 +2,7 @@
 
 This project defines an **agent-based simulation** for exploring the effects of complex social structure on the emergence of vocabulary (in the form of lexical convention) in a structured population of linguistic agents. It is based on an evolutionary model based on Nowak's Evolutionary Language Game and defined by the authors in Ref. [1].
 
-Research based on this model has been published and presented at the *Complex Networks & Their Applications 2021* conference [1]. The model was originally prosposed as part of a final-year Individual Project (COMP3200) at the University of Southampton.
+Research based on this model has been published and presented at the *Complex Networks & Their Applications X* conference in 2021 [1] and PLOS ONE [2]. The model was originally prosposed as part of a final-year Individual Project (COMP3200) at the University of Southampton.
 
 ## Running simulations
 
@@ -32,14 +32,15 @@ To quickly **visualize the results**, you can use the `plotting.py` script throu
 python plotting.py example_simulation/example_results.csv
 ```
 
-The `analysis.py` script contains various functions that can help in **analyzing simulation results**. Most of them are fairly atomic and easy to understand, but feel free to address the corresponding the authors (see below) for help.
+The `analysis.py` script contains various functions that can help in **analyzing simulation results**. Most of them are fairly atomic and easy to understand, but feel free to address the authors (see below) for help.
 
 ## Authors
 
 All software was written by **Kaloyan Danovski**. The model is developed and explored by **Kaloyan Danovski** and **Markus Brede**.
 
-To get in touch, please email Kaloyan at kd1u18[at]southamptonalumni[dot]co[dot]uk.
+To get in touch, please email Kaloyan at kaloyan[dot]danovski[at]gmail[dot]com.
 
 ## References
 
-[1] Danovski, K., Brede, M. (2022). Effects of Population Structure on the Evolution of Linguistic Convention. In: Benito, R.M., Cherifi, C., Cherifi, H., Moro, E., Rocha, L.M., Sales-Pardo, M. (eds) Complex Networks & Their Applications X. COMPLEX NETWORKS 2021. Studies in Computational Intelligence, vol 1015. Springer, Cham. https://doi.org/10.1007/978-3-030-93409-5_57
+[1] Danovski, K., Brede, M., 2022a. Effects of Population Structure on the Evolution of Linguistic Convention, in: Benito, R.M., Cherifi, C., Cherifi, H., Moro, E., Rocha, L.M., Sales-Pardo, M. (Eds.), Complex Networks & Their Applications X, Studies in Computational Intelligence. Springer International Publishing, Cham, pp. 693–704. https://doi.org/10.1007/978-3-030-93409-5_57
+[2] Danovski, K., Brede, M., 2022b. On the evolutionary language game in structured and adaptive populations. PLoS ONE 17, e0273608. https://doi.org/10.1371/journal.pone.0273608
